@@ -20,6 +20,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -40,6 +41,7 @@ public class PageFactory {
     private static final Logger log = LoggerFactory.getLogger(PageFactory.class);
 
     private static WebDriver webDriver;
+    private static Actions actions;
     private static PageShell PageFactoryCore;
     private static VideoRecorderImpl videoRecorder;
     private static BrowserMobProxy proxy; // for use proxy, use Props proxy.enable = true
@@ -262,11 +264,23 @@ public class PageFactory {
      *
      * @return PageFactory
      */
-    public static PageShell getPageFactory() {
+    public static PageShell getInstance() {
         if (null == PageFactoryCore) {
             PageFactoryCore = new PageShell(PAGES_PACKAGE);
         }
         return PageFactoryCore;
+    }
+
+    /**
+     * Get driver actions
+     *
+     * @return Actions
+     */
+    public static Actions getActions() {
+        if (null == actions) {
+            actions = new Actions(getWebDriver());
+        }
+        return actions;
     }
 
     /**

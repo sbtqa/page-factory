@@ -44,12 +44,12 @@ public class ClickAspect {
             targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
 
             TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
-            elementRedirect = PageFactory.getPageFactory().getCurrentPage().getElementRedirect(typifiedElement);
+            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(typifiedElement);
 
         } else if (joinPoint.getTarget() instanceof WebElement) {
             targetWebElement = (WebElement) joinPoint.getTarget();
 
-            elementRedirect = PageFactory.getPageFactory().getCurrentPage().getElementRedirect(targetWebElement);
+            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(targetWebElement);
 
         } else {
             return;
@@ -61,7 +61,7 @@ public class ClickAspect {
 
         Stash.put("beforeClickHandles", PageFactory.getWebDriver().getWindowHandles());
 
-//            boolean isReinitNeeded = ExperianModel.getElementRePageFactory(targetWebElement, PageFactory.getPageFactory().currentPage);
+//            boolean isReinitNeeded = ExperianModel.getElementRePageFactory(targetWebElement, PageFactory.getInstance().currentPage);
         if (!PageFactory.isAspectsDisabled()) {
             Actions actions = new Actions(PageFactory.getWebDriver());
             //TODO: для андроеда тут все выполнялось в цикле. Надо если что поставить иф
@@ -92,11 +92,11 @@ public class ClickAspect {
         }
 
         if (null != elementRedirect) {
-            PageFactory.getPageFactory().getPage(elementRedirect);
+            PageFactory.getInstance().getPage(elementRedirect);
         }
 //            if (isReinitNeeded) {
 //                PageFactory.getDriverExtensions().waitForPageToLoad();
-//                ExperianModel.initElements(PageFactory.getWebDriver(), PageFactory.getPageFactory().currentPage);
+//                ExperianModel.initElements(PageFactory.getWebDriver(), PageFactory.getInstance().currentPage);
 //            }
 
         if (Boolean.valueOf(Props.get("highlightActiveElements"))) {
