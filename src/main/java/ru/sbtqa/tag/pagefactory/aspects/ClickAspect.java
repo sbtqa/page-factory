@@ -59,7 +59,7 @@ public class ClickAspect {
             elementHighlightStyle = DriverExtensions.highlightElementOn(targetWebElement);
         }
 
-        Stash.getInstance().put("beforeClickHandles", PageFactory.getWebDriver().getWindowHandles());
+        Stash.put("beforeClickHandles", PageFactory.getWebDriver().getWindowHandles());
 
 //            boolean isReinitNeeded = ExperianModel.getElementRePageFactory(targetWebElement, PageFactory.getPageFactory().currentPage);
         if (!PageFactory.isAspectsDisabled()) {

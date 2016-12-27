@@ -367,7 +367,7 @@ public abstract class Page {
     @ActionTitle("modal window with text appears")
     public void assertModalWindowAppears(String text) throws PageException {
         try {
-            String popupHandle = DriverExtensions.findNewWindowHandle((Set<String>) Stash.getInstance().get("beforeClickHandles"));
+            String popupHandle = DriverExtensions.findNewWindowHandle((Set<String>) Stash.getValue("beforeClickHandles"));
             if (null != popupHandle && !popupHandle.isEmpty()) {
                 PageFactory.getWebDriver().switchTo().window(popupHandle);
             }

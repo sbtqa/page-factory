@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.AllureNonCriticalFailure;
 import ru.sbtqa.tag.qautils.properties.Props;
 
-public class AllureRunListener extends ru.sbtqa.tag.allurehelper.AllureRunListener {
+public class AllureRunListener extends ru.sbtqa.tag.allurehelper.TagAllureRunListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(AllureRunListener.class);
 
