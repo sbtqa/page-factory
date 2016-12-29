@@ -5,6 +5,6 @@
         <aspect name="ru.sbtqa.tag.pagefactory.aspects.ExceptionAspect"/>
     </aspects>
     <weaver options="">
-        <include within="ru.sbt..*"/>
+        <include within="ru.sbtqa.tag..*"/>
     </weaver>
 </aspectj>

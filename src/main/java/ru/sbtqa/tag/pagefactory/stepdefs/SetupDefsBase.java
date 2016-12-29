@@ -40,6 +40,7 @@ public class SetupDefsBase {
         }
 
         try {
+            //TODO fix if task.to.kill does not exist in application.properties
             String[] tasks = Props.get("tasks.to.kill").split(",");
             if (tasks.length > 0) {
                 for (String task : tasks) {
@@ -96,17 +97,5 @@ public class SetupDefsBase {
     @After
     public void tearDown() {
         PageFactory.dispose();
-        
-        //TODO зкоментить
-//        if (PageFactory.getVideoRecorder() != null && PageFactory.getVideoRecorder().isVideoStarted()) {
-//            log.info("Video is saving...");
-//            Thread.sleep(5000);
-//            String videoPath = PageFactory.getVideoRecorder().stopRecording();
-//            if (videoPath != null) {
-//                //TODO положить в аллюр. Разобраться как сделать
-//                //addVideoParameter();
-//                PageFactory.setVideoRecorderToNull();
-//            }
-//        }
     }
 }

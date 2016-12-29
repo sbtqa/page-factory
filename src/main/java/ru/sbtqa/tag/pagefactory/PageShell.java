@@ -89,7 +89,7 @@ public class PageShell {
      */
     public Page getCurrentPage() throws PageInitializationException {
         if (null == currentPage) {
-            throw new PageInitializationException(new Exception("Current page not initialized!"));
+            throw new PageInitializationException("Current page not initialized!");
         } else {
             return currentPage;
         }

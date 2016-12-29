@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
+import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Proxy;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.UnsupportedBrowserException;
 import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
 import ru.sbtqa.tag.qautils.properties.Props;
-import ru.sbtqa.tag.videorecorder.VideoRecorderImpl;
+import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
 public class PageFactory {
 
@@ -41,7 +42,7 @@ public class PageFactory {
 
     private static WebDriver webDriver;
     private static PageShell PageFactoryCore;
-    private static VideoRecorderImpl videoRecorder;
+    private static VideoRecorder videoRecorder;
     private static BrowserMobProxy proxy; // for use proxy, use Props proxy.enable = true
     private static final Map<Class<? extends Page>, Map<Field, String>> PAGES_REPOSITORY = new HashMap<>();
 
@@ -64,18 +65,12 @@ public class PageFactory {
      */
     public static WebDriver getWebDriver() {
         if (null == webDriver) {
-//            TODO revert video record
-//            if (getVideoRecorder() == null && Boolean.valueOf(Props.get("videoRecordingEnabled"))) {
-//                try {
-//                    videoRecorder = new VideoRecorder();
-//                    videoRecorder.startRecording();
-//                } catch (IOException e) {
-//                    log.warn("Video recording can not be started", e);
-//                }
-//            }
+            if (Boolean.valueOf(Props.get("video.enable"))) {
+                    VideoRecorder.getInstance().startRecording();
+            }
 
             for (int i = 1; i <= ATTEMPTS_TO_START_WEBDRIVER; i++) {
-                log.warn("Attempt #" + i + " to start web driver");
+                log.info("Attempt #" + i + " to start web driver");
                 try {
                     createWebDriver();
                     break;
@@ -212,17 +207,20 @@ public class PageFactory {
             log.warn("Failed to quit web driver", e);
         } finally {
             try {
+                //TODO take out into a separate method
                 // Wait for processes disappear, this might take a few seconds
-                String brwsrNm = BROWSER_NAME.toLowerCase().trim();
-                if ("ie".equals(brwsrNm)) {
-                    brwsrNm = "iexplore";
-                }
-                int i = 0;
-                while (i <= 10) {
-                    if (Runtime.getRuntime().exec("tasklist | findstr " + brwsrNm).waitFor() == 0) {
-                        Thread.sleep(1000);
-                    } else {
-                        i = 10;
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    String brwsrNm = BROWSER_NAME.toLowerCase().trim();
+                    if ("ie".equals(brwsrNm)) {
+                        brwsrNm = "iexplore";
+                    }
+                    int i = 0;
+                    while (i <= 10) {
+                        if (Runtime.getRuntime().exec("tasklist | findstr " + brwsrNm).waitFor() == 0) {
+                            Thread.sleep(1000);
+                        } else {
+                            i = 10;
+                        }
                     }
                 }
             } catch (IOException | InterruptedException e) {
@@ -232,11 +230,6 @@ public class PageFactory {
 
         setWebDriver(null);
         PageFactoryCore = null;
-
-//        //Закрытие коннектов к базе
-//        if (null != dbConnectionFactory) {
-//            dbConnectionFactory.closeConnections();
-//        }
     }
 
     /**

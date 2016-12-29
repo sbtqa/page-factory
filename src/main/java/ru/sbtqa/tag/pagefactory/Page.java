@@ -816,7 +816,7 @@ public abstract class Page {
             }
         }
 
-        throw new NoSuchElementException(String.format("Элемент '%s' отсутствует странице '%s'", title, this.getTitle()));
+        throw new ElementNotFoundException(String.format("Элемент '%s' отсутствует странице '%s'", title, this.getTitle()));
     }
 
     /**
@@ -846,43 +846,28 @@ public abstract class Page {
     }
 
     /**
-     * Execute method by MethodTitle
+     * Find method with corresponding title on current page, and execute it
      *
-     * @param <T> TODO
-     * @param title MethodTitle name
-     * @param type type return value
-     * @param param TODO
-     * @return TODO
-     * @throws java.lang.NoSuchMethodException TODO
+     * @param title title of the method to call
+     * @param param parameters that will be passed to method
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found
+     * @throws java.lang.reflect.InvocationTargetException if there an error to invoke method
      */
-    public <T extends Object> T executeMethodByTitle(String title, Class<T> type, Object... param) throws NoSuchMethodException {
+    public void executeMethodByTitle(String title, Object... param) throws NoSuchMethodException, InvocationTargetException {
         List<Method> methods = Core.getDeclaredMethods(this.getClass());
         for (Method method : methods) {
             if (Core.isActionTitleContainsInAnnotation(method, title)) {
                 try {
                     method.setAccessible(true);
-                    return type.cast(MethodUtils.invokeMethod(this, method.getName(), param));
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                    log.error("Failed to invoke method '" + title + "'", ex);
+                    MethodUtils.invokeMethod(this, method.getName(), param);
+                    return;
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    throw new InvocationTargetException(e, "Failed to invoke '" + title + "' method on '" + this.getTitle() + "' page object");
                 }
             }
         }
 
-        throw new NoSuchMethodException(
-                "There is no " + title + " method on " + this.getTitle() + " page object.");
-    }
-
-    /**
-     * Execute method by MethodTitle
-     *
-     * @param <T> TODO
-     * @param title MethodTitle name
-     * @param param TODO
-     * @return TODO
-     * @throws java.lang.NoSuchMethodException TODO
-     */
-    public <T extends Object> T executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
-        return executeMethodByTitle(title, (Class<T>) this.getClass(), param);
+        throw new NoSuchMethodException("There is no '" + title + "' method on '" + this.getTitle() + "' page object");
     }
 
     /**
@@ -891,7 +876,6 @@ public abstract class Page {
      * @param params a {@link java.lang.Object} object.
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
      */
-    //TODO refactor throws throwable
     public void fireValidationRule(String title, Object... params) throws PageException {
         Method[] methods = this.getClass().getMethods();
         for (Method method : methods) {

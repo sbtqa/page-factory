@@ -319,7 +319,7 @@ public class DriverExtensions {
             js.executeScript("arguments[0].style.border='3px solid red'", webElement);
             return style;
         } catch (Exception e) {
-            log.debug("Something went wrong with element highlight", e);
+            log.warn("Something went wrong with element highlight", e);
             return null;
         }
     }
