@@ -1050,7 +1050,8 @@ public abstract class Page {
                 return Core.getElementByField(this, field);
             }
         }
-        throw new ElementNotFoundException(String.format("Элемент '%s' отсутствует странице '%s'", title, this.getTitle()));
+
+        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
     }
 
     /**
