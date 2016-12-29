@@ -4,26 +4,23 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
@@ -34,42 +31,48 @@ import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
 import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
 import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
 import ru.sbtqa.tag.pagefactory.annotations.ValidationRule;
-import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
-import ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException;
-import ru.sbtqa.tag.pagefactory.exceptions.PageException;
-import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
-import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
+import ru.sbtqa.tag.pagefactory.exceptions.*;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
+import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
+import static java.lang.String.format;
 
+/**
+ * Base page object class. Contains basic actions with elements, search methods
+ */
 public abstract class Page {
 
     private static final Logger log = LoggerFactory.getLogger(Page.class);
 
     /**
+     * Initialize page with specified title and save its instance to {@link PageShell#currentPage} for further use
      *
-     * @param title TODO
-     * @throws PageInitializationException TODO
+     * @param title title of the page to open
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException if failed to execute corresponding page
+     * constructor
      */
     @ActionTitle("отркывается страница")
     @ActionTitle("open page")
     public void initPage(String title) throws PageInitializationException {
-        PageFactory.getPageFactory().getPage(title);
+        PageFactory.getInstance().getPage(title);
     }
 
     /**
+     * Find element with specified title annotation, and fill it with given text
+     * Add elementTitle-&gt;text as parameter-&gt;value to corresponding step in allure report
      *
-     * @param elementTitle a {@link java.lang.String} object.
-     * @param text a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @param elementTitle element to fill
+     * @param text text to enter
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
+     * couldn't be found
      */
     @ActionTitle("заполняет поле")
     @ActionTitle("fill the field")
     public void fillField(String elementTitle, String text) throws PageException {
-        WebElement webElement = PageFactory.getPageFactory().getCurrentPage().getElementByTitle(elementTitle);
+        WebElement webElement = getElementByTitle(elementTitle);
         webElement.click();
         webElement.clear();
         webElement.sendKeys(text);
@@ -77,6 +80,7 @@ public abstract class Page {
     }
 
     /**
+     * Same as {@link #fillField(String, String)}, but accepts particular WebElement object and interacts with it
      *
      * @param webElement an object to interact with
      * @param text string text to send to element
@@ -95,55 +99,44 @@ public abstract class Page {
     }
 
     /**
+     * Click the specified link element
      *
-     * @param elementTitle a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @param webElement a WebElement object to click
      */
-    @ActionTitle("нажимает кнопку")
-    @ActionTitle("click on the button")
-    public void clickButton(String elementTitle) throws PageException {
-        clickLink(elementTitle);
-    }
-
-    /**
-     *
-     * @param webElement a {@link org.openqa.selenium.WebElement} object.
-     */
-    public void clickButton(WebElement webElement) {
-        clickLink(webElement);
-    }
-
-    /**
-     *
-     * @param webElement a {@link org.openqa.selenium.WebElement} object.
-     */
-    public void clickLink(WebElement webElement) {
+    public void clickWebElement(WebElement webElement) {
         webElement.click();
         Core.addToReport(webElement, " is clicked");
     }
 
     /**
+     * Find specified WebElement on a page, and click it
+     * Add corresponding parameter to allure report
      *
-     * @param elementTitle a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @param elementTitle title of the element to click
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
+     * couldn't be found
      */
     @ActionTitle("кликает по ссылке")
-    @ActionTitle("click on the link")
-    public void clickLink(String elementTitle) throws PageException {
+    @ActionTitle("click the link")
+    @ActionTitle("нажимает кнопку")
+    @ActionTitle("click the button")
+    public void clickElementByTitle(String elementTitle) throws PageException {
         WebElement webElement;
         try {
-            webElement = PageFactory.getPageFactory().getCurrentPage().getElementByTitle(elementTitle);
+            webElement = getElementByTitle(elementTitle);
             DriverExtensions.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
         } catch (NoSuchElementException | WaitException e) {
             log.warn("Failed to find element by title {}", elementTitle, e);
             webElement = DriverExtensions.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
-        clickLink(webElement);
+        clickWebElement(webElement);
     }
 
     /**
+     * Press specified key on a keyboard
+     * Add corresponding parameter to allure report
      *
-     * @param keyName a {@link java.lang.String} object.
+     * @param keyName name of the key. See available key names in {@link Keys}
      */
     @ActionTitle("нажимает клавишу")
     @ActionTitle("press the key")
@@ -155,14 +148,17 @@ public abstract class Page {
     }
 
     /**
+     * Focus a WebElement, and send specified key into it
+     * Add corresponding parameter to allure report
      *
-     * @param keyName a {@link java.lang.String} object.
-     * @param elementTitle a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException TODO
+     * @param keyName name of the key. See available key names in {@link Keys}
+     * @param elementTitle title of WebElement that accepts key commands
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element with required
+     * title
      */
     @ActionTitle("нажимает клавишу")
     @ActionTitle("press the key")
-    public void pressKey(String keyName, String elementTitle) throws ElementNotFoundException {
+    public void pressKey(String keyName, String elementTitle) throws PageException {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = new Actions(PageFactory.getWebDriver());
         actions.moveToElement(getElementByTitle(elementTitle));
@@ -173,9 +169,10 @@ public abstract class Page {
     }
 
     /**
+     * Send key to element and add corresponding parameter to allure report
      *
-     * @param webElement a {@link org.openqa.selenium.WebElement} object.
-     * @param keyName a {@link org.openqa.selenium.Keys} object.
+     * @param webElement WebElement to send keys in
+     * @param keyName name of the key. See available key names in {@link Keys}
      */
     public void pressKey(WebElement webElement, Keys keyName) {
         webElement.sendKeys(keyName);
@@ -183,27 +180,36 @@ public abstract class Page {
     }
 
     /**
+     * Find web element with corresponding title, if it is a check box, select it
+     * If it's a WebElement instance, check whether it is already selected, and click if it's not
+     * Add corresponding parameter to allure report
      *
-     * @param elementTitle a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @param elementTitle WebElement that is supposed to represent checkbox
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
+     * couldn't be found
      */
     @ActionTitle("отмечает признак")
     @ActionTitle("select CheckBox")
-    public void selectCheckBox(String elementTitle) throws PageException {
-        WebElement targetElement = PageFactory.getPageFactory().getCurrentPage().getElementByTitle(elementTitle);
-        targetElement.click();
+    public void setCheckBox(String elementTitle) throws PageException {
+        WebElement targetElement = getElementByTitle(elementTitle);
+        if (targetElement.getClass().isAssignableFrom(CheckBox.class)) {
+            ((CheckBox) targetElement).select();
+        } else {
+            setCheckBoxState(targetElement, true);
+        }
         Core.addToReport(elementTitle, " is checked");
     }
 
     /**
-     * click checkbox according to states
+     * Check whether specified element is selected, if it isn't, click it
+     * isSelected() doesn't guarantee correct behavior if given element is not a selectable (checkbox,dropdown,radiobtn)
      *
      * @param webElement a WebElemet object.
      * @param state a boolean object.
      */
-    public void selectCheckBox(WebElement webElement, Boolean state) {
+    public void setCheckBoxState(WebElement webElement, Boolean state) {
         if (null != state) {
-            if (webElement.isSelected() ^ state) {
+            if (webElement.isSelected() != state) {
                 webElement.click();
             }
         }
@@ -211,14 +217,17 @@ public abstract class Page {
     }
 
     /**
+     * Find element with required title, perform {@link #select(WebElement, String, MatchStrategy)} on found element
+     * Use exact match strategy
      *
-     * @param elementTitle TODO
-     * @param option a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException TODO
+     * @param elementTitle WebElement that is supposed to be selectable
+     * @param option option to select
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if required element couldn't be found,
+     * or current page isn't initialized
      */
     @ActionTitle("выбирает")
     @ActionTitle("select")
-    public void select(String elementTitle, String option) throws ElementNotFoundException {
+    public void select(String elementTitle, String option) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         if (null != option) {
             select(webElement, option, MatchStrategy.EXACT);
@@ -226,37 +235,29 @@ public abstract class Page {
     }
 
     /**
-     * Select an option that have matching the argument. By default matching strategy is exact.
-     *
-     * @param webElement SELECT element to interact
-     * @param option the value to match against
-     */
-    public void select(WebElement webElement, String option) {
-        select(webElement, option, MatchStrategy.EXACT);
-    }
-
-    /**
-     * Select an option that have matching the argument in SELECT element specified by element
-     * title.
+     * Find element with required title, perform {@link #select(WebElement, String, MatchStrategy)} on found element
+     * Use given match strategy
      *
      * @param elementTitle the title of SELECT element to interact
      * @param option the value to match against
      * @param strategy the strategy to match value
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if there are an error with
-     * getting element by element title
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if required element couldn't be found,
+     * or current page isn't initialized
      */
-    public void select(String elementTitle, String option, MatchStrategy strategy) throws ElementNotFoundException {
+    public void select(String elementTitle, String option, MatchStrategy strategy) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         select(webElement, option, strategy);
     }
 
     /**
-     * Select an option that have matching the argument.
+     * Try to extract selectable options form given WebElement, and select required one
+     * Add corresponding parameter to allure report
      *
-     * @param webElement SELECT element to interact
+     * @param webElement WebElement for interaction. Element is supposed to be selectable, i.e. have select options
      * @param option the value to match against
-     * @param strategy the strategy to match value
+     * @param strategy the strategy to match value. See {@link MatchStrategy} for available values
      */
+    @SuppressWarnings("unchecked")
     public void select(WebElement webElement, String option, MatchStrategy strategy) {
         String jsString = ""
                 + "var content=[]; "
@@ -289,175 +290,118 @@ public abstract class Page {
         }
 
         if (!isSelectionMade) {
-            try {
-                throw new AutotestError("There is no element '" + option + "' in " + getElementTitle(webElement));
-            } catch (ElementDescriptionException ex) {
-                throw new AutotestError("There is no element '" + option + "' in " + webElement, ex);
-            }
+            throw new AutotestError("There is no element '" + option + "' in " + getElementTitle(webElement));
         }
 
         Core.addToReport(webElement, option);
     }
 
     /**
+     * Wait for an alert with specified text, and accept it
      *
-     * @param elementTitle a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException TODO
+     * @param text alert message
+     * @throws WaitException in case if alert didn't appear during default wait timeout
      */
-    @ActionTitle("отображается значение")
-    @ActionTitle("value is visible")
-    public String showValue(String elementTitle) throws ElementNotFoundException {
-        return getElementByTitle(elementTitle).getText();
+    @ActionTitle("принимает уведомление")
+    @ActionTitle("accepts alert")
+    public void acceptAlert(String text) throws WaitException {
+        DriverExtensions.interactWithAlert(text, true);
     }
 
     /**
+     * Wait for an alert with specified text, and dismiss it
      *
-     * @param text a {@link java.lang.String} object.
+     * @param text alert message
+     * @throws WaitException in case if alert didn't appear during default wait timeout
      */
-    @ActionTitle("появляется уведомление")
-    @ActionTitle("notification appears")
-    public void assertNotificationAppears(String text) {
-        new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds(), 1000).until(ExpectedConditions.alertIsPresent());
-        Alert alert = PageFactory.getWebDriver().switchTo().alert();
-        Assert.assertTrue(alert.getText().contains(text));
-        alert.accept();
+    @ActionTitle("отклоняет уведомление")
+    @ActionTitle("dismisses alert")
+    public void dismissAlert(String text) throws WaitException {
+        DriverExtensions.interactWithAlert(text, false);
     }
 
     /**
+     * Wait for appearance of the required text in current DOM model. Text will be space-trimmed, so only non-space
+     * characters will matter.
      *
-     * @param message a {@link java.lang.String} object.
+     * @param text text to search
+     * @throws WaitException if text didn't appear on the page during the timeout
      */
-    @ActionTitle("появляется сообщение")
-    @ActionTitle("message appears")
-    public void assertMessageAppears(String message) {
-        assertMessageAppears(message, "");
+    @ActionTitle("текст появляется на странице")
+    @ActionTitle("text appears on the page")
+    public void assertTextAppears(String text) throws WaitException {
+        DriverExtensions.waitForTextPresenceInPageSource(text, true);
     }
 
     /**
+     * Check whether specified text is absent on the page. Text is being space-trimmed before assertion, so only
+     * non-space characters will matter
      *
-     * @param message a {@link java.lang.String} object.
-     * @param comment a {@link java.lang.String} object.
+     * @param text text to search for
      */
-    @ActionTitle("появляется сообщение")
-    @ActionTitle("message appears")
-    public void assertMessageAppears(String message, String comment) {
-        long timeOutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
-        Throwable exception = null;
-        String body;
-        while (timeOutTime > System.currentTimeMillis()) {
-            try {
-                Thread.sleep(1000);
-                body = PageFactory.getWebDriver().findElement(By.tagName("body")).getText().replaceAll("\\s+", "");
-                Assert.assertTrue(body.contains(message.replaceAll("\\s+", "")));
-                return;
-            } catch (Exception | AssertionError e) {
-                exception = e;
-            }
-        }
-        throw new AutotestError("Timeout of wating the message with text '" + message + "' has expired. " + comment, exception);
+    @ActionTitle("текст отсутствует на странице")
+    @ActionTitle("text is absent on the page")
+    public void assertTextIsNotPresent(String text) {
+        DriverExtensions.waitForTextPresenceInPageSource(text, false);
     }
 
     /**
+     * Wait for a new browser window, then wait for a specific text inside the appeared window
+     * List of previously opened windows is being saved before each click, so if modal window appears without click,
+     * this method won't catch it.
+     * Text is being waited by {@link #assertTextAppears}, so it will be space-trimmed as well
      *
-     * @param text TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @param text text that will be searched inside of the window
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException if
      */
     @ActionTitle("появляется модальное окно с текстом")
     @ActionTitle("modal window with text appears")
-    public void assertModalWindowAppears(String text) throws PageException {
+    public void assertModalWindowAppears(String text) throws WaitException {
         try {
-            String popupHandle = DriverExtensions.findNewWindowHandle((Set<String>) Stash.getValue("beforeClickHandles"));
+            String popupHandle = DriverExtensions.findNewWindowHandle(Stash.getValue("beforeClickHandles"));
             if (null != popupHandle && !popupHandle.isEmpty()) {
                 PageFactory.getWebDriver().switchTo().window(popupHandle);
             }
-            assertMessageAppears(text);
+            assertTextAppears(text);
         } catch (Exception ex) {
-            throw new PageException("TODO", ex);
+            throw new WaitException("Modal window with text '" + text + "' didn't appear during timeout", ex);
         }
     }
 
     /**
+     * Perform {@link #checkValue(String, WebElement, MatchStrategy)} for the WebElement with corresponding title
+     * on a current page. Use exact match strategy
      *
-     * @param text a {@link java.lang.String} object.
-     */
-    @ActionTitle("не появляется сообщение")
-    @ActionTitle("message doesn’t appear")
-    public void assertMessageDoesNotAppear(String text) {
-        new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds()).
-                until(ExpectedConditions.visibilityOf(PageFactory.getWebDriver().findElement(By.tagName("body"))));
-        try {
-            Assert.assertFalse(PageFactory.getWebDriver().findElement(By.tagName("body")).getText().replaceAll("\\s+", "").contains(text.replaceAll("\\s+", "")));
-        } catch (AssertionError exception) {
-            throw new AutotestError("The message with text '" + text + "' has appeared", exception);
-        }
-    }
-
-    /**
-     *
-     * @param link a {@link java.lang.String} object.
-     */
-    @ActionTitle("отображается ссылка")
-    @ActionTitle("link is visible")
-    public void assertLinkIsVisible(String link) {
-        assertMessageAppears(link);
-    }
-
-    /**
-     *
-     * @param link a {@link java.lang.String} object.
-     */
-    @ActionTitle("не отображается ссылка")
-    @ActionTitle("link is not visible")
-    public void assertLinkIsNotVisible(String link) {
-        assertMessageDoesNotAppear(link);
-    }
-
-    /**
-     *
-     * @param values TODO
-     */
-    public void fillForm(Map<String, String> values) {
-        throw new NoSuchElementException("There is no form defined in " + getTitle() + " page object");
-    }
-
-    /**
-     *
-     *
-     */
-    @ActionTitle("заполняет форму")
-    @ActionTitle("fill the form")
-    public void fillForm() {
-        throw new NoSuchElementException("There is no form defined in " + getTitle() + " page object");
-    }
-
-    /**
-     *
-     * @param text a {@link java.lang.String} object.
-     * @param elementTitle a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @param text string value that will be searched inside of the element
+     * @param elementTitle title of the element to search
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element by given title,
+     * or current page isn't initialized
      */
     @ActionTitle("проверяет значение")
-    @ActionTitle("check value")
+    @ActionTitle("checks value")
     public void checkValue(String elementTitle, String text) throws PageException {
-        checkValue(text, PageFactory.getPageFactory().getCurrentPage().getElementByTitle(elementTitle), MatchStrategy.EXACT);
+        checkValue(text, getElementByTitle(elementTitle), MatchStrategy.EXACT);
     }
 
     /**
+     * Perform {@link #checkValue(String, WebElement, MatchStrategy)} for the specified WebElement.
+     * Use exact match strategy
      *
-     * @param text a {@link java.lang.String} object.
-     * @param webElement a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
+     * @param text string value that will be searched inside of the element
+     * @param webElement WebElement to check
      */
-    public void checkValue(String text, WebElement webElement) throws ElementDescriptionException {
+    public void checkValue(String text, WebElement webElement) {
         checkValue(text, webElement, MatchStrategy.EXACT);
     }
 
     /**
+     * Define a type of given WebElement, and check whether it either contains, or exactly matches given text
+     * in its value. Currently supported elements are text input and select box
+     * TODO: use HtmlElements here, to define which element we are dealing with
      *
-     * @param text a {@link java.lang.String} object.
-     * @param webElement a {@link org.openqa.selenium.WebElement} object.
-     * @param searchStrategy a MatchStrategy object.
+     * @param text string value that will be searched inside of the element
+     * @param webElement WebElement to check
+     * @param searchStrategy match strategy. See available strategies in {@link MatchStrategy}
      */
     public void checkValue(String text, WebElement webElement, MatchStrategy searchStrategy) {
         String value = "";
@@ -513,52 +457,58 @@ public abstract class Page {
     }
 
     /**
+     * Find element by given title, and check whether it is not empty
+     * See {@link #checkFieldIsNotEmpty(WebElement)} for details
      *
-     * @param elementTitle TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
+     * @param elementTitle title of the element to check
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page was not initialized,
+     * or element wasn't found on the page
      */
     @ActionTitle("проверяет что поле непустое")
-    @ActionTitle("check that field is not empty")
+    @ActionTitle("checks that the field is not empty")
     public void checkFieldIsNotEmpty(String elementTitle) throws PageException {
-        WebElement webElement = PageFactory.getPageFactory().getCurrentPage().getElementByTitle(elementTitle);
+        WebElement webElement = getElementByTitle(elementTitle);
         checkFieldIsNotEmpty(webElement);
     }
 
     /**
+     * Check that given WebElement has a value attribute, and it is not empty
      *
-     * @param webElement a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
+     * @param webElement WebElement to check
      */
-    public void checkFieldIsNotEmpty(WebElement webElement) throws ElementDescriptionException {
+    public void checkFieldIsNotEmpty(WebElement webElement) {
         String value = webElement.getText();
         if (value.isEmpty()) {
             value = webElement.getAttribute("value");
         }
-
         try {
-            Assert.assertNotEquals("", value.replaceAll("\\s+", ""));
+            Assert.assertFalse(value.replaceAll("\\s+", "").isEmpty());
         } catch (Exception | AssertionError e) {
             throw new AutotestError("The field" + getElementTitle(webElement) + " is empty", e);
         }
     }
 
     /**
+     * Find element with corresponding title, and make sure that its value is not equal to given text
+     * Text, as well as element value are being space-trimmed before comparison, so only non-space characters matter
      *
-     * @param text a {@link java.lang.String} object.
-     * @param elementTitle TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
+     * @param text element value for comparison
+     * @param elementTitle title of the element to search
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page wasn't initialized, or element with
+     * required title was not found
      */
     @ActionTitle("проверяет несовпадение значения")
     @ActionTitle("check that values are not equal")
     public void checkValuesAreNotEqual(String text, String elementTitle) throws PageException {
-        WebElement webElement = PageFactory.getPageFactory().getCurrentPage().getElementByTitle(elementTitle);
+        WebElement webElement = this.getElementByTitle(elementTitle);
         if (checkValuesAreNotEqual(text, webElement)) {
             throw new AutotestError("'" + text + "' is equal with '" + elementTitle + "' value");
         }
     }
 
     /**
+     * Extract value from the given WebElement, and compare the it with the given text
+     * Text, as well as element value are being space-trimmed before comparison, so only non-space characters matter
      *
      * @param text a {@link java.lang.String} object.
      * @param webElement a {@link org.openqa.selenium.WebElement} object.
@@ -573,6 +523,7 @@ public abstract class Page {
     }
 
     /**
+     * Perform a check that there is an element with required text on current page
      *
      * @param text a {@link java.lang.String} object.
      */
@@ -586,8 +537,152 @@ public abstract class Page {
         }
     }
 
+    /**
+     * Finds elements list in context of current page See
+     * ${@link Core#findListOfElements(String, Class, Object)} for detailed
+     * description
+     *
+     * @param listTitle value of ElementTitle annotation of required element
+     * @param type type of elements in list that is being searched for
+     * @param <T> type of elements in returned list
+     * @return list of elements of particular type
+     * @throws PageException if nothing found or current page is not initialized
+     */
+    public <T extends WebElement> List<T> findListOfElements(String listTitle, Class<T> type)
+            throws PageException {
+        return Core.findListOfElements(listTitle, type, this);
+    }
+
+    /**
+     * Finds elements list in context of current page See
+     * ${@link Core#findListOfElements(String, Class, Object)} for detailed
+     * description
+     *
+     * @param listTitle value of ElementTitle annotation of required element
+     * @return list of WebElement's
+     * @throws PageException if nothing found or current page is not initialized
+     */
+    public List<WebElement> findListOfElements(String listTitle) throws PageException {
+        return Core.findListOfElements(listTitle, WebElement.class, this);
+    }
+
+    /**
+     * Find elements list in context of required block See
+     * ${@link Core#findListOfElements(String, Class, Object)} for detailed
+     * description
+     *
+     * @param listTitle value of ElementTitle annotation of required element
+     * @param type type of elements in list that is being searched for
+     * @param <T> type of elements in returned list
+     * @return list of elements of particular type
+     * @throws PageException if nothing found or current page is not initialized
+     */
+    public <T extends WebElement> List<T> findListOfElementsInBlock(String blockPath, String listTitle, Class<T> type)
+            throws PageException {
+        Object block = findBlock(blockPath);
+        return Core.findListOfElements(listTitle, type, block);
+    }
+
+    /**
+     * Finds elements list in context of required block See
+     * ${@link Core#findListOfElements(String, Class, Object)} for detailed
+     * description
+     *
+     * @param listTitle value of ElementTitle annotation of required element
+     * @return list of WebElement's
+     * @throws PageException if nothing found or current page is not initialized
+     */
+    public List<WebElement> findListOfElementsInBlock(String blockPath, String listTitle) throws PageException {
+        return findListOfElementsInBlock(blockPath, listTitle, WebElement.class);
+    }
+
+    /**
+     * See {@link Core#findBlocks(String, Object, boolean)} for description. This
+     * wrapper finds only one block. Search is being performed on a current page
+     *
+     * @param blockPath full path or just a name of the block to search
+     * @return first found block object
+     * @throws java.util.NoSuchElementException if couldn't find any block
+     */
+    public HtmlElement findBlock(String blockPath) throws NoSuchElementException {
+        try {
+            List<HtmlElement> blocks = Core.findBlocks(blockPath, this, true);
+            if (blocks.isEmpty()) {
+                throw new java.util.NoSuchElementException(format("Couldn't find block '%s' on a page '%s'",
+                        blockPath, this.getTitle()));
+            }
+            return blocks.get(0);
+        } catch (IllegalAccessException ex) {
+            throw new FactoryRuntimeException(format("Internal error during attempt to find block '%s'", blockPath), ex);
+        }
+    }
+
+    /**
+     * See {@link Core#findBlocks(String, Object, boolean)} for description. Search
+     * is being performed on a current page
+     *
+     * @param blockPath full path or just a name of the block to search
+     * @return list of objects that were found by specified path
+     */
+    public List<HtmlElement> findBlocks(String blockPath) throws NoSuchElementException {
+        try {
+            return Core.findBlocks(blockPath, this, false);
+        } catch (IllegalAccessException ex) {
+            throw new FactoryRuntimeException(format("Internal error during attempt to find a block '%s'", blockPath), ex);
+        }
+    }
+
+    /**
+     * Execute parameter-less method inside of the given block element.
+     *
+     * @param block block title, or a block chain string separated with '-&gt;'
+     * symbols
+     * @param actionTitle title of the action to execute
+     */
+    public void executeMethodByTitleInBlock(String block, String actionTitle) {
+        executeMethodByTitleInBlock(block, actionTitle, new Object[0]);
+    }
+
+    /**
+     * Execute method with one or more parameters inside of the given block
+     * element !BEWARE! If there are several elements found by specified block path, a first one will be used!
+     *
+     * @param blockPath block title, or a block chain string separated with '-&gt;' symbols
+     * @param actionTitle title of the action to execute
+     * @param parameters parameters that will be passed to method
+     */
+    public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) {
+        HtmlElement block = findBlock(blockPath);
+        Method[] methods = block.getClass().getMethods();
+        for (Method method : methods) {
+            if (Core.isRequiredAction(method, actionTitle)) {
+                try {
+                    method.setAccessible(true);
+                    if (parameters == null || parameters.length == 0) {
+                        MethodUtils.invokeMethod(block, method.getName());
+                    } else {
+                        MethodUtils.invokeMethod(block, method.getName(), parameters);
+                    }
+                    break;
+                } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                    throw new AutotestError(format("Could not find action '%s' in block the following block: '%s'",
+                            actionTitle, blockPath));
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper methods for manipulations on fields and objects
+     */
     private static class Core {
 
+        /**
+         * Return a list of methods declared tin the given class and its superclasses
+         *
+         * @param clazz class to check
+         * @return list of methods. could be empty list
+         */
         private static List<Method> getDeclaredMethods(Class clazz) {
             List<Method> methods = new ArrayList<>();
 
@@ -603,7 +698,14 @@ public abstract class Page {
             return methods;
         }
 
-        private static Boolean isActionTitleContainsInAnnotation(Method method, String title) {
+        /**
+         * Check whether given method has {@link ActionTitle} or {@link ActionTitles} annotation with required title
+         *
+         * @param method method to check
+         * @param title required title
+         * @return true|false
+         */
+        private static Boolean isRequiredAction(Method method, String title) {
             ActionTitle actionTitle = method.getAnnotation(ActionTitle.class);
             ActionTitles actionTitles = method.getAnnotation(ActionTitles.class);
             List<ActionTitle> actionList = new ArrayList<>();
@@ -617,6 +719,13 @@ public abstract class Page {
             return actionList.stream().filter(action -> action.value().equals(title)).findFirst().isPresent();
         }
 
+        /**
+         * Check whether given field is a child of specified class
+         *
+         * @param parent class that is supposed to be parent
+         * @param field field to check
+         * @return true|false
+         */
         private static boolean isChildOf(Class<?> parent, Field field) {
             Class<?> fieldType = field.getType();
             while (fieldType != null && fieldType != Object.class) {
@@ -629,8 +738,166 @@ public abstract class Page {
             return false;
         }
 
-        private static Class<? extends Page> findRedirect(Class<?> parentClass, Object element, Object parent) {
-            List<Field> fields = FieldUtilsExt.getDeclaredFieldsWithInheritance(parentClass);
+        /**
+         * Finds blocks by required path/name in the given context. Block is a class
+         * that extends HtmlElement. If blockPath contains delimiters, it will be
+         * treated as a full path, and block should be located by the exactly that
+         * path. Otherwise, recursive search via all blocks is being performed
+         *
+         * @param blockPath full path or just a name of the block to search
+         * @param context object where the search will be performed
+         * @param returnFirstFound whether the search should be stopped on a first
+         * found block (for faster searches)
+         * @return list of found blocks. could be empty
+         * @throws IllegalAccessException if called with invalid context
+         */
+        private static List<HtmlElement> findBlocks(String blockPath, Object context, boolean returnFirstFound)
+                throws IllegalAccessException {
+            String[] blockChain;
+            if (blockPath.contains("->")) {
+                blockChain = blockPath.split("->");
+            } else {
+                blockChain = new String[]{blockPath};
+            }
+            List<HtmlElement> found = new ArrayList<>();
+            for (Field currentField : FieldUtilsExt.getDeclaredFieldsWithInheritance(context.getClass())) {
+                if (Core.isBlockElement(currentField)) {
+                    if (Core.isRequiredElement(currentField, blockChain[0])) {
+                        currentField.setAccessible(true);
+                        // isBlockElement() ensures that this is a HtmlElement instance
+                        HtmlElement foundBlock = (HtmlElement) currentField.get(context);
+                        if (blockChain.length == 1) {
+                            // Found required block directly inside the context
+                            found.add(foundBlock);
+                            if (returnFirstFound) {
+                                return found;
+                            }
+                        } else {
+                            // Continue to search in the element chain, reducing its length by the first found element
+                            // +2 because '->' adds 2 symbols
+                            String reducedPath = blockPath.substring(blockChain[0].length() + 2);
+                            found.addAll(findBlocks(reducedPath, foundBlock, returnFirstFound));
+                        }
+                    } else if (blockChain.length == 1) {
+                        found.addAll(findBlocks(blockPath, currentField.get(context), returnFirstFound));
+                    }
+                }
+            }
+            return found;
+        }
+
+        /**
+         * Find list of elements of the specified type with required title in the
+         * given context. Context is either a page object itself, or a block on the
+         * page. !BEWARE! field.get() will actually query browser to evaluate the
+         * list, so this method might reduce performance!
+         *
+         * @param listTitle value of ElementTitle annotation of required element
+         * @param type type of elements inside of the list
+         * @param context object where search should be performed
+         * @param <T> type of elements in returned list
+         * @return list of WebElement's or its derivatives
+         * @throws PageException if didn't find any list or current page wasn't initialized
+         */
+        @SuppressWarnings("unchecked")
+        private static <T extends WebElement> List<T> findListOfElements(String listTitle, Class<T> type, Object context)
+                throws PageException {
+            for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(context.getClass())) {
+                if (Core.isRequiredElement(field, listTitle) && List.class.isAssignableFrom(field.getType())
+                        && field.getGenericType() instanceof ParameterizedType
+                        && ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].equals(type)) {
+                    field.setAccessible(true);
+                    try {
+                        return (List<T>) field.get(context);
+                    } catch (IllegalAccessException e) {
+                        throw new InternalError(format("Internal error during attempt to find list '%s'", listTitle), e);
+                    }
+                }
+            }
+            throw new ElementNotFoundException(format("Couldn't find elements list '%s' on page '%s'", listTitle, PageFactory.getInstance().getCurrentPageTitle()));
+        }
+
+        /**
+         * Find element with required title and type inside of the given block. Return null if didn't find any
+         *
+         * @param block block object
+         * @param elementTitle value of ElementTitle annotation of required element
+         * @param type type of element to return
+         * @param <T> any WebElement or its derivative
+         * @return found element or null (exception should be thrown by a caller
+         * that could no find any elements)
+         */
+        private static <T extends WebElement> T findElementInBlock(HtmlElement block, String elementTitle, Class<T> type)
+                throws InternalError {
+            for (Field f : FieldUtils.getAllFields(block.getClass())) {
+                if (Core.isRequiredElement(f, elementTitle) && f.getType().equals(type)) {
+                    f.setAccessible(true);
+                    try {
+                        return type.cast(f.get(block));
+                    } catch (IllegalAccessException e) {
+                        // Since we explicitly set the field to be accessible, this exception is unexpected.
+                        // It might mean that we try to get field in context of an object it doesn't belong to
+                        throw new InternalError(format("Internal error during attempt to find element '%s' in block '%s'",
+                                elementTitle, block.getName()), e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Check if corresponding field is a block. I.e. it has {@link ElementTitle}
+         * annotation and extends {@link HtmlElement} class directly
+         *
+         * @param field field that is being checked
+         * @return true|false
+         */
+        private static boolean isBlockElement(Field field) {
+            return field.getAnnotationsByType(ElementTitle.class).length > 0
+                    && Core.isChildOf(HtmlElement.class, field);
+        }
+
+        /**
+         * Check whether {@link ElementTitle} annotation of the field has a required
+         * value
+         *
+         * @param field field to check
+         * @param title value of ElementTitle annotation of required element
+         * @return true|false
+         */
+        private static boolean isRequiredElement(Field field, String title) {
+            return getFieldTitle(field).equals(title);
+        }
+
+        /**
+         * Return value of {@link ElementTitle} annotation for the field.
+         * If none present, return empty string
+         *
+         * @param field field to check
+         * @return either an element title, or an empty string
+         */
+        private static String getFieldTitle(Field field) {
+            for (Annotation a : field.getAnnotations()) {
+                if (a instanceof ElementTitle) {
+                    return ((ElementTitle) a).value();
+                }
+            }
+            return "";
+        }
+
+        /**
+         * Search for the given given element among the parent object fields, check whether it has a {@link
+         * RedirectsTo}
+         * annotation, and return a redirection page class, if so. Search goes in recursion if it meets HtmlElement
+         * field,
+         * as given element could be inside of the block
+         *
+         * @param element element that is being checked for redirection
+         * @param parent parent object
+         * @return class of the page, this element redirects to
+         */
+        private static Class<? extends Page> findRedirect(Object parent, Object element) {
+            List<Field> fields = FieldUtilsExt.getDeclaredFieldsWithInheritance(parent.getClass());
 
             for (Field field : fields) {
                 RedirectsTo redirect = field.getAnnotation(RedirectsTo.class);
@@ -639,7 +906,7 @@ public abstract class Page {
                         field.setAccessible(true);
                         Object targetField = field.get(parent);
                         if (targetField != null) {
-                            if (targetField.equals(element)) {
+                            if (targetField == element) {
                                 return redirect.page();
                             }
                         }
@@ -651,7 +918,7 @@ public abstract class Page {
                     field.setAccessible(true);
                     Class<? extends Page> redirects = null;
                     try {
-                        redirects = findRedirect(field.getType(), element, field.get(parent));
+                        redirects = findRedirect(field.get(parent), element);
                     } catch (IllegalArgumentException | IllegalAccessException ex) {
                         log.debug("Failed to get page destination to redirect for html element", ex);
                     }
@@ -663,53 +930,63 @@ public abstract class Page {
             return null;
         }
 
-        private static <T> T getElementByField(Object object, Field field) throws ElementNotFoundException {
+        /**
+         * Get object from a field of specified parent
+         *
+         * @param parentObject object that contains(must contain) given field
+         * @param field field to get
+         * @param <T> supposed type of the field. if field cannot be cast into this type, it will fail
+         * @return element of requested type
+         * @throws ElementDescriptionException in case if field does not belong to the object, or element
+         * could not be cast to specified type
+         */
+        @SuppressWarnings("unchecked")
+        private static <T> T getElementByField(Object parentObject, Field field) throws ElementDescriptionException {
             field.setAccessible(true);
-            Object value;
+            Object element;
             try {
-                value = field.get(object);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new NoSuchElementException("Represented field '" + field + "' is inaccessible or specified "
-                        + "object is not an instance of the class or interface declaring the underlying field", e);
+                element = field.get(parentObject);
+                return (T) element;
+            } catch (IllegalArgumentException | IllegalAccessException iae) {
+                throw new ElementDescriptionException("Specified parent object is not an instance of the class or " +
+                        "interface, declaring the underlying field: '" + field + "'", iae);
+            } catch (ClassCastException cce) {
+                throw new ElementDescriptionException("Requested type is incompatible with field '" + field.getName() +
+                        "' of '" + parentObject.getClass().getCanonicalName() + "'", cce);
             }
-
-            if (isChildOf(TypifiedElement.class, field)) {
-                return (T) ((TypifiedElement) value).getWrappedElement();
-            }
-
-            return (T) value;
         }
 
-        private static <T> T getElementByField(Object object, Field field, Field rootField) throws ElementNotFoundException {
-            rootField.setAccessible(true);
-            Object rootValue;
-            try {
-                rootValue = rootField.get(object);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new NoSuchElementException("Represented field '" + field + "' is inaccessible or specified "
-                        + "object is not an instance of the class or interface declaring the underlying field", e);
-            }
-
-            return getElementByField(rootValue, field);
-        }
-
+        /**
+         * Get title annotation of specified WebElement, and add it as a parameter to allure report results,
+         * with corresponding value. If there is no title annotation, log warning and exit
+         *
+         * @param webElement WebElement to add
+         * @param text value for the specified element
+         */
         private static void addToReport(WebElement webElement, String text) {
             try {
-                String elementTitle = PageFactory.getPageFactory().getCurrentPage().getElementTitle(webElement);
+                String elementTitle = PageFactory.getInstance().getCurrentPage().getElementTitle(webElement);
                 addToReport(elementTitle, text);
-            } catch (PageInitializationException | ElementDescriptionException e) {
+            } catch (PageException e) {
                 log.warn("Failed to add element " + webElement + " to report", e);
             }
         }
 
-        private static void addToReport(String header, String explanation) {
-            ParamsHelper.addParam(header, explanation);
-            log.debug("Add '" + header + explanation + "' to report for page '" + header + "'");
+        /**
+         * Add parameter to allure report.
+         *
+         * @param paramName parameter name
+         * @param paramValue parameter value to set
+         */
+        private static void addToReport(String paramName, String paramValue) {
+            ParamsHelper.addParam(paramName, paramValue);
+            log.debug("Add '" + paramName + "->" + paramValue + "' to report for page '" +
+                    PageFactory.getInstance().getCurrentPageTitle() + "'");
         }
     }
 
     /**
-     * Get a title of the page object
+     * Get title of current page obect
      *
      * @return the title
      */
@@ -718,147 +995,96 @@ public abstract class Page {
     }
 
     /**
-     * Get element title by reflection. Inspecting class of the object to get title annotation of
-     * this object
+     * Search for the given WebElement in page repository storage, that is being generated during preconditions to all
+     * tests. If element is found, return its title annotation. If nothing found, log debug message and return
+     * toString() of corresponding element
      *
-     * @param <T> TODO
-     * @param element TODO
-     * @return a {@link java.lang.String} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
+     * @param element WebElement to search
+     * @return title of the given element
      */
-    public <T extends Object> String getElementTitle(T element) throws ElementDescriptionException {
-        Page currentPage = null;
-        try {
-            currentPage = PageFactory.getPageFactory().getCurrentPage();
-        } catch (PageInitializationException ex) {
-            throw new ElementDescriptionException("Failed to get current page", ex);
-        }
-        if (null == currentPage) {
-            log.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
-            return null;
-        }
-        Map<Field, String> fields = PageFactory.getPageRepository().get(currentPage.getClass());
-
-        Set<Map.Entry<Field, String>> entrySet = fields.entrySet();
-        for (Map.Entry<Field, String> entry : entrySet) {
+    public String getElementTitle(WebElement element) {
+        for (Map.Entry<Field, String> entry : PageFactory.getPageRepository().get(this.getClass()).entrySet()) {
             try {
-                WebElement webElementByField = Core.getElementByField(currentPage, entry.getKey());
-                if (webElementByField == element) {
+                if (Core.getElementByField(this, entry.getKey()) == element) {
                     return entry.getValue();
                 }
-            } catch (java.util.NoSuchElementException | StaleElementReferenceException | NullPointerException | ElementNotFoundException ex) {
+            } catch (NoSuchElementException | StaleElementReferenceException | ElementDescriptionException ex) {
                 log.debug("Failed to get element '" + element + "' title", ex);
             }
         }
-        return null;
+        return element.toString();
     }
-
-//    /**
-//     *
-//     * @param fieldName TODO
-//     * @return TODO
-//     */
-//    public String getElementTitle(String fieldName) {
-//        return PageFactory.getPageRepository().get(this.getClass()).get(fieldName);
-//    }
 
     /**
      * Return class for redirect if annotation contains and null if not present
      *
      * @param <T> TODO
-     * @param <TypifiedElement> TODO
      * @param element TODO
      * @return TODO
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
      */
-    public <T extends WebElement, TypifiedElement> Class<? extends Page> getElementRedirect(T element) throws ElementDescriptionException {
+    public <T extends WebElement> Class<? extends Page> getElementRedirect(T element) throws ElementDescriptionException {
         try {
-            Page currentPage = PageFactory.getPageFactory().getCurrentPage();
+            Page currentPage = PageFactory.getInstance().getCurrentPage();
             if (null == currentPage) {
                 log.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
                 return null;
             }
-            return Core.findRedirect(currentPage.getClass(), element, currentPage);
+            return Core.findRedirect(currentPage, element);
         } catch (IllegalArgumentException | PageInitializationException ex) {
             throw new ElementDescriptionException("Failed to get element redirect", ex);
         }
     }
 
     /**
+     * Find specified WebElement by title annotation among current page fields
      *
-     * @param title a {@link java.lang.String} object.
-     * @return a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException TODO
+     * @param title title of the element to search
+     * @return WebElement found by corresponding title
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if failed to find corresponding element
+     * or element type is set incorrectly
      */
-    public WebElement getElementByTitle(String title) throws ElementNotFoundException {
-        List<Field> fieldList = FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass());
-
-        List<Field> htmlElementFields = new ArrayList<>();
-
-        for (Field field : fieldList) {
-            for (Annotation annotation : field.getAnnotations()) {
-                if (annotation instanceof ElementTitle
-                        && ((ElementTitle) annotation).value().equals(title)) {
-                    return Core.getElementByField(this, field);
-                }
-            }
-            if (field.getType().getSuperclass() == HtmlElement.class) {
-                htmlElementFields.add(field);
+    public WebElement getElementByTitle(String title) throws PageException {
+        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
+            if (Core.isRequiredElement(field, title)) {
+                return Core.getElementByField(this, field);
             }
         }
-        for (Field field : htmlElementFields) {
-            for (Field f : FieldUtilsExt.getDeclaredFieldsWithInheritance(field.getType())) {
-                for (ElementTitle a : f.getAnnotationsByType(ElementTitle.class)) {
-                    if (a.value().equals(title)) {
-                        return Core.getElementByField(this, f, field);
-                    }
-                }
-            }
-        }
-
-        throw new NoSuchElementException(String.format("Элемент '%s' отсутствует странице '%s'", title, this.getTitle()));
+        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
     }
 
     /**
+     * Find specified TypifiedElement by title annotation among current page fields
      *
      * @param <T> TODO
      * @param title a {@link java.lang.String} object.
      * @return a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
      */
     @SuppressWarnings(value = "unchecked")
-    public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws ElementNotFoundException {
-
-        List<Field> fieldList = FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass());
-
-        for (Field field : fieldList) {
-            for (Annotation annotation : field.getAnnotations()) {
-                if (annotation instanceof ElementTitle
-                        && ((ElementTitle) annotation).value().equals(title)) {
-                    if (Core.isChildOf(TypifiedElement.class, field)) {
-                        return (T) Core.getElementByField(this, field);
-                    }
-                }
+    public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
+        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
+            if (Core.isRequiredElement(field, title) && Core.isChildOf(TypifiedElement.class, field)) {
+                return (T) Core.getElementByField(this, field);
             }
         }
-
-        throw new NoSuchElementException("Element '" + title + "' is not present on current page '" + this.getTitle() + "'");
+        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
     }
 
     /**
-     * Execute method by MethodTitle
+     * Find method with corresponding title on current page, and execute it
      *
-     * @param <T> TODO
-     * @param title MethodTitle name
-     * @param type type return value
-     * @param param TODO
-     * @return TODO
-     * @throws java.lang.NoSuchMethodException TODO
+     * @param <T> type parameter of the returned object
+     * @param title title of the method to call
+     * @param type method return type
+     * @param param parameters that will be passed to method
+     * @return method execution result, depends on the method return type
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found
      */
     public <T extends Object> T executeMethodByTitle(String title, Class<T> type, Object... param) throws NoSuchMethodException {
         List<Method> methods = Core.getDeclaredMethods(this.getClass());
         for (Method method : methods) {
-            if (Core.isActionTitleContainsInAnnotation(method, title)) {
+            if (Core.isRequiredAction(method, title)) {
                 try {
                     method.setAccessible(true);
                     return type.cast(MethodUtils.invokeMethod(this, method.getName(), param));
@@ -874,25 +1100,28 @@ public abstract class Page {
 
     /**
      * Execute method by MethodTitle
+     * //TODO: looks like this one makes no sense. We suppose that called method will return current page instance, why
+     * would it?
      *
-     * @param <T> TODO
-     * @param title MethodTitle name
-     * @param param TODO
-     * @return TODO
-     * @throws java.lang.NoSuchMethodException TODO
+     * @param <T> type parameter of the returned object
+     * @param title title of the method to call
+     * @param param parameters that will be passed to method
+     * @return method execution result, depends on the method return type
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found
      */
     public <T extends Object> T executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
         return executeMethodByTitle(title, (Class<T>) this.getClass(), param);
     }
 
     /**
+     * Find a method with {@link ValidationRule} annotation on current page, and call it
      *
-     * @param title a {@link java.lang.String} object.
-     * @param params a {@link java.lang.Object} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @param title title of the validation rule
+     * @param params parameters passed to called method
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if couldn't find corresponding validation rule
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException if failed tyo invoke method
      */
-    //TODO refactor throws throwable
-    public void fireValidationRule(String title, Object... params) throws PageException {
+    public void fireValidationRule(String title, Object... params) throws PageException, FactoryRuntimeException {
         Method[] methods = this.getClass().getMethods();
         for (Method method : methods) {
             if (null != method.getAnnotation(ValidationRule.class)
@@ -901,11 +1130,11 @@ public abstract class Page {
                     method.invoke(this, params);
                 } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
                     log.debug("Failed to invoke method {}", method, e);
-                    throw new WebDriverException("Failed to invoke method", e);
+                    throw new FactoryRuntimeException("Failed to invoke method", e);
                 }
                 return;
             }
         }
-        throw new PageInitializationException("There is no '" + title + "' validation rule in '" + getTitle() + "' page.");
+        throw new PageException("There is no '" + title + "' validation rule in '" + this.getTitle() + "' page.");
     }
 }
