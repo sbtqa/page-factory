@@ -211,15 +211,18 @@ public class DriverExtensions {
     }
 
     /**
+     * Wait until specified text either appears, or disappears from page source
      *
      * @param text text to search in page source
+     * @param shouldTextBePresent boolean, self explanatory
      * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
-    public static void waitForTextPresentInPageSource(String text) throws WaitException {
+    public static void waitForTextPresenceInPageSource(String text, boolean shouldTextBePresent) throws WaitException {
         long timeoutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
+        WebElement body = waitUntilElementAppearsInDom(By.tagName("body"));
         while (timeoutTime > System.currentTimeMillis()) {
             sleep(1);
-            if (PageFactory.getWebDriver().getPageSource().contains(text)) {
+            if (body.getText().replaceAll("\\s+", "").contains(text.replaceAll("\\s+", "")) == shouldTextBePresent) {
                 return;
             }
         }

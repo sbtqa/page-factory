@@ -20,9 +20,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
@@ -332,20 +330,19 @@ public abstract class Page {
     @ActionTitle("текст появляется на странице")
     @ActionTitle("text appears on the page")
     public void assertTextAppears(String text) throws WaitException {
-        long timeOutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
-        Throwable exception = null;
-        String body;
-        while (timeOutTime > System.currentTimeMillis()) {
-            try {
-                Thread.sleep(1000);
-                body = PageFactory.getWebDriver().findElement(By.tagName("body")).getText().replaceAll("\\s+", "");
-                Assert.assertTrue(body.contains(text.replaceAll("\\s+", "")));
-            } catch (Throwable e) {
-                exception = e;
-            }
-        }
-        throw new WaitException("Timeout while waiting for the text '" + text + "' on page '" + this.getTitle() + "'",
-                exception);
+        DriverExtensions.waitForTextPresenceInPageSource(text, true);
+    }
+
+    /**
+     * Check whether specified text is absent on the page. Text is being space-trimmed before assertion, so only
+     * non-space characters will matter
+     *
+     * @param text text to search for
+     */
+    @ActionTitle("текст отсутствует на странице")
+    @ActionTitle("text is absent on the page")
+    public void assertTextIsNotPresent(String text) {
+        DriverExtensions.waitForTextPresenceInPageSource(text, false);
     }
 
     /**
@@ -372,25 +369,6 @@ public abstract class Page {
     }
 
     /**
-     * Check whether specified text is basent on the page. Text is being space-trimmed before assertion, so only
-     * non-space characters will matter
-     *
-     * @param text text to search for
-     * @throws AutotestError if text is present on the page
-     */
-    @ActionTitle("текст отсутствует на странице")
-    @ActionTitle("text is absent on the page")
-    public void assertTextIsNotPresent(String text) throws AutotestError {
-        new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds()).
-                until(ExpectedConditions.visibilityOf(PageFactory.getWebDriver().findElement(By.tagName("body"))));
-        try {
-            Assert.assertFalse(PageFactory.getWebDriver().findElement(By.tagName("body")).getText().replaceAll("\\s+", "").contains(text.replaceAll("\\s+", "")));
-        } catch (AssertionError exception) {
-            throw new AutotestError("The message with text '" + text + "' has appeared", exception);
-        }
-    }
-
-    /**
      * Perform {@link #checkValue(String, WebElement, MatchStrategy)} for the WebElement with corresponding title
      * on a current page. Use exact match strategy
      *
@@ -398,11 +376,10 @@ public abstract class Page {
      * @param elementTitle title of the element to search
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element by given title,
      * or current page isn't initialized
-     * @throws ru.sbtqa.tag.qautils.errors.AutotestError if found element doesn't contain required text
      */
     @ActionTitle("проверяет значение")
     @ActionTitle("checks value")
-    public void checkValue(String elementTitle, String text) throws PageException, AutotestError {
+    public void checkValue(String elementTitle, String text) throws PageException {
         checkValue(text, getElementByTitle(elementTitle), MatchStrategy.EXACT);
     }
 
@@ -412,9 +389,8 @@ public abstract class Page {
      *
      * @param text string value that will be searched inside of the element
      * @param webElement WebElement to check
-     * @throws ru.sbtqa.tag.qautils.errors.AutotestError if element doesn't contain required text
      */
-    public void checkValue(String text, WebElement webElement) throws AutotestError {
+    public void checkValue(String text, WebElement webElement) {
         checkValue(text, webElement, MatchStrategy.EXACT);
     }
 
@@ -487,11 +463,10 @@ public abstract class Page {
      * @param elementTitle title of the element to check
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page was not initialized,
      * or element wasn't found on the page
-     * @throws ru.sbtqa.tag.qautils.errors.AutotestError if field is empty
      */
     @ActionTitle("проверяет что поле непустое")
     @ActionTitle("checks that the field is not empty")
-    public void checkFieldIsNotEmpty(String elementTitle) throws PageException, AutotestError {
+    public void checkFieldIsNotEmpty(String elementTitle) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         checkFieldIsNotEmpty(webElement);
     }
@@ -500,9 +475,8 @@ public abstract class Page {
      * Check that given WebElement has a value attribute, and it is not empty
      *
      * @param webElement WebElement to check
-     * @throws ru.sbtqa.tag.qautils.errors.AutotestError
      */
-    public void checkFieldIsNotEmpty(WebElement webElement) throws AutotestError {
+    public void checkFieldIsNotEmpty(WebElement webElement) {
         String value = webElement.getText();
         if (value.isEmpty()) {
             value = webElement.getAttribute("value");
@@ -515,21 +489,27 @@ public abstract class Page {
     }
 
     /**
-     * @param text a {@link java.lang.String} object.
-     * @param elementTitle TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
+     * Find element with corresponding title, and make sure that its value is not equal to given text
+     * Text, as well as element value are being space-trimmed before comparison, so only non-space characters matter
+     *
+     * @param text element value for comparison
+     * @param elementTitle title of the element to search
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page wasn't initialized, or element with
+     * required title was not found
      */
     @ActionTitle("проверяет несовпадение значения")
     @ActionTitle("check that values are not equal")
     public void checkValuesAreNotEqual(String text, String elementTitle) throws PageException {
-        WebElement webElement = PageFactory.getInstance().getCurrentPage().getElementByTitle(elementTitle);
+        WebElement webElement = this.getElementByTitle(elementTitle);
         if (checkValuesAreNotEqual(text, webElement)) {
             throw new AutotestError("'" + text + "' is equal with '" + elementTitle + "' value");
         }
     }
 
     /**
+     * Extract value from the given WebElement, and compare the it with the given text
+     * Text, as well as element value are being space-trimmed before comparison, so only non-space characters matter
+     *
      * @param text a {@link java.lang.String} object.
      * @param webElement a {@link org.openqa.selenium.WebElement} object.
      * @return a boolean.
@@ -624,7 +604,7 @@ public abstract class Page {
      * @return first found block object
      * @throws java.util.NoSuchElementException if couldn't find any block
      */
-    public HtmlElement findBlock(String blockPath) throws java.util.NoSuchElementException {
+    public HtmlElement findBlock(String blockPath) throws NoSuchElementException {
         try {
             List<HtmlElement> blocks = Core.findBlocks(blockPath, this, true);
             if (blocks.isEmpty()) {
@@ -644,7 +624,7 @@ public abstract class Page {
      * @param blockPath full path or just a name of the block to search
      * @return list of objects that were found by specified path
      */
-    public List<HtmlElement> findBlocks(String blockPath) throws java.util.NoSuchElementException {
+    public List<HtmlElement> findBlocks(String blockPath) throws NoSuchElementException {
         try {
             return Core.findBlocks(blockPath, this, false);
         } catch (IllegalAccessException ex) {
@@ -658,28 +638,20 @@ public abstract class Page {
      * @param block block title, or a block chain string separated with '-&gt;'
      * symbols
      * @param actionTitle title of the action to execute
-     * @throws AutotestError if block (block chain) wasn't found, or there is no
-     * such method in block
      */
-    public void takeActionInBlock(String block, String actionTitle)
-            throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        takeActionInBlock(block, actionTitle, new Object[0]);
+    public void executeMethodByTitleInBlock(String block, String actionTitle) {
+        executeMethodByTitleInBlock(block, actionTitle, new Object[0]);
     }
 
     /**
      * Execute method with one or more parameters inside of the given block
-     * element !BEWARE! If there are several elements found by specified block
-     * path, a first one will be used!
+     * element !BEWARE! If there are several elements found by specified block path, a first one will be used!
      *
-     * @param blockPath block title, or a block chain string separated with
-     * '-&gt;' symbols
+     * @param blockPath block title, or a block chain string separated with '-&gt;' symbols
      * @param actionTitle title of the action to execute
      * @param parameters parameters that will be passed to method
-     * @throws AutotestError if block (block chain) wasn't found, or there is no
-     * such method in block
      */
-    public void takeActionInBlock(String blockPath, String actionTitle, Object... parameters)
-            throws AutotestError, InvocationTargetException, IllegalAccessException {
+    public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) {
         HtmlElement block = findBlock(blockPath);
         Method[] methods = block.getClass().getMethods();
         for (Method method : methods) {
