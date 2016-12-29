@@ -653,7 +653,7 @@ public abstract class Page {
      * @param actionTitle title of the action to execute
      * @param parameters parameters that will be passed to method
      */
-    public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) {
+    public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) throws NoSuchMethodException {
         HtmlElement block = findBlock(blockPath);
         Method[] methods = block.getClass().getMethods();
         for (Method method : methods) {
@@ -672,6 +672,8 @@ public abstract class Page {
                 }
             }
         }
+        
+        throw new NoSuchMethodException(format("There is no '%s' method in block '%s'", actionTitle, blockPath));
     }
 
     /**
