@@ -1,9 +1,6 @@
 package ru.sbtqa.tag.pagefactory;
 
-import java.util.Optional;
 import java.util.Set;
-
-import cucumber.runtime.junit.Assertions;
 import org.junit.Assert;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;

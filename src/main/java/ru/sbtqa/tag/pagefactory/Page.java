@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
@@ -20,7 +18,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,7 +40,6 @@ import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
-
 import static java.lang.String.format;
 
 /**
@@ -56,8 +52,9 @@ public abstract class Page {
     /**
      * Initialize page with specified title and save its instance to {@link PageShell#currentPage} for further use
      *
-     * @param title
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException if failed to execute corresponding page constructor
+     * @param title title of the page to open
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException if failed to execute corresponding page
+     * constructor
      */
     @ActionTitle("отркывается страница")
     @ActionTitle("open page")
@@ -70,8 +67,9 @@ public abstract class Page {
      * Add elementTitle-&gt;text as parameter-&gt;value to corresponding step in allure report
      *
      * @param elementTitle element to fill
-     * @param text         text to enter
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element couldn't be found
+     * @param text text to enter
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
+     * couldn't be found
      */
     @ActionTitle("заполняет поле")
     @ActionTitle("fill the field")
@@ -87,7 +85,7 @@ public abstract class Page {
      * Same as {@link #fillField(String, String)}, but accepts particular WebElement object and interacts with it
      *
      * @param webElement an object to interact with
-     * @param text       string text to send to element
+     * @param text string text to send to element
      */
     public void fillField(WebElement webElement, String text) {
         if (null != text) {
@@ -117,7 +115,8 @@ public abstract class Page {
      * Add corresponding parameter to allure report
      *
      * @param elementTitle title of the element to click
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element couldn't be found
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
+     * couldn't be found
      */
     @ActionTitle("кликает по ссылке")
     @ActionTitle("click the link")
@@ -154,9 +153,10 @@ public abstract class Page {
      * Focus a WebElement, and send specified key into it
      * Add corresponding parameter to allure report
      *
-     * @param keyName      name of the key. See available key names in {@link Keys}
+     * @param keyName name of the key. See available key names in {@link Keys}
      * @param elementTitle title of WebElement that accepts key commands
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element with required  title
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element with required
+     * title
      */
     @ActionTitle("нажимает клавишу")
     @ActionTitle("press the key")
@@ -174,7 +174,7 @@ public abstract class Page {
      * Send key to element and add corresponding parameter to allure report
      *
      * @param webElement WebElement to send keys in
-     * @param keyName    name of the key. See available key names in {@link Keys}
+     * @param keyName name of the key. See available key names in {@link Keys}
      */
     public void pressKey(WebElement webElement, Keys keyName) {
         webElement.sendKeys(keyName);
@@ -187,7 +187,8 @@ public abstract class Page {
      * Add corresponding parameter to allure report
      *
      * @param elementTitle WebElement that is supposed to represent checkbox
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element couldn't be found
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
+     * couldn't be found
      */
     @ActionTitle("отмечает признак")
     @ActionTitle("select CheckBox")
@@ -206,7 +207,7 @@ public abstract class Page {
      * isSelected() doesn't guarantee correct behavior if given element is not a selectable (checkbox,dropdown,radiobtn)
      *
      * @param webElement a WebElemet object.
-     * @param state      a boolean object.
+     * @param state a boolean object.
      */
     public void setCheckBoxState(WebElement webElement, Boolean state) {
         if (null != state) {
@@ -222,9 +223,9 @@ public abstract class Page {
      * Use exact match strategy
      *
      * @param elementTitle WebElement that is supposed to be selectable
-     * @param option       option to select
+     * @param option option to select
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if required element couldn't be found,
-     *                                                           or current page isn't initialized
+     * or current page isn't initialized
      */
     @ActionTitle("выбирает")
     @ActionTitle("select")
@@ -240,10 +241,10 @@ public abstract class Page {
      * Use given match strategy
      *
      * @param elementTitle the title of SELECT element to interact
-     * @param option       the value to match against
-     * @param strategy     the strategy to match value
+     * @param option the value to match against
+     * @param strategy the strategy to match value
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if required element couldn't be found,
-     *                                                           or current page isn't initialized
+     * or current page isn't initialized
      */
     public void select(String elementTitle, String option, MatchStrategy strategy) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
@@ -255,8 +256,8 @@ public abstract class Page {
      * Add corresponding parameter to allure report
      *
      * @param webElement WebElement for interaction. Element is supposed to be selectable, i.e. have select options
-     * @param option     the value to match against
-     * @param strategy   the strategy to match value. See {@link MatchStrategy} for available values
+     * @param option the value to match against
+     * @param strategy the strategy to match value. See {@link MatchStrategy} for available values
      */
     @SuppressWarnings("unchecked")
     public void select(WebElement webElement, String option, MatchStrategy strategy) {
@@ -393,11 +394,11 @@ public abstract class Page {
      * Perform {@link #checkValue(String, WebElement, MatchStrategy)} for the WebElement with corresponding title
      * on a current page. Use exact match strategy
      *
-     * @param text         string value that will be searched inside of the element
+     * @param text string value that will be searched inside of the element
      * @param elementTitle title of the element to search
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element by given title,
-     *                                                                      or current page isn't initialized
-     * @throws ru.sbtqa.tag.qautils.errors.AutotestError                    if found element doesn't contain required text
+     * or current page isn't initialized
+     * @throws ru.sbtqa.tag.qautils.errors.AutotestError if found element doesn't contain required text
      */
     @ActionTitle("проверяет значение")
     @ActionTitle("checks value")
@@ -409,7 +410,7 @@ public abstract class Page {
      * Perform {@link #checkValue(String, WebElement, MatchStrategy)} for the specified WebElement.
      * Use exact match strategy
      *
-     * @param text       string value that will be searched inside of the element
+     * @param text string value that will be searched inside of the element
      * @param webElement WebElement to check
      * @throws ru.sbtqa.tag.qautils.errors.AutotestError if element doesn't contain required text
      */
@@ -422,8 +423,8 @@ public abstract class Page {
      * in its value. Currently supported elements are text input and select box
      * TODO: use HtmlElements here, to define which element we are dealing with
      *
-     * @param text           string value that will be searched inside of the element
-     * @param webElement     WebElement to check
+     * @param text string value that will be searched inside of the element
+     * @param webElement WebElement to check
      * @param searchStrategy match strategy. See available strategies in {@link MatchStrategy}
      */
     public void checkValue(String text, WebElement webElement, MatchStrategy searchStrategy) {
@@ -485,8 +486,8 @@ public abstract class Page {
      *
      * @param elementTitle title of the element to check
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page was not initialized,
-     *                                                           or element wasn't found on the page
-     * @throws ru.sbtqa.tag.qautils.errors.AutotestError         if field is empty
+     * or element wasn't found on the page
+     * @throws ru.sbtqa.tag.qautils.errors.AutotestError if field is empty
      */
     @ActionTitle("проверяет что поле непустое")
     @ActionTitle("checks that the field is not empty")
@@ -514,7 +515,7 @@ public abstract class Page {
     }
 
     /**
-     * @param text         a {@link java.lang.String} object.
+     * @param text a {@link java.lang.String} object.
      * @param elementTitle TODO
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
@@ -529,7 +530,7 @@ public abstract class Page {
     }
 
     /**
-     * @param text       a {@link java.lang.String} object.
+     * @param text a {@link java.lang.String} object.
      * @param webElement a {@link org.openqa.selenium.WebElement} object.
      * @return a boolean.
      */
@@ -562,8 +563,8 @@ public abstract class Page {
      * description
      *
      * @param listTitle value of ElementTitle annotation of required element
-     * @param type      type of elements in list that is being searched for
-     * @param <T>       type of elements in returned list
+     * @param type type of elements in list that is being searched for
+     * @param <T> type of elements in returned list
      * @return list of elements of particular type
      * @throws PageException if nothing found or current page is not initialized
      */
@@ -591,8 +592,8 @@ public abstract class Page {
      * description
      *
      * @param listTitle value of ElementTitle annotation of required element
-     * @param type      type of elements in list that is being searched for
-     * @param <T>       type of elements in returned list
+     * @param type type of elements in list that is being searched for
+     * @param <T> type of elements in returned list
      * @return list of elements of particular type
      * @throws PageException if nothing found or current page is not initialized
      */
@@ -654,11 +655,11 @@ public abstract class Page {
     /**
      * Execute parameter-less method inside of the given block element.
      *
-     * @param block       block title, or a block chain string separated with '-&gt;'
-     *                    symbols
+     * @param block block title, or a block chain string separated with '-&gt;'
+     * symbols
      * @param actionTitle title of the action to execute
      * @throws AutotestError if block (block chain) wasn't found, or there is no
-     *                       such method in block
+     * such method in block
      */
     public void takeActionInBlock(String block, String actionTitle)
             throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
@@ -670,12 +671,12 @@ public abstract class Page {
      * element !BEWARE! If there are several elements found by specified block
      * path, a first one will be used!
      *
-     * @param blockPath   block title, or a block chain string separated with
-     *                    '-&gt;' symbols
+     * @param blockPath block title, or a block chain string separated with
+     * '-&gt;' symbols
      * @param actionTitle title of the action to execute
-     * @param parameters  parameters that will be passed to method
+     * @param parameters parameters that will be passed to method
      * @throws AutotestError if block (block chain) wasn't found, or there is no
-     *                       such method in block
+     * such method in block
      */
     public void takeActionInBlock(String blockPath, String actionTitle, Object... parameters)
             throws AutotestError, InvocationTargetException, IllegalAccessException {
@@ -729,7 +730,7 @@ public abstract class Page {
          * Check whether given method has {@link ActionTitle} or {@link ActionTitles} annotation with required title
          *
          * @param method method to check
-         * @param title  required title
+         * @param title required title
          * @return true|false
          */
         private static Boolean isRequiredAction(Method method, String title) {
@@ -750,7 +751,7 @@ public abstract class Page {
          * Check whether given field is a child of specified class
          *
          * @param parent class that is supposed to be parent
-         * @param field  field to check
+         * @param field field to check
          * @return true|false
          */
         private static boolean isChildOf(Class<?> parent, Field field) {
@@ -771,10 +772,10 @@ public abstract class Page {
          * treated as a full path, and block should be located by the exactly that
          * path. Otherwise, recursive search via all blocks is being performed
          *
-         * @param blockPath        full path or just a name of the block to search
-         * @param context          object where the search will be performed
+         * @param blockPath full path or just a name of the block to search
+         * @param context object where the search will be performed
          * @param returnFirstFound whether the search should be stopped on a first
-         *                         found block (for faster searches)
+         * found block (for faster searches)
          * @return list of found blocks. could be empty
          * @throws IllegalAccessException if called with invalid context
          */
@@ -820,9 +821,9 @@ public abstract class Page {
          * list, so this method might reduce performance!
          *
          * @param listTitle value of ElementTitle annotation of required element
-         * @param type      type of elements inside of the list
-         * @param context   object where search should be performed
-         * @param <T>       type of elements in returned list
+         * @param type type of elements inside of the list
+         * @param context object where search should be performed
+         * @param <T> type of elements in returned list
          * @return list of WebElement's or its derivatives
          * @throws PageException if didn't find any list or current page wasn't initialized
          */
@@ -847,10 +848,10 @@ public abstract class Page {
         /**
          * Find element with required title and type inside of the given block. Return null if didn't find any
          *
-         * @param block        block object
+         * @param block block object
          * @param elementTitle value of ElementTitle annotation of required element
-         * @param type         type of element to return
-         * @param <T>          any WebElement or its derivative
+         * @param type type of element to return
+         * @param <T> any WebElement or its derivative
          * @return found element or null (exception should be thrown by a caller
          * that could no find any elements)
          */
@@ -913,12 +914,14 @@ public abstract class Page {
         }
 
         /**
-         * Search for the given given element among the parent object fields, check whether it has a {@link RedirectsTo}
-         * annotation, and return a redirection page class, if so. Search goes in recursion if it meets HtmlElement field,
+         * Search for the given given element among the parent object fields, check whether it has a {@link
+         * RedirectsTo}
+         * annotation, and return a redirection page class, if so. Search goes in recursion if it meets HtmlElement
+         * field,
          * as given element could be inside of the block
          *
          * @param element element that is being checked for redirection
-         * @param parent  parent object
+         * @param parent parent object
          * @return class of the page, this element redirects to
          */
         private static Class<? extends Page> findRedirect(Object parent, Object element) {
@@ -959,11 +962,11 @@ public abstract class Page {
          * Get object from a field of specified parent
          *
          * @param parentObject object that contains(must contain) given field
-         * @param field        field to get
-         * @param <T>          supposed type of the field. if field cannot be cast into this type, it will fail
+         * @param field field to get
+         * @param <T> supposed type of the field. if field cannot be cast into this type, it will fail
          * @return element of requested type
          * @throws ElementDescriptionException in case if field does not belong to the object, or element
-         *                                     could not be cast to specified type
+         * could not be cast to specified type
          */
         @SuppressWarnings("unchecked")
         private static <T> T getElementByField(Object parentObject, Field field) throws ElementDescriptionException {
@@ -986,7 +989,7 @@ public abstract class Page {
          * with corresponding value. If there is no title annotation, log warning and exit
          *
          * @param webElement WebElement to add
-         * @param text       value for the specified element
+         * @param text value for the specified element
          */
         private static void addToReport(WebElement webElement, String text) {
             try {
@@ -1000,7 +1003,7 @@ public abstract class Page {
         /**
          * Add parameter to allure report.
          *
-         * @param paramName  parameter name
+         * @param paramName parameter name
          * @param paramValue parameter value to set
          */
         private static void addToReport(String paramName, String paramValue) {
@@ -1043,7 +1046,7 @@ public abstract class Page {
     /**
      * Return class for redirect if annotation contains and null if not present
      *
-     * @param <T>     TODO
+     * @param <T> TODO
      * @param element TODO
      * @return TODO
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
@@ -1067,7 +1070,7 @@ public abstract class Page {
      * @param title title of the element to search
      * @return WebElement found by corresponding title
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if failed to find corresponding element
-     *                                                           or element type is set incorrectly
+     * or element type is set incorrectly
      */
     public WebElement getElementByTitle(String title) throws PageException {
         for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
@@ -1081,7 +1084,7 @@ public abstract class Page {
     /**
      * Find specified TypifiedElement by title annotation among current page fields
      *
-     * @param <T>   TODO
+     * @param <T> TODO
      * @param title a {@link java.lang.String} object.
      * @return a {@link org.openqa.selenium.WebElement} object.
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
@@ -1099,9 +1102,9 @@ public abstract class Page {
     /**
      * Find method with corresponding title on current page, and execute it
      *
-     * @param <T>   type parameter of the returned object
+     * @param <T> type parameter of the returned object
      * @param title title of the method to call
-     * @param type  method return type
+     * @param type method return type
      * @param param parameters that will be passed to method
      * @return method execution result, depends on the method return type
      * @throws java.lang.NoSuchMethodException if required method couldn't be found
@@ -1125,9 +1128,10 @@ public abstract class Page {
 
     /**
      * Execute method by MethodTitle
-     * //TODO: looks like this one makes no sense. We suppose that called method will return current page instance, why would it?
+     * //TODO: looks like this one makes no sense. We suppose that called method will return current page instance, why
+     * would it?
      *
-     * @param <T>   type parameter of the returned object
+     * @param <T> type parameter of the returned object
      * @param title title of the method to call
      * @param param parameters that will be passed to method
      * @return method execution result, depends on the method return type
@@ -1140,9 +1144,9 @@ public abstract class Page {
     /**
      * Find a method with {@link ValidationRule} annotation on current page, and call it
      *
-     * @param title  title of the validation rule
+     * @param title title of the validation rule
      * @param params parameters passed to called method
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException           if couldn't find corresponding validation rule
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if couldn't find corresponding validation rule
      * @throws ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException if failed tyo invoke method
      */
     public void fireValidationRule(String title, Object... params) throws PageException, FactoryRuntimeException {
