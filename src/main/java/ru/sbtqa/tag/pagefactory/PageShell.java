@@ -35,11 +35,11 @@ public class PageShell {
     }
 
     /**
-     * Construct page object by title
+     * Initialize page with specified title and save its instance to {@link PageShell#currentPage} for further use
      *
      * @param title page title
      * @return page instance
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
+     * @throws PageInitializationException if failed to execute corresponding page constructor
      */
     public Page getPage(String title) throws PageInitializationException {
         if (null == currentPage || !currentPageTitle.equals(title)) {
@@ -74,7 +74,7 @@ public class PageShell {
      * @param packageName a {@link java.lang.String} object.
      * @param title a {@link java.lang.String} object.
      * @return a Page object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
+     * @throws PageInitializationException {@inheritDoc}
      */
     public Page getPage(String packageName, String title) throws PageInitializationException {
         return bootstrapPage(getPageClass(packageName, title));
@@ -205,10 +205,11 @@ public class PageShell {
     }
 
     /**
+     * Run constructor of specified page class and put its instance into static {@link #currentPage} variable
      *
-     * @param page TODO
-     * @return TODO
-     * @throws PageInitializationException TODO
+     * @param page page class
+     * @return initialized page
+     * @throws PageInitializationException if failed to execute corresponding page constructor
      */
     private Page bootstrapPage(Class<?> page) throws PageInitializationException {
         if (page != null) {

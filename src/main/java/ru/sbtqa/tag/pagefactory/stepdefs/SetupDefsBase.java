@@ -53,7 +53,7 @@ public class SetupDefsBase {
 
         Reflections reflections;
         PageFactory.getWebDriver();
-        PageFactory.getPageFactory();
+        PageFactory.getInstance();
         reflections = new Reflections(PageFactory.getPagesPackage());
 
         Collection<String> allClassesString = reflections.getStore().get("SubTypesScanner").values();

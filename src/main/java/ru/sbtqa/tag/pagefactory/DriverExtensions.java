@@ -1,6 +1,7 @@
 package ru.sbtqa.tag.pagefactory;
 
 import java.util.Set;
+import org.junit.Assert;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -210,15 +211,18 @@ public class DriverExtensions {
     }
 
     /**
+     * Wait until specified text either appears, or disappears from page source
      *
      * @param text text to search in page source
+     * @param shouldTextBePresent boolean, self explanatory
      * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
-    public static void waitForTextPresentInPageSource(String text) throws WaitException {
+    public static void waitForTextPresenceInPageSource(String text, boolean shouldTextBePresent) throws WaitException {
         long timeoutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
+        WebElement body = waitUntilElementAppearsInDom(By.tagName("body"));
         while (timeoutTime > System.currentTimeMillis()) {
             sleep(1);
-            if (PageFactory.getWebDriver().getPageSource().contains(text)) {
+            if (body.getText().replaceAll("\\s+", "").contains(text.replaceAll("\\s+", "")) == shouldTextBePresent) {
                 return;
             }
         }
@@ -287,23 +291,52 @@ public class DriverExtensions {
     }
 
     /**
+     * Accept any alert regardless of its message
      *
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException if alert didn't appear during timeout
      */
     public static void acceptAlert() throws WaitException {
+        interactWithAlert("", true);
+    }
+
+    /**
+     * Dismiss any alert regardless of its message
+     *
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException if alert didn't appear during timeout
+     */
+    public static void dismissAlert() throws WaitException {
+        interactWithAlert("", false);
+    }
+
+    /**
+     * Wait for an alert with corresponding text (if specified). Depending on the decision, either accept it or decline
+     * If messageText is empty, text doesn't matter
+     *
+     * @param messageText text of an alert. If empty string is provided, it is being ignored
+     * @param decision true - accept, false - dismiss
+     * @throws WaitException in case if alert didn't appear during default wait timeout
+     */
+    public static void interactWithAlert(String messageText, boolean decision) throws WaitException {
         long timeoutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
 
         while (timeoutTime > System.currentTimeMillis()) {
             try {
                 Alert alert = PageFactory.getWebDriver().switchTo().alert();
-                alert.accept();
+                if (!messageText.isEmpty()) {
+                    Assert.assertEquals(alert.getText(), messageText);
+                }
+                if (decision) {
+                    alert.accept();
+                } else {
+                    alert.dismiss();
+                }
                 return;
             } catch (Exception e) {
                 log.debug("Alert has not appeared yet", e);
             }
             sleep(1);
         }
-        throw new WaitException("Timed out after '" + PageFactory.getTimeOutInSeconds() + "' seconds waiting for allert to accept");
+        throw new WaitException("Timed out after '" + PageFactory.getTimeOutInSeconds() + "' seconds waiting for alert to accept");
     }
 
     /**

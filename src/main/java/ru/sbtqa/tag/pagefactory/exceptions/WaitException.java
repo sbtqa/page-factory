@@ -1,6 +1,8 @@
 package ru.sbtqa.tag.pagefactory.exceptions;
 
-public class WaitException extends Exception {
+import ru.sbtqa.tag.qautils.errors.AutotestError;
+
+public class WaitException extends AutotestError {
 
     /**
      *
