@@ -571,6 +571,7 @@ public abstract class Page {
      * ${@link Core#findListOfElements(String, Class, Object)} for detailed
      * description
      *
+     * @param blockPath full path or just a name of the block to search
      * @param listTitle value of ElementTitle annotation of required element
      * @param type type of elements in list that is being searched for
      * @param <T> type of elements in returned list
@@ -588,6 +589,7 @@ public abstract class Page {
      * ${@link Core#findListOfElements(String, Class, Object)} for detailed
      * description
      *
+     * @param blockPath full path or just a name of the block to search
      * @param listTitle value of ElementTitle annotation of required element
      * @return list of WebElement's
      * @throws PageException if nothing found or current page is not initialized
@@ -665,8 +667,8 @@ public abstract class Page {
                     }
                     break;
                 } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    throw new AutotestError(format("Could not find action '%s' in block the following block: '%s'",
-                            actionTitle, blockPath));
+                    throw new FactoryRuntimeException(format("Failed to execute method '%s' in the following block: '%s'",
+                            actionTitle, blockPath), e);
                 }
             }
         }
@@ -1078,9 +1080,8 @@ public abstract class Page {
      * @param title title of the method to call
      * @param param parameters that will be passed to method
      * @throws java.lang.NoSuchMethodException if required method couldn't be found
-     * @throws java.lang.reflect.InvocationTargetException if there an error to invoke method
      */
-    public void executeMethodByTitle(String title, Object... param) throws NoSuchMethodException, InvocationTargetException {
+    public void executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
         List<Method> methods = Core.getDeclaredMethods(this.getClass());
         for (Method method : methods) {
             if (Core.isRequiredAction(method, title)) {
@@ -1089,7 +1090,7 @@ public abstract class Page {
                     MethodUtils.invokeMethod(this, method.getName(), param);
                     return;
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    throw new InvocationTargetException(e, "Failed to invoke '" + title + "' method on '" + this.getTitle() + "' page object");
+                    throw new FactoryRuntimeException("Failed to invoke method", e);
                 }
             }
         }
@@ -1103,7 +1104,6 @@ public abstract class Page {
      * @param title title of the validation rule
      * @param params parameters passed to called method
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if couldn't find corresponding validation rule
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException if failed tyo invoke method
      */
     public void fireValidationRule(String title, Object... params) throws PageException {
         Method[] methods = this.getClass().getMethods();
