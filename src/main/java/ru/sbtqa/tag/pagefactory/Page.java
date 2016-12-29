@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory;
 
+import static java.lang.String.format;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -38,7 +39,6 @@ import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
-import static java.lang.String.format;
 
 /**
  * Base page object class. Contains basic actions with elements, search methods
@@ -571,6 +571,7 @@ public abstract class Page {
      * ${@link Core#findListOfElements(String, Class, Object)} for detailed
      * description
      *
+     * @param blockPath full path or just a name of the block to search
      * @param listTitle value of ElementTitle annotation of required element
      * @param type type of elements in list that is being searched for
      * @param <T> type of elements in returned list
@@ -588,6 +589,7 @@ public abstract class Page {
      * ${@link Core#findListOfElements(String, Class, Object)} for detailed
      * description
      *
+     * @param blockPath full path or just a name of the block to search
      * @param listTitle value of ElementTitle annotation of required element
      * @return list of WebElement's
      * @throws PageException if nothing found or current page is not initialized
@@ -638,8 +640,9 @@ public abstract class Page {
      * @param block block title, or a block chain string separated with '-&gt;'
      * symbols
      * @param actionTitle title of the action to execute
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found
      */
-    public void executeMethodByTitleInBlock(String block, String actionTitle) {
+    public void executeMethodByTitleInBlock(String block, String actionTitle) throws NoSuchMethodException {
         executeMethodByTitleInBlock(block, actionTitle, new Object[0]);
     }
 
@@ -650,8 +653,9 @@ public abstract class Page {
      * @param blockPath block title, or a block chain string separated with '-&gt;' symbols
      * @param actionTitle title of the action to execute
      * @param parameters parameters that will be passed to method
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found 
      */
-    public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) {
+    public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) throws NoSuchMethodException {
         HtmlElement block = findBlock(blockPath);
         Method[] methods = block.getClass().getMethods();
         for (Method method : methods) {
@@ -665,11 +669,13 @@ public abstract class Page {
                     }
                     break;
                 } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    throw new AutotestError(format("Could not find action '%s' in block the following block: '%s'",
-                            actionTitle, blockPath));
+                    throw new FactoryRuntimeException(format("Failed to execute method '%s' in the following block: '%s'",
+                            actionTitle, blockPath), e);
                 }
             }
         }
+        
+        throw new NoSuchMethodException(format("There is no '%s' method in block '%s'", actionTitle, blockPath));
     }
 
     /**
@@ -1050,6 +1056,7 @@ public abstract class Page {
                 return Core.getElementByField(this, field);
             }
         }
+
         throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
     }
 
@@ -1074,43 +1081,25 @@ public abstract class Page {
     /**
      * Find method with corresponding title on current page, and execute it
      *
-     * @param <T> type parameter of the returned object
      * @param title title of the method to call
-     * @param type method return type
      * @param param parameters that will be passed to method
-     * @return method execution result, depends on the method return type
      * @throws java.lang.NoSuchMethodException if required method couldn't be found
      */
-    public <T extends Object> T executeMethodByTitle(String title, Class<T> type, Object... param) throws NoSuchMethodException {
+    public void executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
         List<Method> methods = Core.getDeclaredMethods(this.getClass());
         for (Method method : methods) {
             if (Core.isRequiredAction(method, title)) {
                 try {
                     method.setAccessible(true);
-                    return type.cast(MethodUtils.invokeMethod(this, method.getName(), param));
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                    log.error("Failed to invoke method '" + title + "'", ex);
+                    MethodUtils.invokeMethod(this, method.getName(), param);
+                    return;
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    throw new FactoryRuntimeException("Failed to invoke method", e);
                 }
             }
         }
 
-        throw new NoSuchMethodException(
-                "There is no " + title + " method on " + this.getTitle() + " page object.");
-    }
-
-    /**
-     * Execute method by MethodTitle
-     * //TODO: looks like this one makes no sense. We suppose that called method will return current page instance, why
-     * would it?
-     *
-     * @param <T> type parameter of the returned object
-     * @param title title of the method to call
-     * @param param parameters that will be passed to method
-     * @return method execution result, depends on the method return type
-     * @throws java.lang.NoSuchMethodException if required method couldn't be found
-     */
-    public <T extends Object> T executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
-        return executeMethodByTitle(title, (Class<T>) this.getClass(), param);
+        throw new NoSuchMethodException("There is no '" + title + "' method on '" + this.getTitle() + "' page object");
     }
 
     /**
@@ -1119,9 +1108,8 @@ public abstract class Page {
      * @param title title of the validation rule
      * @param params parameters passed to called method
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if couldn't find corresponding validation rule
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException if failed tyo invoke method
      */
-    public void fireValidationRule(String title, Object... params) throws PageException, FactoryRuntimeException {
+    public void fireValidationRule(String title, Object... params) throws PageException {
         Method[] methods = this.getClass().getMethods();
         for (Method method : methods) {
             if (null != method.getAnnotation(ValidationRule.class)

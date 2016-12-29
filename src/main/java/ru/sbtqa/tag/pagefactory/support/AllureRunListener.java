@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.AllureNonCriticalFailure;
 import ru.sbtqa.tag.qautils.properties.Props;
+import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
 public class AllureRunListener extends ru.sbtqa.tag.allurehelper.TagAllureRunListener {
 
@@ -17,37 +18,36 @@ public class AllureRunListener extends ru.sbtqa.tag.allurehelper.TagAllureRunLis
      */
     @Override
     public void testFailure(Failure failure) {
-        
-//        if (PageFactory.getVideoRecorder() != null && PageFactory.getVideoRecorder().isVideoStarted()) {
-//            String videoPath = PageFactory.getVideoRecorder().stopRecording();
-//            if (videoPath != null) {
-//                addVideoParameter(PageFactory.getVideoRecorder().getvideoPath());
-//                PageFactory.setVideoRecorderToNull();
-//            }
-//        }
+
+        if (VideoRecorder.getInstance().isVideoStarted()) {
+            String videoPath = VideoRecorder.getInstance().stopRecording();
+            if (videoPath != null) {
+                addVideoParameter(VideoRecorder.getInstance().getVideoPath());
+                VideoRecorder.getInstance().resetVideoRecorder();
+            }
+        }
         LOG.debug("TestFailure:" + failure.getTrace());
-        
+
         takeScreenshot();
- 
+
         super.testFailure(failure);
     }
 
     /**
-     * Mark test as Failure for Allure report if test failed, but it was not critical
+     * Mark test as Failure for Allure report if test failed, but it was not
+     * critical
      *
      * @param description - description of test
      * @throws IllegalAccessException TODO
      */
     @Override
     public void testFinished(Description description) throws IllegalAccessException {
-//        if (PageFactory.getVideoRecorder() != null) {
-//            addVideoParameter(PageFactory.getVideoRecorder().getvideoPath());
-//        }
-        
+        addVideoParameter(VideoRecorder.getInstance().getVideoPath());
+
         if (AllureNonCriticalFailure.getFailure().containsKey(Thread.currentThread())) {
             takeScreenshot();
         }
-        
+
         super.testFinished(description);
     }
 
@@ -57,17 +57,17 @@ public class AllureRunListener extends ru.sbtqa.tag.allurehelper.TagAllureRunLis
      */
     @Override
     public void testSuiteFinished(String uid) {
-//        if (PageFactory.getVideoRecorder() != null && PageFactory.getVideoRecorder().isVideoStarted()) {
-//            String videoPath = PageFactory.getVideoRecorder().stopRecording();
-//            if (videoPath != null) {
-//                addVideoParameter(PageFactory.getVideoRecorder().getvideoPath());
-//                PageFactory.setVideoRecorderToNull();
-//            }
-//        }
-        
+        if (VideoRecorder.getInstance().isVideoStarted()) {
+            String videoPath = VideoRecorder.getInstance().stopRecording();
+            if (videoPath != null) {
+                addVideoParameter(VideoRecorder.getInstance().getVideoPath());
+                VideoRecorder.getInstance().resetVideoRecorder();
+            }
+        }
+
         super.testSuiteFinished(uid);
     }
-    
+
     /**
      *
      */

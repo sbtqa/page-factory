@@ -55,7 +55,7 @@ public class ClickAspect {
             return;
         }
 
-        if (Boolean.valueOf(Props.get("highlightActiveElements"))) {
+        if (Boolean.valueOf(Props.get("video.highlight.enable"))) {
             elementHighlightStyle = DriverExtensions.highlightElementOn(targetWebElement);
         }
 
@@ -99,7 +99,7 @@ public class ClickAspect {
 //                ExperianModel.initElements(PageFactory.getWebDriver(), PageFactory.getInstance().currentPage);
 //            }
 
-        if (Boolean.valueOf(Props.get("highlightActiveElements"))) {
+        if (Boolean.valueOf(Props.get("video.highlight.enable"))) {
             DriverExtensions.highlightElementOff(targetWebElement, elementHighlightStyle);
         }
     }

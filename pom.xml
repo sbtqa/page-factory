@@ -58,7 +58,7 @@
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>qa-utils</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -70,13 +70,13 @@
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>allure-helper</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>video-recorder</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
       <type>jar</type>
     </dependency>
     <dependency>
