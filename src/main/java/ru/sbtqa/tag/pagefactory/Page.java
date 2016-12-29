@@ -640,8 +640,9 @@ public abstract class Page {
      * @param block block title, or a block chain string separated with '-&gt;'
      * symbols
      * @param actionTitle title of the action to execute
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found
      */
-    public void executeMethodByTitleInBlock(String block, String actionTitle) {
+    public void executeMethodByTitleInBlock(String block, String actionTitle) throws NoSuchMethodException {
         executeMethodByTitleInBlock(block, actionTitle, new Object[0]);
     }
 
@@ -652,6 +653,7 @@ public abstract class Page {
      * @param blockPath block title, or a block chain string separated with '-&gt;' symbols
      * @param actionTitle title of the action to execute
      * @param parameters parameters that will be passed to method
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found 
      */
     public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) throws NoSuchMethodException {
         HtmlElement block = findBlock(blockPath);
