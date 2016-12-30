@@ -538,6 +538,48 @@ public abstract class Page {
     }
 
     /**
+     * Find element of required type in the specified block, or block chain on
+     * the page. If blockPath is separated by &gt; delimiters, it will be
+     * treated as a block path, so element could be found only in the described
+     * chain of blocks. Otherwise, given block will be searched recursively on
+     * the page
+     *
+     * @param blockPath block or block chain where element will be searched
+     * @param title value of ElementTitle annotation of required element
+     * @param type type of the searched element
+     * @return web element of the required type
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if element was not found
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with
+     * the wrong type
+     */
+    public <T extends WebElement> T findElementInBlockByTitle(String blockPath, String title, Class<T> type)
+            throws PageException {
+        for (HtmlElement block : findBlocks(blockPath)) {
+            T found = Core.findElementInBlock(block, title, type);
+            if (null != found) {
+                return found;
+            }
+        }
+        throw new ElementNotFoundException(format("Couldn't find element '%s' in '%s'", title, blockPath));
+    }
+
+    /**
+     * Acts exactly like {@link #findElementInBlockByTitle(String, String, Class)}, but
+     * return a WebElement instance. It still could be casted to HtmlElement and
+     * TypifiedElement any class that extend them.
+     *
+     * @param blockPath block or block chain where element will be searched
+     * @param title value of ElementTitle annotation of required element
+     * @return WebElement
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if element was not found
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with
+     * the wrong type
+     */
+    public WebElement findElementInBlockByTitle(String blockPath, String title) throws PageException {
+        return findElementInBlockByTitle(blockPath, title, WebElement.class);
+    }
+
+    /**
      * Finds elements list in context of current page See
      * ${@link Core#findListOfElements(String, Class, Object)} for detailed
      * description
@@ -679,6 +721,140 @@ public abstract class Page {
     }
 
     /**
+     * Get title of current page obect
+     *
+     * @return the title
+     */
+    public String getTitle() {
+        return this.getClass().getAnnotation(PageEntry.class).title();
+    }
+
+    /**
+     * Search for the given WebElement in page repository storage, that is being generated during preconditions to all
+     * tests. If element is found, return its title annotation. If nothing found, log debug message and return
+     * toString() of corresponding element
+     *
+     * @param element WebElement to search
+     * @return title of the given element
+     */
+    public String getElementTitle(WebElement element) {
+        for (Map.Entry<Field, String> entry : PageFactory.getPageRepository().get(this.getClass()).entrySet()) {
+            try {
+                if (Core.getElementByField(this, entry.getKey()) == element) {
+                    return entry.getValue();
+                }
+            } catch (NoSuchElementException | StaleElementReferenceException | ElementDescriptionException ex) {
+                log.debug("Failed to get element '" + element + "' title", ex);
+            }
+        }
+        return element.toString();
+    }
+
+    /**
+     * Return class for redirect if annotation contains and null if not present
+     *
+     * @param element element, redirect for which is being searched
+     * @return class of the page object, element redirects to
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if failed to find redirect
+     */
+    public Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
+        try {
+            Page currentPage = PageFactory.getInstance().getCurrentPage();
+            if (null == currentPage) {
+                log.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
+                return null;
+            }
+            return Core.findRedirect(currentPage, element);
+        } catch (IllegalArgumentException | PageInitializationException ex) {
+            throw new ElementDescriptionException("Failed to get element redirect", ex);
+        }
+    }
+
+    /**
+     * Find specified WebElement by title annotation among current page fields
+     *
+     * @param title title of the element to search
+     * @return WebElement found by corresponding title
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if failed to find corresponding element
+     * or element type is set incorrectly
+     */
+    public WebElement getElementByTitle(String title) throws PageException {
+        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
+            if (Core.isRequiredElement(field, title)) {
+                return Core.getElementByField(this, field);
+            }
+        }
+
+        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
+    }
+
+    /**
+     * Find specified TypifiedElement by title annotation among current page fields
+     *
+     * @param <T> TODO
+     * @param title a {@link java.lang.String} object.
+     * @return a {@link org.openqa.selenium.WebElement} object.
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     */
+    @SuppressWarnings(value = "unchecked")
+    public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
+        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
+            if (Core.isRequiredElement(field, title) && Core.isChildOf(TypifiedElement.class, field)) {
+                return (T) Core.getElementByField(this, field);
+            }
+        }
+        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
+    }
+
+    /**
+     * Find method with corresponding title on current page, and execute it
+     *
+     * @param title title of the method to call
+     * @param param parameters that will be passed to method
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found
+     */
+    public void executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
+        List<Method> methods = Core.getDeclaredMethods(this.getClass());
+        for (Method method : methods) {
+            if (Core.isRequiredAction(method, title)) {
+                try {
+                    method.setAccessible(true);
+                    MethodUtils.invokeMethod(this, method.getName(), param);
+                    return;
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    throw new FactoryRuntimeException("Failed to invoke method", e);
+                }
+            }
+        }
+
+        throw new NoSuchMethodException("There is no '" + title + "' method on '" + this.getTitle() + "' page object");
+    }
+
+    /**
+     * Find a method with {@link ValidationRule} annotation on current page, and call it
+     *
+     * @param title title of the validation rule
+     * @param params parameters passed to called method
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if couldn't find corresponding validation rule
+     */
+    public void fireValidationRule(String title, Object... params) throws PageException {
+        Method[] methods = this.getClass().getMethods();
+        for (Method method : methods) {
+            if (null != method.getAnnotation(ValidationRule.class)
+                    && method.getAnnotation(ValidationRule.class).title().equals(title)) {
+                try {
+                    method.invoke(this, params);
+                } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
+                    log.debug("Failed to invoke method {}", method, e);
+                    throw new FactoryRuntimeException("Failed to invoke method", e);
+                }
+                return;
+            }
+        }
+        throw new PageException("There is no '" + title + "' validation rule in '" + this.getTitle() + "' page.");
+    }
+
+    /**
      * Helper methods for manipulations on fields and objects
      */
     private static class Core {
@@ -816,7 +992,8 @@ public abstract class Page {
                     try {
                         return (List<T>) field.get(context);
                     } catch (IllegalAccessException e) {
-                        throw new InternalError(format("Internal error during attempt to find list '%s'", listTitle), e);
+                        throw new FactoryRuntimeException(
+                                format("Internal error during attempt to find list '%s'", listTitle), e);
                     }
                 }
             }
@@ -834,17 +1011,23 @@ public abstract class Page {
          * that could no find any elements)
          */
         private static <T extends WebElement> T findElementInBlock(HtmlElement block, String elementTitle, Class<T> type)
-                throws InternalError {
+                throws ElementDescriptionException {
             for (Field f : FieldUtils.getAllFields(block.getClass())) {
                 if (Core.isRequiredElement(f, elementTitle) && f.getType().equals(type)) {
                     f.setAccessible(true);
                     try {
                         return type.cast(f.get(block));
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException iae) {
                         // Since we explicitly set the field to be accessible, this exception is unexpected.
                         // It might mean that we try to get field in context of an object it doesn't belong to
-                        throw new InternalError(format("Internal error during attempt to find element '%s' in block '%s'",
-                                elementTitle, block.getName()), e);
+                        throw new FactoryRuntimeException(
+                                format("Internal error during attempt to find element '%s' in block '%s'",
+                                        elementTitle, block.getName()), iae);
+                    } catch (ClassCastException cce) {
+                        throw new ElementDescriptionException(
+                                format("Element '%s' was found in block '%s', but it's type is incorrect." +
+                                                "Requested '%s', but got '%s'",
+                                        elementTitle, block.getName(), type.getName(), f.getType()), cce);
                     }
                 }
             }
@@ -989,140 +1172,5 @@ public abstract class Page {
             log.debug("Add '" + paramName + "->" + paramValue + "' to report for page '" +
                     PageFactory.getInstance().getCurrentPageTitle() + "'");
         }
-    }
-
-    /**
-     * Get title of current page obect
-     *
-     * @return the title
-     */
-    public String getTitle() {
-        return this.getClass().getAnnotation(PageEntry.class).title();
-    }
-
-    /**
-     * Search for the given WebElement in page repository storage, that is being generated during preconditions to all
-     * tests. If element is found, return its title annotation. If nothing found, log debug message and return
-     * toString() of corresponding element
-     *
-     * @param element WebElement to search
-     * @return title of the given element
-     */
-    public String getElementTitle(WebElement element) {
-        for (Map.Entry<Field, String> entry : PageFactory.getPageRepository().get(this.getClass()).entrySet()) {
-            try {
-                if (Core.getElementByField(this, entry.getKey()) == element) {
-                    return entry.getValue();
-                }
-            } catch (NoSuchElementException | StaleElementReferenceException | ElementDescriptionException ex) {
-                log.debug("Failed to get element '" + element + "' title", ex);
-            }
-        }
-        return element.toString();
-    }
-
-    /**
-     * Return class for redirect if annotation contains and null if not present
-     *
-     * @param <T> TODO
-     * @param element TODO
-     * @return TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException TODO
-     */
-    public <T extends WebElement> Class<? extends Page> getElementRedirect(T element) throws ElementDescriptionException {
-        try {
-            Page currentPage = PageFactory.getInstance().getCurrentPage();
-            if (null == currentPage) {
-                log.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
-                return null;
-            }
-            return Core.findRedirect(currentPage, element);
-        } catch (IllegalArgumentException | PageInitializationException ex) {
-            throw new ElementDescriptionException("Failed to get element redirect", ex);
-        }
-    }
-
-    /**
-     * Find specified WebElement by title annotation among current page fields
-     *
-     * @param title title of the element to search
-     * @return WebElement found by corresponding title
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if failed to find corresponding element
-     * or element type is set incorrectly
-     */
-    public WebElement getElementByTitle(String title) throws PageException {
-        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
-            if (Core.isRequiredElement(field, title)) {
-                return Core.getElementByField(this, field);
-            }
-        }
-
-        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
-    }
-
-    /**
-     * Find specified TypifiedElement by title annotation among current page fields
-     *
-     * @param <T> TODO
-     * @param title a {@link java.lang.String} object.
-     * @return a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
-     */
-    @SuppressWarnings(value = "unchecked")
-    public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
-        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
-            if (Core.isRequiredElement(field, title) && Core.isChildOf(TypifiedElement.class, field)) {
-                return (T) Core.getElementByField(this, field);
-            }
-        }
-        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
-    }
-
-    /**
-     * Find method with corresponding title on current page, and execute it
-     *
-     * @param title title of the method to call
-     * @param param parameters that will be passed to method
-     * @throws java.lang.NoSuchMethodException if required method couldn't be found
-     */
-    public void executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
-        List<Method> methods = Core.getDeclaredMethods(this.getClass());
-        for (Method method : methods) {
-            if (Core.isRequiredAction(method, title)) {
-                try {
-                    method.setAccessible(true);
-                    MethodUtils.invokeMethod(this, method.getName(), param);
-                    return;
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    throw new FactoryRuntimeException("Failed to invoke method", e);
-                }
-            }
-        }
-
-        throw new NoSuchMethodException("There is no '" + title + "' method on '" + this.getTitle() + "' page object");
-    }
-
-    /**
-     * Find a method with {@link ValidationRule} annotation on current page, and call it
-     *
-     * @param title title of the validation rule
-     * @param params parameters passed to called method
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if couldn't find corresponding validation rule
-     */
-    public void fireValidationRule(String title, Object... params) throws PageException {
-        Method[] methods = this.getClass().getMethods();
-        for (Method method : methods) {
-            if (null != method.getAnnotation(ValidationRule.class)
-                    && method.getAnnotation(ValidationRule.class).title().equals(title)) {
-                try {
-                    method.invoke(this, params);
-                } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
-                    log.debug("Failed to invoke method {}", method, e);
-                    throw new FactoryRuntimeException("Failed to invoke method", e);
-                }
-                return;
-            }
-        }
-        throw new PageException("There is no '" + title + "' validation rule in '" + this.getTitle() + "' page.");
     }
 }
