@@ -58,13 +58,13 @@
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>qa-utils</artifactId>
-      <version>1.0.3</version>
+      <version>1.1-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>datajack</artifactId>
-      <version>1.1.0</version>
+      <version>1.2-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
