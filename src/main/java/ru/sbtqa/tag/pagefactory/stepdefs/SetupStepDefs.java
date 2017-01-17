@@ -24,9 +24,9 @@ import ru.sbtqa.tag.qautils.reflect.ClassUtilsExt;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
-public class SetupDefsBase {
+public class SetupStepDefs {
 
-    private static final Logger log = LoggerFactory.getLogger(SetupDefsBase.class);
+    private static final Logger log = LoggerFactory.getLogger(SetupStepDefs.class);
 
     @Before()
     public void setUp() {
@@ -51,9 +51,10 @@ public class SetupDefsBase {
             log.debug("Failed to kill one of task to kill", e);
         }
 
-        Reflections reflections;
-        PageFactory.getWebDriver();
+        PageFactory.getDriver();
         PageFactory.getInstance();
+        
+        Reflections reflections;
         reflections = new Reflections(PageFactory.getPagesPackage());
 
         Collection<String> allClassesString = reflections.getStore().get("SubTypesScanner").values();
