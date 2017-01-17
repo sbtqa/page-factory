@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -23,58 +25,75 @@ public class DesiredCapabilitiesParser {
      * @return built capabilities
      */
     public DesiredCapabilities parse() {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        final DesiredCapabilities capabilities = new DesiredCapabilities();
 
         capabilities.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 
         final String capsPrefix = "webdriver." + PageFactory.getBrowserName().toLowerCase() + ".capability.";
         Set<String> propKeys = Props.getProps().stringPropertyNames();
 
-        List<String> capabilitiesFromProps = propKeys.stream().filter(prop -> prop.startsWith(capsPrefix))
-                .collect(Collectors.toList());
+        List<Object> capabilitiesFromProps = propKeys.stream().filter(new Predicate<String>() {
+            @Override
+            public boolean test(String prop) {
+                return prop.startsWith(capsPrefix);
+            }
+        }).collect(Collectors.toList());
 
-        Map<String, Object> options = new HashMap<>();
-        capabilitiesFromProps.forEach(rawCapabilityKey -> {
-            String capability = rawCapabilityKey.substring(capsPrefix.length());
+        final Map<String, Object> options = new HashMap<>();
+        capabilitiesFromProps.forEach(new Consumer<Object>() {
+            @Override
+            public void accept(Object rawCapabilityObj) {
+                String rawCapabilityKey = (String) rawCapabilityObj;
 
-            if (capability.startsWith("options") && "Chrome".equals(getBrowserName())) {
-                // For Chrome options must be parsed and specified as a data structure.
-                // For non-chrome browsers options could be passed as string
-                String optionsCapability = capability.substring("options.".length());
-                switch (optionsCapability) {
-                    case "args":
-                    case "extensions":
-                    case "excludeSwitches":
-                    case "windowTypes":
-                        String[] arrayOfStrings = Props.get(rawCapabilityKey).split(",");
-                        List<String> listOfStrings = new ArrayList<>();
-                        Arrays.stream(arrayOfStrings).forEach(item -> listOfStrings.add(item.trim()));
-                        if (!listOfStrings.isEmpty()) {
-                            options.put(optionsCapability, listOfStrings.toArray());
-                        }
-                        break;
-                    case "prefs":
-                    case "mobileEmulation":
-                    case "perfLoggingPrefs":
-                        Map<String, Object> dictionary = new HashMap<>();
-                        String[] dictRows = Props.get(rawCapabilityKey).split(",");
-                        Arrays.stream(dictRows).forEach(row -> {
-                            String[] keyVal = row.split("=>");
-                            dictionary.put(keyVal[0], keyVal[1].trim());
-                        });
-                        if (!dictionary.isEmpty()) {
-                            options.put(optionsCapability, dictionary);
-                        }
-                        break;
-                    default:
-                        options.put(optionsCapability, Props.get(rawCapabilityKey));
-                        break;
+                String capability = rawCapabilityKey.substring(capsPrefix.length());
+
+                if (capability.startsWith("options") && "Chrome".equals(getBrowserName())) {
+                    // For Chrome options must be parsed and specified as a data structure.
+                    // For non-chrome browsers options could be passed as string
+                    String optionsCapability = capability.substring("options.".length());
+                    switch (optionsCapability) {
+                        case "args":
+                        case "extensions":
+                        case "excludeSwitches":
+                        case "windowTypes":
+                            String[] arrayOfStrings = Props.get(rawCapabilityKey).split(",");
+                            final List<String> listOfStrings = new ArrayList<>();
+                            Arrays.stream(arrayOfStrings).forEach(new Consumer<String>() {
+                                @Override
+                                public void accept(String item) {
+                                    listOfStrings.add(item.trim());
+                                }
+                            });
+                            if (!listOfStrings.isEmpty()) {
+                                options.put(optionsCapability, listOfStrings.toArray());
+                            }
+                            break;
+                        case "prefs":
+                        case "mobileEmulation":
+                        case "perfLoggingPrefs":
+                            final Map<String, Object> dictionary = new HashMap<>();
+                            String[] dictRows = Props.get(rawCapabilityKey).split(",");
+                            Arrays.stream(dictRows).forEach(new Consumer<String>() {
+                                @Override
+                                public void accept(String row) {
+                                    String[] keyVal = row.split("=>");
+                                    dictionary.put(keyVal[0], keyVal[1].trim());
+                                }
+                            });
+                            if (!dictionary.isEmpty()) {
+                                options.put(optionsCapability, dictionary);
+                            }
+                            break;
+                        default:
+                            options.put(optionsCapability, Props.get(rawCapabilityKey));
+                            break;
+                    }
+                    if (!options.isEmpty()) {
+                        capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+                    }
+                } else {
+                    capabilities.setCapability(capability, Props.get(rawCapabilityKey));
                 }
-                if (!options.isEmpty()) {
-                    capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-                }
-            } else {
-                capabilities.setCapability(capability, Props.get(rawCapabilityKey));
             }
         });
         return capabilities;
