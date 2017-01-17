@@ -7,14 +7,17 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import ru.sbtqa.tag.pagefactory.PageFactory;
 import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 
 public class MDriver {
     
+    private static AppiumDriver<AndroidElement> mobileDriver;
+    
     public static AppiumDriver<AndroidElement> getDriver() {
         if (null == mobileDriver) {
-            createMobileDriver();
+            createDriver();
         }
         return mobileDriver;
     }
@@ -35,16 +38,16 @@ public class MDriver {
 
         URL url;
         try {
-            url = new URL(INITIAL_URL);
+            url = new URL(PageFactory.getInitialUrl());
         } catch (MalformedURLException e) {
-            throw new FactoryRuntimeException("Failed to connect to appium on url " + INITIAL_URL, e);
+            throw new FactoryRuntimeException("Failed to connect to appium on url " + PageFactory.getInitialUrl(), e);
         }
 
         setAspectsDisabled(true);
         mobileDriver = new AndroidDriver<>(url, capabilities);
     }
     
-    private static void dispose() {
+    public static void dispose() {
         if (mobileDriver != null) {
             mobileDriver.quit();
         }
