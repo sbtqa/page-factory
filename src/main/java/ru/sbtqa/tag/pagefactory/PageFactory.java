@@ -104,12 +104,12 @@ public class PageFactory {
         return BROWSER_NAME;
     }
 
-//    /**
-//     * @return the pagesPackage
-//     */
-//    public static String getPagesPackage() {
-//        return PAGES_PACKAGE;
-//    }
+    /**
+     * @return the pagesPackage
+     */
+    public static String getPagesPackage() {
+        return PAGES_PACKAGE;
+    }
 
     /**
      * @return the timeOut

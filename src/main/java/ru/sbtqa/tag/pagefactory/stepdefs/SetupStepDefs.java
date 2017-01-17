@@ -55,7 +55,7 @@ public class SetupStepDefs {
         PageFactory.getInstance();
         
         Reflections reflections;
-        reflections = new Reflections(PageFactory.getPageRepository());
+        reflections = new Reflections(PageFactory.getPagesPackage());
 
         Collection<String> allClassesString = reflections.getStore().get("SubTypesScanner").values();
         Set<Class<?>> allClasses = new HashSet();
