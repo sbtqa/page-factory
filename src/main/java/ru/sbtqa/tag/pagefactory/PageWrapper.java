@@ -17,9 +17,9 @@ import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.properties.Props;
 
-public class PageShell {
+public class PageWrapper {
 
-    private static final Logger log = LoggerFactory.getLogger(PageShell.class);
+    private static final Logger log = LoggerFactory.getLogger(PageWrapper.class);
 
     private String currentPageTitle;
     private Page currentPage;
@@ -30,12 +30,12 @@ public class PageShell {
      *
      * @param pagesPackage a {@link java.lang.String} object.
      */
-    public PageShell(String pagesPackage) {
+    public PageWrapper(String pagesPackage) {
         this.pagesPackage = pagesPackage;
     }
 
     /**
-     * Initialize page with specified title and save its instance to {@link PageShell#currentPage} for further use
+     * Initialize page with specified title and save its instance to {@link PageWrapper#currentPage} for further use
      *
      * @param title page title
      * @return page instance
