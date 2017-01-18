@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
@@ -916,12 +915,13 @@ public abstract class Page {
                 actionList.add(actionTitle);
             }
 
-            return actionList.stream().filter(new Predicate<ActionTitle>() {
-                @Override
-                public boolean test(ActionTitle action) {
-                    return action.value().equals(title);
+            for (ActionTitle action : actionList) {
+                if (action.value().equals(title)) {
+                    return true;
                 }
-            }).findFirst().isPresent();
+            }
+
+            return false;
         }
 
         /**
@@ -1065,7 +1065,8 @@ public abstract class Page {
          * @return true|false
          */
         private static boolean isBlockElement(Field field) {
-            return field.getAnnotationsByType(ElementTitle.class).length > 0
+
+            return (null != field.getAnnotation(ElementTitle.class))
                     && Core.isChildOf(HtmlElement.class, field);
         }
 

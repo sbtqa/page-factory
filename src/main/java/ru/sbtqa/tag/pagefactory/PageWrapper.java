@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -9,8 +10,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,22 +180,11 @@ public class PageWrapper {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final Set<Class<?>> allClasses = new HashSet<>();
         try {
-            ClassPath.from(loader)
-                    .getAllClasses()
-                    .stream()
-                    .filter(new Predicate<ClassPath.ClassInfo>() {
-                        @Override
-                        public boolean test(ClassPath.ClassInfo info) {
-                            return info.getName().startsWith(packageName + ".");
-                        }
-                    })
-                    .forEach(new Consumer<ClassPath.ClassInfo>() {
-                        @Override
-                        public void accept(ClassPath.ClassInfo info) {
-                            allClasses.add(info.load());
-                        }
-                    });
-
+            for (ClassPath.ClassInfo info: ClassPath.from(loader).getAllClasses()) {
+                if (info.getName().startsWith(packageName + ".")) {
+                    allClasses.add(info.load());
+                }
+            }
         } catch (IOException ex) {
             log.warn("Failed to shape class info set", ex);
         }

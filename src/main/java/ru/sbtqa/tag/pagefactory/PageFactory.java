@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
@@ -54,7 +53,6 @@ public class PageFactory {
     private static final String TIMEOUT = Props.get("webdriver.page.load.timeout");
     private static final String INITIAL_URL = Props.get("webdriver.url");
     private static final int ATTEMPTS_TO_START_WEBDRIVER = Integer.parseInt(Props.get("webdriver.create.attempts", "3"));
-//    private static final boolean isScreenshotTaken = false;
 
     private static final String WEBDRIVER_PATH = "src/test/resources/webdrivers/";
 
@@ -184,17 +182,13 @@ public class PageFactory {
         Set<String> windowHandlesSet = webDriver.getWindowHandles();
         try {
             if (windowHandlesSet.size() > 1) {
-                windowHandlesSet.
-                        forEach(new Consumer<String>() {
-                            @Override
-                            public void accept(String winHandle) {
-                                webDriver.switchTo().window(winHandle);
-                                ((JavascriptExecutor) webDriver).executeScript(
-                                        "var objWin = window.self;"
-                                        + "objWin.open('','_self','');"
-                                        + "objWin.close();");
-                            }
-                        });
+                for (String winHandle : windowHandlesSet) {
+                    webDriver.switchTo().window(winHandle);
+                    ((JavascriptExecutor) webDriver).executeScript(
+                            "var objWin = window.self;"
+                                    + "objWin.open('','_self','');"
+                                    + "objWin.close();");
+                }
             }
         } catch (Exception e) {
             log.warn("Failed to kill all of the iexplore windows", e);
