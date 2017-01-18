@@ -142,7 +142,7 @@ public abstract class Page {
     @ActionTitle("press the key")
     public void pressKey(String keyName) {
         Keys key = Keys.valueOf(keyName.toUpperCase());
-        Actions actions = new Actions(PageFactory.getWebDriver());
+        Actions actions = PageFactory.getActions();
         actions.sendKeys(key).perform();
         Core.addToReport(keyName, " is pressed");
     }
@@ -160,7 +160,7 @@ public abstract class Page {
     @ActionTitle("press the key")
     public void pressKey(String keyName, String elementTitle) throws PageException {
         Keys key = Keys.valueOf(keyName.toUpperCase());
-        Actions actions = new Actions(PageFactory.getWebDriver());
+        Actions actions = PageFactory.getActions();
         actions.moveToElement(getElementByTitle(elementTitle));
         actions.click();
         actions.sendKeys(key);
@@ -266,7 +266,7 @@ public abstract class Page {
                 + " content.push(options[i].text)"
                 + "}"
                 + "return content";
-        List<String> options = (ArrayList<String>) ((JavascriptExecutor) PageFactory.getWebDriver()).
+        List<String> options = (ArrayList<String>) ((JavascriptExecutor) PageFactory.getDriver()).
                 executeScript(jsString, webElement);
 
         boolean isSelectionMade = false;

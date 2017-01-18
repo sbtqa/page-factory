@@ -34,9 +34,9 @@ import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
-public class WDriver {
+public class WbDriver {
 
-    private static final Logger log = LoggerFactory.getLogger(WDriver.class);
+    private static final Logger log = LoggerFactory.getLogger(WbDriver.class);
 
     private static WebDriver webDriver;
     private static final int ATTEMPTS_TO_START_WEBDRIVER = Integer.parseInt(Props.get("driver.create.attempts", "3"));

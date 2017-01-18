@@ -9,8 +9,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.pagefactory.FieldDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.pagefactory.drivers.MDriver;
-import ru.sbtqa.tag.pagefactory.drivers.WDriver;
+import ru.sbtqa.tag.pagefactory.drivers.MblDriver;
+import ru.sbtqa.tag.pagefactory.drivers.WbDriver;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
@@ -33,32 +33,32 @@ public class PageFactory {
     private static final String TIMEOUT = Props.get("page.load.timeout");
     private static final String BROWSER_NAME = Props.get("browser.name");
 
-    public static <T> T getDriver() {
-        switch (getEnvironment()) {
-            case WEB:
-                return (T) WDriver.getDriver();
-            case MOBILE:
-                return (T) MDriver.getDriver();
-            default:
-                throw new FactoryRuntimeException("Failed to get driver");
-        }
-    }
-
     public static WebDriver getWebDriver() {
         return getDriver();
     }
 
     public static AppiumDriver getMobileDriver() {
-        return getDriver();
+        return (AppiumDriver) getDriver();
+    }
+    
+    public static WebDriver getDriver() {
+        switch (getEnvironment()) {
+            case WEB:
+                return WbDriver.getDriver();
+            case MOBILE:
+                return MblDriver.getDriver();
+            default:
+                throw new FactoryRuntimeException("Failed to get driver");
+        }
     }
 
     public static void dispose() {
         switch (getEnvironment()) {
             case WEB:
-                WDriver.dispose();
+                WbDriver.dispose();
                 break;
             case MOBILE:
-                MDriver.dispose();
+                MblDriver.dispose();
                 break;
             default:
                 throw new FactoryRuntimeException("Failed to dispose");

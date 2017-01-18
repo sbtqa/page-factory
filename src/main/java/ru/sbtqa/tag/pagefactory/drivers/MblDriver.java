@@ -11,7 +11,7 @@ import ru.sbtqa.tag.pagefactory.PageFactory;
 import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 
-public class MDriver {
+public class MblDriver {
     
     private static AppiumDriver<AndroidElement> mobileDriver;
     
