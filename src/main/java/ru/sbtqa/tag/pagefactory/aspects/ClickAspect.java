@@ -10,9 +10,9 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.pagefactory.DriverExtensions;
 import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
@@ -44,7 +44,7 @@ public class ClickAspect {
         String elementHighlightStyle = null;
         boolean isVideoHighlightEnable = Boolean.valueOf(Props.get("video.highlight.enable"));
         if (isVideoHighlightEnable) {
-            elementHighlightStyle = DriverExtensions.highlightElementOn(targetWebElement);
+            elementHighlightStyle = WebExtension.highlightElementOn(targetWebElement);
         }
 
         if (PageFactory.getEnvironment() == Environment.WEB) {
@@ -84,7 +84,7 @@ public class ClickAspect {
         }
 
         if (isVideoHighlightEnable) {
-            DriverExtensions.highlightElementOff(targetWebElement, elementHighlightStyle);
+            WebExtension.highlightElementOff(targetWebElement, elementHighlightStyle);
         }
     }
 

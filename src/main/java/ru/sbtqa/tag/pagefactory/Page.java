@@ -33,6 +33,8 @@ import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
 import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
 import ru.sbtqa.tag.pagefactory.annotations.ValidationRule;
 import ru.sbtqa.tag.pagefactory.exceptions.*;
+import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
+import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
@@ -124,10 +126,10 @@ public abstract class Page {
         WebElement webElement;
         try {
             webElement = getElementByTitle(elementTitle);
-            DriverExtensions.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
+            DriverExtension.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
         } catch (NoSuchElementException | WaitException e) {
             log.warn("Failed to find element by title {}", elementTitle, e);
-            webElement = DriverExtensions.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
+            webElement = DriverExtension.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
         clickWebElement(webElement);
     }
@@ -305,7 +307,7 @@ public abstract class Page {
     @ActionTitle("принимает уведомление")
     @ActionTitle("accepts alert")
     public void acceptAlert(String text) throws WaitException {
-        DriverExtensions.interactWithAlert(text, true);
+        DriverExtension.interactWithAlert(text, true);
     }
 
     /**
@@ -317,7 +319,7 @@ public abstract class Page {
     @ActionTitle("отклоняет уведомление")
     @ActionTitle("dismisses alert")
     public void dismissAlert(String text) throws WaitException {
-        DriverExtensions.interactWithAlert(text, false);
+        DriverExtension.interactWithAlert(text, false);
     }
 
     /**
@@ -330,7 +332,7 @@ public abstract class Page {
     @ActionTitle("текст появляется на странице")
     @ActionTitle("text appears on the page")
     public void assertTextAppears(String text) throws WaitException {
-        DriverExtensions.waitForTextPresenceInPageSource(text, true);
+        WebExtension.waitForTextPresenceInPageSource(text, true);
     }
 
     /**
@@ -342,7 +344,7 @@ public abstract class Page {
     @ActionTitle("текст отсутствует на странице")
     @ActionTitle("text is absent on the page")
     public void assertTextIsNotPresent(String text) {
-        DriverExtensions.waitForTextPresenceInPageSource(text, false);
+        WebExtension.waitForTextPresenceInPageSource(text, false);
     }
 
     /**
@@ -358,7 +360,7 @@ public abstract class Page {
     @ActionTitle("modal window with text appears")
     public void assertModalWindowAppears(String text) throws WaitException {
         try {
-            String popupHandle = DriverExtensions.findNewWindowHandle(Stash.getValue("beforeClickHandles"));
+            String popupHandle = WebExtension.findNewWindowHandle(Stash.getValue("beforeClickHandles"));
             if (null != popupHandle && !popupHandle.isEmpty()) {
                 PageFactory.getWebDriver().switchTo().window(popupHandle);
             }
@@ -532,7 +534,7 @@ public abstract class Page {
     @ActionTitle("check that element with text is present")
     @ActionTitle("check the text is visible")
     public void checkElementWithTextIsPresent(String text) {
-        if (!DriverExtensions.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
+        if (!DriverExtension.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
             throw new AutotestError("Text '" + text + "' is not present");
         }
     }

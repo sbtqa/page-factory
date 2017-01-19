@@ -26,7 +26,7 @@ public class MblDriver {
         File classpathRoot = new File(System.getProperty("user.dir"));
         //TODO refactor app get
         File appDir = new File(classpathRoot, "app");
-        File app = new File(appDir, "SberbankMobile.apk");
+        File app = new File(appDir, "friend.apk");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         //TODO move to application properties
         capabilities.setCapability("deviceName", "Android Emulator");
