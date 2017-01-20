@@ -5,8 +5,6 @@ import cucumber.api.java.bg.И;
 import cucumber.api.java.en.And;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -14,6 +12,7 @@ import org.openqa.selenium.WebElement;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.yandex.qatools.htmlelements.element.*;
 
@@ -202,7 +201,8 @@ public class GenericStepDefs {
     @И("^(?:пользователь |он |)(?:находится на странице|открывается страница|открывается вкладка мастера) \"(.*?)\"$")
     @And("^(?:user |he |)(?:is on the page|page is being opened|master tab is being opened) \"(.*?)\"$")
     public void openPage(String title) throws PageInitializationException {
-        if (!PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
+        if (PageFactory.getEnvironment() != Environment.MOBILE && 
+	      !PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
             for (String windowHandle : PageFactory.getWebDriver().getWindowHandles()) {
                 PageFactory.getWebDriver().switchTo().window(windowHandle);
             }

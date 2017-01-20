@@ -10,6 +10,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.qautils.properties.Props;
+import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
 public class MblDriver {
     
@@ -17,6 +19,10 @@ public class MblDriver {
     
     public static AppiumDriver<AndroidElement> getDriver() {
         if (null == mobileDriver) {
+	    if (Boolean.valueOf(Props.get("video.enable"))) {
+                VideoRecorder.getInstance().startRecording();
+            }
+	    
             createDriver();
         }
         return mobileDriver;
@@ -26,7 +32,7 @@ public class MblDriver {
         File classpathRoot = new File(System.getProperty("user.dir"));
         //TODO refactor app get
         File appDir = new File(classpathRoot, "app");
-        File app = new File(appDir, "friend.apk");
+        File app = new File(appDir, "SberbankMobile.apk");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         //TODO move to application properties
         capabilities.setCapability("deviceName", "Android Emulator");
