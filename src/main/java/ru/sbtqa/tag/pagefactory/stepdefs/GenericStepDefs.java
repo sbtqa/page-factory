@@ -38,7 +38,7 @@ import ru.yandex.qatools.htmlelements.element.*;
  * | value 1 |
  * } value 2 |
  *
- * See Cucumber {@link "https://cucumber.io/docs/reference#step-definitions"} for details
+ * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber documentation</a>
  *
  */
 public class GenericStepDefs {
