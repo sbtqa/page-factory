@@ -50,19 +50,6 @@ public abstract class Page {
     private static final Logger log = LoggerFactory.getLogger(Page.class);
 
     /**
-     * Initialize page with specified title and save its instance to {@link PageWrapper#currentPage} for further use
-     *
-     * @param title title of the page to open
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException if failed to execute corresponding page
-     * constructor
-     */
-    @ActionTitle("отркывается страница")
-    @ActionTitle("open page")
-    public void initPage(String title) throws PageInitializationException {
-        PageFactory.getInstance().getPage(title);
-    }
-
-    /**
      * Find element with specified title annotation, and fill it with given text
      * Add elementTitle-&gt;text as parameter-&gt;value to corresponding step in allure report
      *

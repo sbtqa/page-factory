@@ -40,10 +40,17 @@ public class TagAllureReporter extends ru.yandex.qatools.allure.cucumberjvm.Allu
                 VideoRecorder.getInstance().resetVideoRecorder();
             }
         }
-        if ("failed".equals(result.getStatus())) {
+        if (Result.FAILED.equals(result.getStatus())) {
             LOG.debug(result.getErrorMessage(), result.getError());
-            takeScreenshot();
             new OnFailureScheduler().processPendings();
+        }
+    }
+
+    @Override
+    public void result(Result result) {
+        super.result(result);
+        if (Result.FAILED.equals(result.getStatus())) {
+            takeScreenshot();
         }
     }
 
