@@ -10,24 +10,23 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.yandex.qatools.allure.annotations.Attachment;
 
 public class ScreenShooter {
 
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(ScreenShooter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScreenShooter.class);
 
     /**
-     * Takes screenshot with WebDriver
+     * Takes screenshot with driver
      *
      * @return screenshot in byte array
      */
     @Attachment(type = "image/png", value = "Screenshot")
     public static byte[] takeWithDriver() {
-        return ((PageFactory.getWebDriver() == null)
-                ? "".getBytes()
-                : ((TakesScreenshot) PageFactory.getWebDriver()).getScreenshotAs(OutputType.BYTES));
+        return ((TakesScreenshot) PageFactory.getDriver()).getScreenshotAs(OutputType.BYTES);
     }
 
     /**
