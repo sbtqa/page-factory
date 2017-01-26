@@ -34,8 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.UnsupportedBrowserException;
 import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
+import ru.sbtqa.tag.pagefactory.support.RobotUtil;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class PageFactory {
 
@@ -160,9 +163,35 @@ public class PageFactory {
                 log.error("Can not parse remote url. Check webdriver.remote.host property");
             }
         }
-        webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
+        webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), SECONDS);
         webDriver.manage().window().maximize();
-        webDriver.get(INITIAL_URL);
+        // Authorization
+        String authType = Props.get("auth.type");
+        if (!authType.isEmpty()) {
+            String login = Props.get("auth.login");
+            String password = Props.get("auth.password");
+            if (login.isEmpty() || password.isEmpty()) {
+                throw new UnsupportedOperationException("Http authorization with empty login or password is not supported");
+            }
+            String secondWaitStr = Props.get("auth.wait");
+            final int defaultWaitPopUp = 5;
+            int wait = secondWaitStr.isEmpty() ? defaultWaitPopUp : Integer.parseInt(secondWaitStr);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    webDriver.get(INITIAL_URL);
+                }
+            }).start();
+            try {
+                SECONDS.sleep(wait);
+            } catch (InterruptedException e) {
+                log.warn("Failed to wait for http login popup", e);
+                Thread.currentThread().interrupt();
+            }
+            RobotUtil.handleHttpLoginPopUp(login, password);
+        } else {
+            webDriver.get(INITIAL_URL);
+        }
     }
 
     /**
