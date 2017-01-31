@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
@@ -22,6 +23,10 @@ public class MblDriver {
     private static AppiumDriver<AndroidElement> mobileDriver;
 
     public static AppiumDriver<AndroidElement> getDriver() {
+	if (Environment.MOBILE != PageFactory.getEnvironment()) {
+	    throw new FactoryRuntimeException("Failed to get mobile driver while environment is not mobile");
+	}
+	
 	if (null == mobileDriver) {
 	    if (Boolean.valueOf(Props.get("video.enable"))) {
 		VideoRecorder.getInstance().startRecording();

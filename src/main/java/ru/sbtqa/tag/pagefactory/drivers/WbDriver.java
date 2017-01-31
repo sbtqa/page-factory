@@ -29,8 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import static ru.sbtqa.tag.pagefactory.PageFactory.getTimeOutInSeconds;
+import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.exceptions.UnsupportedBrowserException;
 import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
+import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
@@ -44,6 +46,10 @@ public class WbDriver {
     private static final String WEBDRIVER_PATH = "src/test/resources/webdrivers/";
 
     public static org.openqa.selenium.WebDriver getDriver() {
+	if (Environment.WEB != PageFactory.getEnvironment()) {
+	    throw new FactoryRuntimeException("Failed to get web driver while environment is not web");
+	}
+	
         if (null == webDriver) {
             if (Boolean.valueOf(Props.get("video.enable"))) {
                 VideoRecorder.getInstance().startRecording();
