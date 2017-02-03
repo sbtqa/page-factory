@@ -5,8 +5,6 @@ import cucumber.api.java.bg.И;
 import cucumber.api.java.en.And;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
