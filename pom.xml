@@ -128,9 +128,9 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>ru.yandex.qatools.htmlelements</groupId>
+      <groupId>ru.sbtqa.htmlelements</groupId>
       <artifactId>htmlelements-java</artifactId>
-      <version>1.17</version>
+      <version>1.17-JAVA7</version>
       <type>jar</type>
     </dependency>
     <dependency>
