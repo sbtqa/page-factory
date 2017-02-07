@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.sbtqa.tag</groupId>
   <artifactId>page-factory</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>page-factory</name>
   <description>page-factory description</description>
@@ -41,8 +41,8 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
   <distributionManagement>
     <snapshotRepository>
@@ -76,7 +76,7 @@
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>video-recorder</artifactId>
-      <version>1.0.4</version>
+      <version>1.1-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -128,9 +128,9 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>ru.yandex.qatools.htmlelements</groupId>
+      <groupId>ru.sbtqa.htmlelements</groupId>
       <artifactId>htmlelements-java</artifactId>
-      <version>1.17</version>
+      <version>1.17-JAVA7</version>
       <type>jar</type>
     </dependency>
     <dependency>

@@ -43,7 +43,7 @@ public class PageFactory {
 
     private static WebDriver webDriver;
     private static Actions actions;
-    private static PageShell PageFactoryCore;
+    private static PageWrapper PageFactoryCore;
     private static VideoRecorder videoRecorder;
     private static BrowserMobProxy proxy; // for use proxy, use Props proxy.enable = true
     private static final Map<Class<? extends Page>, Map<Field, String>> PAGES_REPOSITORY = new HashMap<>();
@@ -53,7 +53,6 @@ public class PageFactory {
     private static final String TIMEOUT = Props.get("webdriver.page.load.timeout");
     private static final String INITIAL_URL = Props.get("webdriver.url");
     private static final int ATTEMPTS_TO_START_WEBDRIVER = Integer.parseInt(Props.get("webdriver.create.attempts", "3"));
-//    private static final boolean isScreenshotTaken = false;
 
     private static final String WEBDRIVER_PATH = "src/test/resources/webdrivers/";
 
@@ -68,7 +67,7 @@ public class PageFactory {
     public static WebDriver getWebDriver() {
         if (null == webDriver) {
             if (Boolean.valueOf(Props.get("video.enable"))) {
-                    VideoRecorder.getInstance().startRecording();
+                VideoRecorder.getInstance().startRecording();
             }
 
             for (int i = 1; i <= ATTEMPTS_TO_START_WEBDRIVER; i++) {
@@ -183,14 +182,13 @@ public class PageFactory {
         Set<String> windowHandlesSet = webDriver.getWindowHandles();
         try {
             if (windowHandlesSet.size() > 1) {
-                windowHandlesSet.
-                      forEach((winHandle) -> {
-                          webDriver.switchTo().window(winHandle);
-                          ((JavascriptExecutor) webDriver).executeScript(
-                                "var objWin = window.self;"
-                                + "objWin.open('','_self','');"
-                                + "objWin.close();");
-                      });
+                for (String winHandle : windowHandlesSet) {
+                    webDriver.switchTo().window(winHandle);
+                    ((JavascriptExecutor) webDriver).executeScript(
+                            "var objWin = window.self;"
+                                    + "objWin.open('','_self','');"
+                                    + "objWin.close();");
+                }
             }
         } catch (Exception e) {
             log.warn("Failed to kill all of the iexplore windows", e);
@@ -198,7 +196,7 @@ public class PageFactory {
 
         try {
             if ("IE".equals(BROWSER_NAME)
-                  && Boolean.parseBoolean(Props.get("browser.ie.killOnDispose", "true"))) {
+                    && Boolean.parseBoolean(Props.get("browser.ie.killOnDispose", "true"))) {
                 // Kill IE by Windows means instead of webdriver.quit()
                 Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
                 Runtime.getRuntime().exec("taskkill /f /im IEDriverServer.exe").waitFor();
@@ -257,9 +255,9 @@ public class PageFactory {
      *
      * @return PageFactory
      */
-    public static PageShell getInstance() {
+    public static PageWrapper getInstance() {
         if (null == PageFactoryCore) {
-            PageFactoryCore = new PageShell(PAGES_PACKAGE);
+            PageFactoryCore = new PageWrapper(PAGES_PACKAGE);
         }
         return PageFactoryCore;
     }
