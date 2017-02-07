@@ -10,10 +10,13 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.exceptions.DirectionException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
+import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 import ru.yandex.qatools.htmlelements.element.*;
 
 /**
@@ -404,4 +407,32 @@ public class GenericStepDefs {
     public void reInitPage() {
         PageFactory.getWebDriver().navigate().refresh();
     }
+    
+    /**
+     * Swipe to text
+     * @param direction direction to swipe
+     * @param text text on page to swipe to
+     * @throws DirectionException if specified unsupported direction
+     */
+    @И("^пользователь свайпает экран \"(.*?)\" до текста \"(.*?)\"$")
+    public void swipeToText(String direction, String text) throws DirectionException {
+	switch (direction.toUpperCase()) {
+	    case "ВНИЗ":
+		MobileExtension.swipeToText(DirectionStrategy.DOWN, text);
+		break;
+	    case "ВВЕРХ":
+		MobileExtension.swipeToText(DirectionStrategy.UP, text);
+		break;
+	    case "ВПРАВО":
+		MobileExtension.swipeToText(DirectionStrategy.RIGHT, text);
+		break;
+	    case "ВЛЕВО":
+		MobileExtension.swipeToText(DirectionStrategy.LEFT, text);
+		break;
+	    default:
+		throw new DirectionException("Failed to swipe to direction '" + direction + "'");
+	}
+    }
+    
+    
 }

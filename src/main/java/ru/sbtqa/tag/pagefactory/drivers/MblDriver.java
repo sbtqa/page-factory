@@ -49,6 +49,8 @@ public class MblDriver {
 	capabilities.setCapability("appPackage", Props.get("appium.app.package"));
 	capabilities.setCapability("appActivity", Props.get("appium.app.activity"));
 	capabilities.setCapability("autoGrantPermissions", "true");
+	capabilities.setCapability("unicodeKeyboard", "true");
+	capabilities.setCapability("resetKeyboard", "true");
 	LOG.info("Capabilities are {}", capabilities);
 
 	URL url;
