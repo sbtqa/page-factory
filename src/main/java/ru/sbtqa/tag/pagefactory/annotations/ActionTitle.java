@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-//@Repeatable(ActionTitles.class)
 public @interface ActionTitle {
 
     /**

@@ -35,7 +35,6 @@ public class DesiredCapabilitiesParser {
             }
         }
 
-
         final Map<String, Object> options = new HashMap<>();
 
         for (String rawCapabilityKey: capabilitiesFromProps) {
