@@ -10,10 +10,13 @@ import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
+import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.datajack.Stash;
 import ru.sbtqa.tag.pagefactory.annotations.*;
 import ru.sbtqa.tag.pagefactory.exceptions.*;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
+import ru.sbtqa.tag.qautils.i18n.I18N;
+import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
@@ -34,7 +37,7 @@ import static java.lang.String.format;
  */
 public abstract class Page {
 
-    private static final Logger log = LoggerFactory.getLogger(Page.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Page.class);
 
     /**
      * Find element with specified title annotation, and fill it with given text
@@ -65,7 +68,7 @@ public abstract class Page {
             try {
                 webElement.clear();
             } catch (InvalidElementStateException | NullPointerException e) {
-                log.debug("Failed to clear web element {}", webElement, e);
+                LOG.debug("Failed to clear web element {}", webElement, e);
             }
             webElement.sendKeys(text);
         }
@@ -100,7 +103,7 @@ public abstract class Page {
             webElement = getElementByTitle(elementTitle);
             DriverExtensions.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
         } catch (NoSuchElementException | WaitException e) {
-            log.warn("Failed to find element by title {}", elementTitle, e);
+            LOG.warn("Failed to find element by title {}", elementTitle, e);
             webElement = DriverExtensions.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
         clickWebElement(webElement);
@@ -693,7 +696,7 @@ public abstract class Page {
 
     /**
      * Search for the given WebElement in page repository storage, that is being generated during preconditions to all
-     * tests. If element is found, return its title annotation. If nothing found, log debug message and return
+     * tests. If element is found, return its title annotation. If nothing found, LOG debug message and return
      * toString() of corresponding element
      *
      * @param element WebElement to search
@@ -706,7 +709,7 @@ public abstract class Page {
                     return entry.getValue();
                 }
             } catch (NoSuchElementException | StaleElementReferenceException | ElementDescriptionException ex) {
-                log.debug("Failed to get element '" + element + "' title", ex);
+                LOG.debug("Failed to get element '" + element + "' title", ex);
             }
         }
         return element.toString();
@@ -723,7 +726,7 @@ public abstract class Page {
         try {
             Page currentPage = PageFactory.getInstance().getCurrentPage();
             if (null == currentPage) {
-                log.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
+                LOG.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
                 return null;
             }
             return Core.findRedirect(currentPage, element);
@@ -807,7 +810,7 @@ public abstract class Page {
                 try {
                     method.invoke(this, params);
                 } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
-                    log.debug("Failed to invoke method {}", method, e);
+                    LOG.debug("Failed to invoke method {}", method, e);
                     throw new FactoryRuntimeException("Failed to invoke method", e);
                 }
                 return;
@@ -853,6 +856,7 @@ public abstract class Page {
             ActionTitle actionTitle = method.getAnnotation(ActionTitle.class);
             ActionTitles actionTitles = method.getAnnotation(ActionTitles.class);
             List<ActionTitle> actionList = new ArrayList<>();
+
             if (actionTitles != null) {
                 actionList.addAll(Arrays.asList(actionTitles.value()));
             }
@@ -861,7 +865,15 @@ public abstract class Page {
             }
 
             for (ActionTitle action : actionList) {
-                if (action.value().equals(title)) {
+                String actionValue = action.value();
+                try {
+                    I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.cucumberFeature.getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
+                    actionValue = i18n.get(action.value());
+                } catch (I18NRuntimeException e) {
+                    LOG.debug("There is no bundle for translation class. Leave it as is", e);
+                }
+
+                if (actionValue.equals(title)) {
                     return true;
                 }
             }
@@ -1069,7 +1081,7 @@ public abstract class Page {
                             }
                         }
                     } catch (NoSuchElementException | StaleElementReferenceException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-                        log.debug("Failed to get page destination to redirect for element", ex);
+                        LOG.debug("Failed to get page destination to redirect for element", ex);
                     }
                 }
                 if (Core.isChildOf(HtmlElement.class, field)) {
@@ -1078,7 +1090,7 @@ public abstract class Page {
                     try {
                         redirects = findRedirect(field.get(parent), element);
                     } catch (IllegalArgumentException | IllegalAccessException ex) {
-                        log.debug("Failed to get page destination to redirect for html element", ex);
+                        LOG.debug("Failed to get page destination to redirect for html element", ex);
                     }
                     if (redirects != null) {
                         return redirects;
@@ -1116,7 +1128,7 @@ public abstract class Page {
 
         /**
          * Get title annotation of specified WebElement, and add it as a parameter to allure report results,
-         * with corresponding value. If there is no title annotation, log warning and exit
+         * with corresponding value. If there is no title annotation, LOG warning and exit
          *
          * @param webElement WebElement to add
          * @param text value for the specified element
@@ -1126,7 +1138,7 @@ public abstract class Page {
                 String elementTitle = PageFactory.getInstance().getCurrentPage().getElementTitle(webElement);
                 addToReport(elementTitle, text);
             } catch (PageException e) {
-                log.warn("Failed to add element " + webElement + " to report", e);
+                LOG.warn("Failed to add element " + webElement + " to report", e);
             }
         }
 
@@ -1138,7 +1150,7 @@ public abstract class Page {
          */
         private static void addToReport(String paramName, String paramValue) {
             ParamsHelper.addParam(paramName, paramValue);
-            log.debug("Add '" + paramName + "->" + paramValue + "' to report for page '" +
+            LOG.debug("Add '" + paramName + "->" + paramValue + "' to report for page '" +
                     PageFactory.getInstance().getCurrentPageTitle() + "'");
         }
     }
