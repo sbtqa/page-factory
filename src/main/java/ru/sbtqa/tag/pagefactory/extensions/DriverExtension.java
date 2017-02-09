@@ -25,7 +25,7 @@ public class DriverExtension {
      * @param webElement Desired web element
      */
     public static void waitUntilElementPresent(WebElement webElement) {
-        new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds()).
+        new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds()).
                 until(ExpectedConditions.visibilityOf(webElement));
     }
 
@@ -36,7 +36,7 @@ public class DriverExtension {
      * @param timeout Timeout in seconds
      */
     public static void waitUntilElementPresent(WebElement webElement, int timeout) {
-        new WebDriverWait(PageFactory.getWebDriver(), timeout).
+        new WebDriverWait(PageFactory.getDriver(), timeout).
                 until(ExpectedConditions.visibilityOf(webElement));
     }
 
@@ -46,7 +46,7 @@ public class DriverExtension {
      * @param webElement Desired web element
      */
     public static void waitUntilElementToBeClickable(WebElement webElement) {
-        new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds()).
+        new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds()).
                 until(ExpectedConditions.elementToBeClickable(webElement));
     }
 
@@ -57,7 +57,7 @@ public class DriverExtension {
      * @param timeout Timeout in seconds
      */
     public static void waitUntilElementToBeClickable(WebElement webElement, int timeout) {
-        new WebDriverWait(PageFactory.getWebDriver(), timeout).
+        new WebDriverWait(PageFactory.getDriver(), timeout).
                 until(ExpectedConditions.elementToBeClickable(webElement));
     }
 
@@ -68,13 +68,13 @@ public class DriverExtension {
      */
     public static void waitUntilPagePrepared(WebElement webElement) {
         try {
-            new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds() / 2).
+            new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds() / 2).
                     until(ExpectedConditions.visibilityOf(webElement));
         } catch (Exception | AssertionError e) {
             log.debug("Element {} does not become visible after timeout", webElement, e);
-            PageFactory.getWebDriver().navigate().refresh();
+            PageFactory.getDriver().navigate().refresh();
             log.debug("Page refreshed");
-            new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds()).
+            new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds()).
                     until(ExpectedConditions.visibilityOf(webElement));
         }
     }
@@ -86,10 +86,10 @@ public class DriverExtension {
      * @return return appeared WebElement
      */
     public static WebElement waitUntilElementAppearsInDom(By by) {
-        new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds())
+        new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds())
                 .until(ExpectedConditions.presenceOfElementLocated(by));
 
-        return PageFactory.getWebDriver().findElement(by);
+        return PageFactory.getDriver().findElement(by);
     }
 
     /**
@@ -100,10 +100,10 @@ public class DriverExtension {
      * @return return appeared WebElement
      */
     public static WebElement waitUntilElementAppearsInDom(By by, long timeout) {
-        new WebDriverWait(PageFactory.getWebDriver(), timeout)
+        new WebDriverWait(PageFactory.getDriver(), timeout)
                 .until(ExpectedConditions.presenceOfElementLocated(by));
 
-        return PageFactory.getWebDriver().findElement(by);
+        return PageFactory.getDriver().findElement(by);
     }
 
     /**
@@ -133,7 +133,7 @@ public class DriverExtension {
      * @param element a {@link org.openqa.selenium.WebElement} object.
      */
     public static void waitUntilElementGetInvisible(WebElement element) {
-        new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds())
+        new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds())
                 .until(ExpectedConditions.not(ExpectedConditions.visibilityOf(element)));
     }
 
@@ -192,7 +192,7 @@ public class DriverExtension {
 
         while (timeoutTime > System.currentTimeMillis()) {
             try {
-                Alert alert = PageFactory.getWebDriver().switchTo().alert();
+                Alert alert = PageFactory.getDriver().switchTo().alert();
                 if (!messageText.isEmpty()) {
                     Assert.assertEquals(alert.getText(), messageText);
                 }
@@ -220,7 +220,7 @@ public class DriverExtension {
      */
     public static boolean checkElementWithTextIsPresent(String text, int timeout) {
         try {
-            new WebDriverWait(PageFactory.getWebDriver(), timeout)
+            new WebDriverWait(PageFactory.getDriver(), timeout)
                     .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), '" + text + "')]")));
             return true;
         } catch (TimeoutException e) {
