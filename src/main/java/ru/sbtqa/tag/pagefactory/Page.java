@@ -1,53 +1,45 @@
 package ru.sbtqa.tag.pagefactory;
 
-import static java.lang.String.format;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.InvalidElementStateException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
+import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
-import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
-import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
-import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
-import ru.sbtqa.tag.pagefactory.annotations.ValidationRule;
+import ru.sbtqa.tag.pagefactory.annotations.*;
 import ru.sbtqa.tag.pagefactory.exceptions.*;
 import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
+import ru.sbtqa.tag.qautils.i18n.I18N;
+import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.*;
+
+import static java.lang.String.format;
+
 /**
  * Base page object class. Contains basic actions with elements, search methods
  */
 public abstract class Page {
 
-    private static final Logger log = LoggerFactory.getLogger(Page.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Page.class);
 
     /**
      * Find element with specified title annotation, and fill it with given text
@@ -58,8 +50,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
      * couldn't be found
      */
-    @ActionTitle("заполняет поле")
-    @ActionTitle("fill the field")
+    @ActionTitle("fill.field")
     public void fillField(String elementTitle, String text) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         webElement.click();
@@ -79,7 +70,7 @@ public abstract class Page {
             try {
                 webElement.clear();
             } catch (InvalidElementStateException | NullPointerException e) {
-                log.debug("Failed to clear web element {}", webElement, e);
+                LOG.debug("Failed to clear web element {}", webElement, e);
             }
             webElement.sendKeys(text);
         }
@@ -105,18 +96,17 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
      * couldn't be found
      */
-    @ActionTitle("кликает по ссылке")
-    @ActionTitle("click the link")
-    @ActionTitle("нажимает кнопку")
-    @ActionTitle("click the button")
+    @ActionTitles({
+            @ActionTitle("click.link"),
+            @ActionTitle("click.button")})
     public void clickElementByTitle(String elementTitle) throws PageException {
         WebElement webElement;
         try {
             webElement = getElementByTitle(elementTitle);
             DriverExtension.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
         } catch (NoSuchElementException | WaitException e) {
-            log.warn("Failed to find element by title {}", elementTitle, e);
-            webElement = DriverExtension.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
+            LOG.warn("Failed to find element by title {}", elementTitle, e);
+            webElement = DriverExtensions.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
         clickWebElement(webElement);
     }
@@ -127,8 +117,7 @@ public abstract class Page {
      *
      * @param keyName name of the key. See available key names in {@link Keys}
      */
-    @ActionTitle("нажимает клавишу")
-    @ActionTitle("press the key")
+    @ActionTitle("press.key")
     public void pressKey(String keyName) {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = PageFactory.getActions();
@@ -145,8 +134,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element with required
      * title
      */
-    @ActionTitle("нажимает клавишу")
-    @ActionTitle("press the key")
+    @ActionTitle("press.key")
     public void pressKey(String keyName, String elementTitle) throws PageException {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = PageFactory.getActions();
@@ -177,8 +165,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not initialized, or required element
      * couldn't be found
      */
-    @ActionTitle("отмечает признак")
-    @ActionTitle("select CheckBox")
+    @ActionTitle("select.checkBox")
     public void setCheckBox(String elementTitle) throws PageException {
         WebElement targetElement = getElementByTitle(elementTitle);
         if (targetElement.getClass().isAssignableFrom(CheckBox.class)) {
@@ -214,7 +201,6 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if required element couldn't be found,
      * or current page isn't initialized
      */
-    @ActionTitle("выбирает")
     @ActionTitle("select")
     public void select(String elementTitle, String option) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
@@ -291,8 +277,7 @@ public abstract class Page {
      * @param text alert message
      * @throws WaitException in case if alert didn't appear during default wait timeout
      */
-    @ActionTitle("принимает уведомление")
-    @ActionTitle("accepts alert")
+    @ActionTitle("accept.alert")
     public void acceptAlert(String text) throws WaitException {
         DriverExtension.interactWithAlert(text, true);
     }
@@ -303,8 +288,7 @@ public abstract class Page {
      * @param text alert message
      * @throws WaitException in case if alert didn't appear during default wait timeout
      */
-    @ActionTitle("отклоняет уведомление")
-    @ActionTitle("dismisses alert")
+    @ActionTitle("dismiss.alert")
     public void dismissAlert(String text) throws WaitException {
         DriverExtension.interactWithAlert(text, false);
     }
@@ -316,8 +300,7 @@ public abstract class Page {
      * @param text text to search
      * @throws WaitException if text didn't appear on the page during the timeout
      */
-    @ActionTitle("текст появляется на странице")
-    @ActionTitle("text appears on the page")
+    @ActionTitle("text.appears.on.page")
     public void assertTextAppears(String text) throws WaitException {
         WebExtension.waitForTextPresenceInPageSource(text, true);
     }
@@ -328,8 +311,7 @@ public abstract class Page {
      *
      * @param text text to search for
      */
-    @ActionTitle("текст отсутствует на странице")
-    @ActionTitle("text is absent on the page")
+    @ActionTitle("text.absent.on.page")
     public void assertTextIsNotPresent(String text) {
         WebExtension.waitForTextPresenceInPageSource(text, false);
     }
@@ -343,8 +325,7 @@ public abstract class Page {
      * @param text text that will be searched inside of the window
      * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException if
      */
-    @ActionTitle("появляется модальное окно с текстом")
-    @ActionTitle("modal window with text appears")
+    @ActionTitle("modal.window.with.text.appears")
     public void assertModalWindowAppears(String text) throws WaitException {
         try {
             String popupHandle = WebExtension.findNewWindowHandle(Stash.getValue("beforeClickHandles"));
@@ -366,8 +347,8 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if couldn't find element by given title,
      * or current page isn't initialized
      */
-    @ActionTitle("проверяет значение")
-    @ActionTitle("checks value")
+
+    @ActionTitle("check.value")
     public void checkValue(String elementTitle, String text) throws PageException {
         checkValue(text, getElementByTitle(elementTitle), MatchStrategy.EXACT);
     }
@@ -453,8 +434,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page was not initialized,
      * or element wasn't found on the page
      */
-    @ActionTitle("проверяет что поле непустое")
-    @ActionTitle("checks that the field is not empty")
+    @ActionTitle("check.field.not.empty")
     public void checkFieldIsNotEmpty(String elementTitle) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         checkFieldIsNotEmpty(webElement);
@@ -486,8 +466,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page wasn't initialized, or element with
      * required title was not found
      */
-    @ActionTitle("проверяет несовпадение значения")
-    @ActionTitle("check that values are not equal")
+    @ActionTitle("check.values.not.equal")
     public void checkValuesAreNotEqual(String text, String elementTitle) throws PageException {
         WebElement webElement = this.getElementByTitle(elementTitle);
         if (checkValuesAreNotEqual(text, webElement)) {
@@ -516,10 +495,9 @@ public abstract class Page {
      *
      * @param text a {@link java.lang.String} object.
      */
-    @ActionTitle("существует элемент с текстом")
-    @ActionTitle("отображается текст")
-    @ActionTitle("check that element with text is present")
-    @ActionTitle("check the text is visible")
+    @ActionTitles({
+            @ActionTitle("check.element.with.text.present"),
+            @ActionTitle("check.text.visible")})
     public void checkElementWithTextIsPresent(String text) {
         if (!DriverExtension.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
             throw new AutotestError("Text '" + text + "' is not present");
@@ -684,7 +662,7 @@ public abstract class Page {
      * @param blockPath block title, or a block chain string separated with '-&gt;' symbols
      * @param actionTitle title of the action to execute
      * @param parameters parameters that will be passed to method
-     * @throws java.lang.NoSuchMethodException if required method couldn't be found 
+     * @throws java.lang.NoSuchMethodException if required method couldn't be found
      */
     public void executeMethodByTitleInBlock(String blockPath, String actionTitle, Object... parameters) throws NoSuchMethodException {
         HtmlElement block = findBlock(blockPath);
@@ -705,7 +683,7 @@ public abstract class Page {
                 }
             }
         }
-        
+
         throw new NoSuchMethodException(format("There is no '%s' method in block '%s'", actionTitle, blockPath));
     }
 
@@ -720,7 +698,7 @@ public abstract class Page {
 
     /**
      * Search for the given WebElement in page repository storage, that is being generated during preconditions to all
-     * tests. If element is found, return its title annotation. If nothing found, log debug message and return
+     * tests. If element is found, return its title annotation. If nothing found, LOG debug message and return
      * toString() of corresponding element
      *
      * @param element WebElement to search
@@ -733,7 +711,7 @@ public abstract class Page {
                     return entry.getValue();
                 }
             } catch (NoSuchElementException | StaleElementReferenceException | ElementDescriptionException ex) {
-                log.debug("Failed to get element '" + element + "' title", ex);
+                LOG.debug("Failed to get element '" + element + "' title", ex);
             }
         }
         return element.toString();
@@ -750,7 +728,7 @@ public abstract class Page {
         try {
             Page currentPage = PageFactory.getInstance().getCurrentPage();
             if (null == currentPage) {
-                log.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
+                LOG.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
                 return null;
             }
             return Core.findRedirect(currentPage, element);
@@ -834,7 +812,7 @@ public abstract class Page {
                 try {
                     method.invoke(this, params);
                 } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
-                    log.debug("Failed to invoke method {}", method, e);
+                    LOG.debug("Failed to invoke method {}", method, e);
                     throw new FactoryRuntimeException("Failed to invoke method", e);
                 }
                 return;
@@ -876,10 +854,11 @@ public abstract class Page {
          * @param title required title
          * @return true|false
          */
-        private static Boolean isRequiredAction(Method method, String title) {
+        private static Boolean isRequiredAction(Method method, final String title) {
             ActionTitle actionTitle = method.getAnnotation(ActionTitle.class);
             ActionTitles actionTitles = method.getAnnotation(ActionTitles.class);
             List<ActionTitle> actionList = new ArrayList<>();
+
             if (actionTitles != null) {
                 actionList.addAll(Arrays.asList(actionTitles.value()));
             }
@@ -887,7 +866,21 @@ public abstract class Page {
                 actionList.add(actionTitle);
             }
 
-            return actionList.stream().filter(action -> action.value().equals(title)).findFirst().isPresent();
+            for (ActionTitle action : actionList) {
+                String actionValue = action.value();
+                try {
+                    I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.cucumberFeature.getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
+                    actionValue = i18n.get(action.value());
+                } catch (I18NRuntimeException e) {
+                    LOG.debug("There is no bundle for translation class. Leave it as is", e);
+                }
+
+                if (actionValue.equals(title)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /**
@@ -1031,7 +1024,8 @@ public abstract class Page {
          * @return true|false
          */
         private static boolean isBlockElement(Field field) {
-            return field.getAnnotationsByType(ElementTitle.class).length > 0
+
+            return (null != field.getAnnotation(ElementTitle.class))
                     && Core.isChildOf(HtmlElement.class, field);
         }
 
@@ -1089,7 +1083,7 @@ public abstract class Page {
                             }
                         }
                     } catch (NoSuchElementException | StaleElementReferenceException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-                        log.debug("Failed to get page destination to redirect for element", ex);
+                        LOG.debug("Failed to get page destination to redirect for element", ex);
                     }
                 }
                 if (Core.isChildOf(HtmlElement.class, field)) {
@@ -1098,7 +1092,7 @@ public abstract class Page {
                     try {
                         redirects = findRedirect(field.get(parent), element);
                     } catch (IllegalArgumentException | IllegalAccessException ex) {
-                        log.debug("Failed to get page destination to redirect for html element", ex);
+                        LOG.debug("Failed to get page destination to redirect for html element", ex);
                     }
                     if (redirects != null) {
                         return redirects;
@@ -1136,7 +1130,7 @@ public abstract class Page {
 
         /**
          * Get title annotation of specified WebElement, and add it as a parameter to allure report results,
-         * with corresponding value. If there is no title annotation, log warning and exit
+         * with corresponding value. If there is no title annotation, LOG warning and exit
          *
          * @param webElement WebElement to add
          * @param text value for the specified element
@@ -1146,7 +1140,7 @@ public abstract class Page {
                 String elementTitle = PageFactory.getInstance().getCurrentPage().getElementTitle(webElement);
                 addToReport(elementTitle, text);
             } catch (PageException e) {
-                log.warn("Failed to add element " + webElement + " to report", e);
+                LOG.warn("Failed to add element " + webElement + " to report", e);
             }
         }
 
@@ -1158,7 +1152,7 @@ public abstract class Page {
          */
         private static void addToReport(String paramName, String paramValue) {
             ParamsHelper.addParam(paramName, paramValue);
-            log.debug("Add '" + paramName + "->" + paramValue + "' to report for page '" +
+            LOG.debug("Add '" + paramName + "->" + paramValue + "' to report for page '" +
                     PageFactory.getInstance().getCurrentPageTitle() + "'");
         }
     }

@@ -1,12 +1,10 @@
 package ru.sbtqa.tag.pagefactory.support;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
@@ -23,18 +21,24 @@ public class DesiredCapabilitiesParser {
      * @return built capabilities
      */
     public DesiredCapabilities parse() {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+        final DesiredCapabilities capabilities = new DesiredCapabilities();
 
         capabilities.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 
         final String capsPrefix = "webdriver." + PageFactory.getBrowserName().toLowerCase() + ".capability.";
         Set<String> propKeys = Props.getProps().stringPropertyNames();
+        List<String> capabilitiesFromProps = new ArrayList<>();
 
-        List<String> capabilitiesFromProps = propKeys.stream().filter(prop -> prop.startsWith(capsPrefix))
-                .collect(Collectors.toList());
+        for (String prop: propKeys) {
+            if (prop.startsWith(capsPrefix)) {
+                capabilitiesFromProps.add(prop);
+            }
+        }
 
-        Map<String, Object> options = new HashMap<>();
-        capabilitiesFromProps.forEach(rawCapabilityKey -> {
+        final Map<String, Object> options = new HashMap<>();
+
+        for (String rawCapabilityKey: capabilitiesFromProps) {
+
             String capability = rawCapabilityKey.substring(capsPrefix.length());
 
             if (capability.startsWith("options") && "Chrome".equals(getBrowserName())) {
@@ -47,8 +51,12 @@ public class DesiredCapabilitiesParser {
                     case "excludeSwitches":
                     case "windowTypes":
                         String[] arrayOfStrings = Props.get(rawCapabilityKey).split(",");
-                        List<String> listOfStrings = new ArrayList<>();
-                        Arrays.stream(arrayOfStrings).forEach(item -> listOfStrings.add(item.trim()));
+                        final List<String> listOfStrings = new ArrayList<>();
+
+                        for (String item: arrayOfStrings) {
+                            listOfStrings.add(item.trim());
+                        }
+
                         if (!listOfStrings.isEmpty()) {
                             options.put(optionsCapability, listOfStrings.toArray());
                         }
@@ -56,12 +64,14 @@ public class DesiredCapabilitiesParser {
                     case "prefs":
                     case "mobileEmulation":
                     case "perfLoggingPrefs":
-                        Map<String, Object> dictionary = new HashMap<>();
+                        final Map<String, Object> dictionary = new HashMap<>();
                         String[] dictRows = Props.get(rawCapabilityKey).split(",");
-                        Arrays.stream(dictRows).forEach(row -> {
+
+                        for (String row: dictRows) {
                             String[] keyVal = row.split("=>");
                             dictionary.put(keyVal[0], keyVal[1].trim());
-                        });
+                        }
+
                         if (!dictionary.isEmpty()) {
                             options.put(optionsCapability, dictionary);
                         }
@@ -76,7 +86,7 @@ public class DesiredCapabilitiesParser {
             } else {
                 capabilities.setCapability(capability, Props.get(rawCapabilityKey));
             }
-        });
+        }
         return capabilities;
     }
 }

@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -35,11 +36,13 @@ public class PageWrapper {
     }
 
     /**
-     * Initialize page with specified title and save its instance to {@link PageWrapper#currentPage} for further use
+     * Initialize page with specified title and save its instance to
+     * {@link PageWrapper#currentPage} for further use
      *
      * @param title page title
      * @return page instance
-     * @throws PageInitializationException if failed to execute corresponding page constructor
+     * @throws PageInitializationException if failed to execute corresponding
+     * page constructor
      */
     public Page getPage(String title) throws PageInitializationException {
         if (null == currentPage || !currentPageTitle.equals(title)) {
@@ -61,7 +64,8 @@ public class PageWrapper {
      *
      * @param page TODO
      * @return TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
+     * TODO
      */
     public Page getPage(Class<? extends Page> page) throws PageInitializationException {
         return bootstrapPage(page);
@@ -85,7 +89,8 @@ public class PageWrapper {
      * Getter for the field <code>currentPage</code>.</p>
      *
      * @return a Page object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
+     * TODO
      */
     public Page getCurrentPage() throws PageInitializationException {
         if (null == currentPage) {
@@ -121,7 +126,8 @@ public class PageWrapper {
      * @param packageName a {@link java.lang.String} object.
      * @param title a {@link java.lang.String} object.
      * @return a Page object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
+     * TODO
      */
     public Page changeUrlByTitle(String packageName, String title) throws PageInitializationException {
 
@@ -170,17 +176,15 @@ public class PageWrapper {
      * @param title TODO
      * @return
      */
-    private Class<?> getPageClass(String packageName, String title) {
+    private Class<?> getPageClass(final String packageName, String title) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        Set<Class<?>> allClasses = new HashSet<>();
+        final Set<Class<?>> allClasses = new HashSet<>();
         try {
-            ClassPath.from(loader)
-                    .getAllClasses()
-                    .stream()
-                    .filter((info) -> (info.getName().startsWith(packageName + ".")))
-                    .forEach((info) -> {
-                        allClasses.add(info.load());
-                    });
+            for (ClassPath.ClassInfo info: ClassPath.from(loader).getAllClasses()) {
+                if (info.getName().startsWith(packageName + ".")) {
+                    allClasses.add(info.load());
+                }
+            }
         } catch (IOException ex) {
             log.warn("Failed to shape class info set", ex);
         }
@@ -205,11 +209,13 @@ public class PageWrapper {
     }
 
     /**
-     * Run constructor of specified page class and put its instance into static {@link #currentPage} variable
+     * Run constructor of specified page class and put its instance into static
+     * {@link #currentPage} variable
      *
      * @param page page class
      * @return initialized page
-     * @throws PageInitializationException if failed to execute corresponding page constructor
+     * @throws PageInitializationException if failed to execute corresponding
+     * page constructor
      */
     private Page bootstrapPage(Class<?> page) throws PageInitializationException {
         if (page != null) {
