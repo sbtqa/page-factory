@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.String.format;
 import java.util.Arrays;
 import java.util.Map;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -563,7 +562,7 @@ public abstract class Page {
                 return found;
             }
         }
-        throw new ElementNotFoundException(format("Couldn't find element '%s' in '%s'", title, blockPath));
+        throw new ElementNotFoundException(String.format("Couldn't find element '%s' in '%s'", title, blockPath));
     }
 
     /**
@@ -658,12 +657,12 @@ public abstract class Page {
         try {
             List<HtmlElement> blocks = Core.findBlocks(blockPath, this, true);
             if (blocks.isEmpty()) {
-                throw new java.util.NoSuchElementException(format("Couldn't find block '%s' on a page '%s'",
+                throw new java.util.NoSuchElementException(String.format("Couldn't find block '%s' on a page '%s'",
                         blockPath, this.getTitle()));
             }
             return blocks.get(0);
         } catch (IllegalAccessException ex) {
-            throw new FactoryRuntimeException(format("Internal error during attempt to find block '%s'", blockPath), ex);
+            throw new FactoryRuntimeException(String.format("Internal error during attempt to find block '%s'", blockPath), ex);
         }
     }
 
@@ -678,7 +677,7 @@ public abstract class Page {
         try {
             return Core.findBlocks(blockPath, this, false);
         } catch (IllegalAccessException ex) {
-            throw new FactoryRuntimeException(format("Internal error during attempt to find a block '%s'", blockPath), ex);
+            throw new FactoryRuntimeException(String.format("Internal error during attempt to find a block '%s'", blockPath), ex);
         }
     }
 
@@ -721,13 +720,13 @@ public abstract class Page {
                     }
                     break;
                 } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    throw new FactoryRuntimeException(format("Failed to execute method '%s' in the following block: '%s'",
+                    throw new FactoryRuntimeException(String.format("Failed to execute method '%s' in the following block: '%s'",
                             actionTitle, blockPath), e);
                 }
             }
         }
 
-        throw new NoSuchMethodException(format("There is no '%s' method in block '%s'", actionTitle, blockPath));
+        throw new NoSuchMethodException(String.format("There is no '%s' method in block '%s'", actionTitle, blockPath));
     }
 
     /**
@@ -797,7 +796,7 @@ public abstract class Page {
             }
         }
 
-        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
+        throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
     }
 
     /**
@@ -816,7 +815,7 @@ public abstract class Page {
                 return (T) Core.getElementByField(this, field);
             }
         }
-        throw new ElementNotFoundException(format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
+        throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
     }
 
     /**
@@ -1028,11 +1027,11 @@ public abstract class Page {
                         return (List<T>) field.get(context);
                     } catch (IllegalAccessException e) {
                         throw new FactoryRuntimeException(
-                                format("Internal error during attempt to find list '%s'", listTitle), e);
+                                String.format("Internal error during attempt to find list '%s'", listTitle), e);
                     }
                 }
             }
-            throw new ElementNotFoundException(format("Couldn't find elements list '%s' on page '%s'", listTitle, PageFactory.getInstance().getCurrentPageTitle()));
+            throw new ElementNotFoundException(String.format("Couldn't find elements list '%s' on page '%s'", listTitle, PageFactory.getInstance().getCurrentPageTitle()));
         }
 
         /**
@@ -1058,11 +1057,11 @@ public abstract class Page {
                         // Since we explicitly set the field to be accessible, this exception is unexpected.
                         // It might mean that we try to get field in context of an object it doesn't belong to
                         throw new FactoryRuntimeException(
-                                format("Internal error during attempt to find element '%s' in block '%s'",
+                                String.format("Internal error during attempt to find element '%s' in block '%s'",
                                         elementTitle, block.getName()), iae);
                     } catch (ClassCastException cce) {
                         throw new ElementDescriptionException(
-                                format("Element '%s' was found in block '%s', but it's type is incorrect."
+                                String.format("Element '%s' was found in block '%s', but it's type is incorrect."
                                         + "Requested '%s', but got '%s'",
                                         elementTitle, block.getName(), type.getName(), f.getType()), cce);
                     }
