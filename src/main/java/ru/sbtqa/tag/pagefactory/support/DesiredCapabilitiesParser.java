@@ -29,7 +29,7 @@ public class DesiredCapabilitiesParser {
         Set<String> propKeys = Props.getProps().stringPropertyNames();
         List<String> capabilitiesFromProps = new ArrayList<>();
 
-        for (String prop: propKeys) {
+        for (String prop : propKeys) {
             if (prop.startsWith(capsPrefix)) {
                 capabilitiesFromProps.add(prop);
             }
@@ -37,7 +37,7 @@ public class DesiredCapabilitiesParser {
 
         final Map<String, Object> options = new HashMap<>();
 
-        for (String rawCapabilityKey: capabilitiesFromProps) {
+        for (String rawCapabilityKey : capabilitiesFromProps) {
 
             String capability = rawCapabilityKey.substring(capsPrefix.length());
 
@@ -53,7 +53,7 @@ public class DesiredCapabilitiesParser {
                         String[] arrayOfStrings = Props.get(rawCapabilityKey).split(",");
                         final List<String> listOfStrings = new ArrayList<>();
 
-                        for (String item: arrayOfStrings) {
+                        for (String item : arrayOfStrings) {
                             listOfStrings.add(item.trim());
                         }
 
@@ -67,7 +67,7 @@ public class DesiredCapabilitiesParser {
                         final Map<String, Object> dictionary = new HashMap<>();
                         String[] dictRows = Props.get(rawCapabilityKey).split(",");
 
-                        for (String row: dictRows) {
+                        for (String row : dictRows) {
                             String[] keyVal = row.split("=>");
                             dictionary.put(keyVal[0], keyVal[1].trim());
                         }

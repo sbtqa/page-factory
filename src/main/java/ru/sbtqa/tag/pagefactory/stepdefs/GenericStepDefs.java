@@ -10,44 +10,53 @@ import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
-import ru.yandex.qatools.htmlelements.element.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import ru.yandex.qatools.htmlelements.element.Button;
+import ru.yandex.qatools.htmlelements.element.CheckBox;
+import ru.yandex.qatools.htmlelements.element.HtmlElement;
+import ru.yandex.qatools.htmlelements.element.Image;
+import ru.yandex.qatools.htmlelements.element.Link;
+import ru.yandex.qatools.htmlelements.element.Radio;
+import ru.yandex.qatools.htmlelements.element.Table;
+import ru.yandex.qatools.htmlelements.element.TextBlock;
+import ru.yandex.qatools.htmlelements.element.TextInput;
 
 /**
- * Basic step definitions, that should be available on every project
- * Notations used in this class:
- * Block - a class that extends {@link HtmlElement} and has {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle}
- * annotation
- * Action - a method with {@link ru.sbtqa.tag.pagefactory.annotations.ActionTitle} annotation in page object
- * List - list of {@link WebElement}'s with {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation on page
+ * Basic step definitions, that should be available on every project Notations
+ * used in this class: Block - a class that extends {@link HtmlElement} and has
+ * {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation Action -
+ * a method with {@link ru.sbtqa.tag.pagefactory.annotations.ActionTitle}
+ * annotation in page object List - list of {@link WebElement}'s with
+ * {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation on page
  * object
  * <p>
- * To pass a Cucumber {@link cucumber.api.DataTable} as a parameter to method, supply a table in the following format
- * after a step ini feature:
+ * To pass a Cucumber {@link cucumber.api.DataTable} as a parameter to method,
+ * supply a table in the following format after a step ini feature:
  * <p>
- * | header 1| header 2 |
- * | value 1 | value 2  |
+ * | header 1| header 2 | | value 1 | value 2 |
  * <p>
- * This table will be converted to a {@link cucumber.api.DataTable} object. First line is not enforced to be a header.
+ * This table will be converted to a {@link cucumber.api.DataTable} object.
+ * First line is not enforced to be a header.
  * <p>
- * To pass a list as parameter, use flattened table as follows:
- * | value 1 |
- * } value 2 |
+ * To pass a list as parameter, use flattened table as follows: | value 1 | }
+ * value 2 |
  *
- * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber documentation</a>
+ * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber
+ * documentation</a>
  */
 public class GenericStepDefs {
 
     /**
-     * Execute action with no parameters inside block element
-     * User|he keywords are optional
+     * Execute action with no parameters inside block element User|he keywords
+     * are optional
      *
      * @param block path or name of the block
      * @param action title of the action to execute
      * @throws PageInitializationException if current page is not initialized
-     * @throws NoSuchMethodException if corresponding method doesn't exist in specified block
+     * @throws NoSuchMethodException if corresponding method doesn't exist in
+     * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
     @And("userActionInBlockNoParams")
@@ -57,14 +66,15 @@ public class GenericStepDefs {
     }
 
     /**
-     * Execute action with parameters taken from specified {@link DataTable} inside block element
-     * User|he keywords are optional
+     * Execute action with parameters taken from specified {@link DataTable}
+     * inside block element User|he keywords are optional
      *
      * @param block path or name of the block
      * @param action title of the action to execute
      * @param dataTable table of parameters
      * @throws PageInitializationException if current page is not initialized
-     * @throws NoSuchMethodException if corresponding method doesn't exist in specified block
+     * @throws NoSuchMethodException if corresponding method doesn't exist in
+     * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
     @And("userActionInBlockTableParam")
@@ -73,32 +83,33 @@ public class GenericStepDefs {
     }
 
     /**
-     * Execute action with one parameter inside block element
-     * User|he keywords are optional
+     * Execute action with one parameter inside block element User|he keywords
+     * are optional
      *
      * @param block path or name of the block
      * @param action title of the action to execute
      * @param param parameter
      * @throws PageInitializationException if current page is not initialized
-     * @throws NoSuchMethodException if corresponding method doesn't exist in specified block
+     * @throws NoSuchMethodException if corresponding method doesn't exist in
+     * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-
     @And("userActionInBlockOneParam")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, param);
     }
 
     /**
-     * Execute action with two parameters inside block element
-     * User|he keywords are optional
+     * Execute action with two parameters inside block element User|he keywords
+     * are optional
      *
      * @param block path or name of the block
      * @param action title of the action to execute
      * @param param1 first parameter
      * @param param2 second parameter
      * @throws PageInitializationException if current page is not initialized
-     * @throws NoSuchMethodException if corresponding method doesn't exist in specified block
+     * @throws NoSuchMethodException if corresponding method doesn't exist in
+     * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
     @And("userActionInBlockTwoParams")
@@ -107,13 +118,15 @@ public class GenericStepDefs {
     }
 
     /**
-     * Find element inside given block. Element name itself is a parameter, and defines type of the element to search for
-     * User|he keywords are optional
+     * Find element inside given block. Element name itself is a parameter, and
+     * defines type of the element to search for User|he keywords are optional
      *
      * @param block path or name of the block
-     * @param elementType type of the searched element. Could be one of Yandex element types types
+     * @param elementType type of the searched element. Could be one of Yandex
+     * element types types
      * @param elementTitle title of the element to search
-     * @throws PageException if current page is not initialized, or element wasn't found
+     * @throws PageException if current page is not initialized, or element
+     * wasn't found
      */
     @And("findElementInBlock")
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
@@ -162,12 +175,14 @@ public class GenericStepDefs {
     }
 
     /**
-     * Find element with given value in specified list
-     * User|he keywords are optional
+     * Find element with given value in specified list User|he keywords are
+     * optional
      *
      * @param listTitle title of the list to search for
-     * @param value required value of the element. for text elements value is being checked via getText() method
-     * @throws PageException if page wasn't initialized of required list wasn't found
+     * @param value required value of the element. for text elements value is
+     * being checked via getText() method
+     * @throws PageException if page wasn't initialized of required list wasn't
+     * found
      */
     @And("findElementInList")
     public void findElementInList(String listTitle, String value) throws PageException {
@@ -184,8 +199,8 @@ public class GenericStepDefs {
     }
 
     /**
-     * Initialize a page with corresponding title (defined via {@link ru.sbtqa.tag.pagefactory.annotations.PageEntry}
-     * annotation)
+     * Initialize a page with corresponding title (defined via
+     * {@link ru.sbtqa.tag.pagefactory.annotations.PageEntry} annotation)
      * User|he keywords are optional
      *
      * @param title of the page to initialize
@@ -202,8 +217,7 @@ public class GenericStepDefs {
     }
 
     /**
-     * Execute action with no parameters
-     * User|he keywords are optional
+     * Execute action with no parameters User|he keywords are optional
      *
      * @param action title of the action to execute
      * @throws PageInitializationException if current page is not initialized
@@ -215,8 +229,7 @@ public class GenericStepDefs {
     }
 
     /**
-     * Execute action with one parameter
-     * User|he keywords are optional
+     * Execute action with one parameter User|he keywords are optional
      *
      * @param action title of the action to execute
      * @param param parameter
@@ -229,8 +242,7 @@ public class GenericStepDefs {
     }
 
     /**
-     * Execute action with two parameters
-     * User|he keywords are optional
+     * Execute action with two parameters User|he keywords are optional
      *
      * @param action title of the action to execute
      * @param param1 first parameter
@@ -244,8 +256,7 @@ public class GenericStepDefs {
     }
 
     /**
-     * Execute action with three parameters
-     * User|he keywords are optional
+     * Execute action with three parameters User|he keywords are optional
      *
      * @param action title of the action to execute
      * @param param1 first parameter
@@ -289,8 +300,8 @@ public class GenericStepDefs {
     }
 
     /**
-     * Execute action with parameters taken from list
-     * User|he keywords are optional
+     * Execute action with parameters taken from list User|he keywords are
+     * optional
      *
      * @param action title of the action to execute
      * @param list parameters list
@@ -303,8 +314,8 @@ public class GenericStepDefs {
     }
 
     /**
-     * Open a copy for current page in a new browser tab
-     * User|he keywords are optional
+     * Open a copy for current page in a new browser tab User|he keywords are
+     * optional
      */
     @And("openCopyPage")
     public void openCopyPage() {
@@ -340,7 +351,7 @@ public class GenericStepDefs {
     }
 
     /**
-     * Close current browser tab and open  a tab with given name
+     * Close current browser tab and open a tab with given name
      *
      * @param title title of the page to open
      */
@@ -367,8 +378,10 @@ public class GenericStepDefs {
     /**
      * Initialize a page with corresponding URL
      *
-     * @param url value of the {@link ru.sbtqa.tag.pagefactory.annotations.PageEntry#url} to search for
-     * @throws PageInitializationException if page with corresponding URL is absent or couldn't be initialized
+     * @param url value of the
+     * {@link ru.sbtqa.tag.pagefactory.annotations.PageEntry#url} to search for
+     * @throws PageInitializationException if page with corresponding URL is
+     * absent or couldn't be initialized
      */
     @And("goToPageByUrl")
     public void goToPageByUrl(String url) throws PageInitializationException {

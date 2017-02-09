@@ -1,6 +1,5 @@
 package ru.sbtqa.tag.pagefactory;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -20,7 +19,7 @@ import ru.sbtqa.tag.qautils.properties.Props;
 
 public class PageWrapper {
 
-    private static final Logger log = LoggerFactory.getLogger(PageWrapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PageWrapper.class);
 
     private String currentPageTitle;
     private Page currentPage;
@@ -146,7 +145,7 @@ public class PageWrapper {
                     String finalUrl = currentUrl.getProtocol() + "://" + currentUrl.getAuthority() + getUrlPrefix() + ((PageEntry) annotation).url();
                     PageFactory.getWebDriver().navigate().to(finalUrl);
                 } catch (MalformedURLException ex) {
-                    log.error("Failed to get current url", ex);
+                    LOG.error("Failed to get current url", ex);
                 }
             }
 
@@ -186,7 +185,7 @@ public class PageWrapper {
                 }
             }
         } catch (IOException ex) {
-            log.warn("Failed to shape class info set", ex);
+            LOG.warn("Failed to shape class info set", ex);
         }
 
         for (Class<?> page : allClasses) {
@@ -197,7 +196,7 @@ public class PageWrapper {
                 try {
                     pageTitle = (String) FieldUtils.readStaticField(page, "title", true);
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    log.debug("Failed to read {} becase it is not page object", pageTitle, ex);
+                    LOG.debug("Failed to read {} becase it is not page object", pageTitle, ex);
                 }
             }
             if (pageTitle != null && pageTitle.equals(title)) {
