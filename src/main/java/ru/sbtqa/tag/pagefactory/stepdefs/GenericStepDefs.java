@@ -12,9 +12,11 @@ import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.DirectionException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
+import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 
 import ru.yandex.qatools.htmlelements.element.Button;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
@@ -405,9 +407,10 @@ public class GenericStepDefs {
      * @param direction direction to swipe
      * @param text text on page to swipe to
      * @throws DirectionException if specified unsupported direction
+     * @throws SwipeException if the text is not found or swipe depth is reached
      */
     @And("^пользователь свайпает экран \"(.*?)\" до текста \"(.*?)\"$")
-    public void swipeToText(String direction, String text) throws DirectionException {
+    public void swipeToText(String direction, String text) throws DirectionException, SwipeException {
 	switch (direction.toUpperCase()) {
 	    case "ВНИЗ":
 		MobileExtension.swipeToText(DirectionStrategy.DOWN, text);

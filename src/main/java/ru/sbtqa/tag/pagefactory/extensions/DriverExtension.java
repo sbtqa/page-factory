@@ -17,7 +17,7 @@ import ru.sbtqa.tag.qautils.managers.DateManager;
 
 public class DriverExtension {
 
-    private static final Logger log = LoggerFactory.getLogger(DriverExtension.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DriverExtension.class);
 
     /**
      * Wait until element present
@@ -71,9 +71,9 @@ public class DriverExtension {
             new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds() / 2).
                     until(ExpectedConditions.visibilityOf(webElement));
         } catch (Exception | AssertionError e) {
-            log.debug("Element {} does not become visible after timeout", webElement, e);
+            LOG.debug("Element {} does not become visible after timeout", webElement, e);
             PageFactory.getDriver().navigate().refresh();
-            log.debug("Page refreshed");
+            LOG.debug("Page refreshed");
             new WebDriverWait(PageFactory.getDriver(), PageFactory.getTimeOutInSeconds()).
                     until(ExpectedConditions.visibilityOf(webElement));
         }
@@ -120,7 +120,7 @@ public class DriverExtension {
                     return;
                 }
             } catch (NoSuchElementException | StaleElementReferenceException e) {
-                log.debug("There is no element {} in dom", webElement, e);
+                LOG.debug("There is no element {} in dom", webElement, e);
                 return;
             }
             sleep(1);
@@ -154,7 +154,7 @@ public class DriverExtension {
                     return;
                 }
             } catch (Exception e) {
-                log.debug("Target element still not enable", e);
+                LOG.debug("Target element still not enable", e);
             }
 
         }
@@ -203,7 +203,7 @@ public class DriverExtension {
                 }
                 return;
             } catch (Exception e) {
-                log.debug("Alert has not appeared yet", e);
+                LOG.debug("Alert has not appeared yet", e);
             }
             sleep(1);
         }
@@ -224,7 +224,7 @@ public class DriverExtension {
                     .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), '" + text + "')]")));
             return true;
         } catch (TimeoutException e) {
-            log.debug("Element with text {} is not located on page", text, e);
+            LOG.debug("Element with text {} is not located on page", text, e);
             return false;
         }
     }
@@ -237,7 +237,7 @@ public class DriverExtension {
         try {
             Thread.sleep(sec * 1000L);
         } catch (InterruptedException e) {
-            log.warn("Error while thread is sleeping", e);
+            LOG.warn("Error while thread is sleeping", e);
             Thread.currentThread().interrupt();
         }
     }
