@@ -16,9 +16,9 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
-public class MblDriver {
+public class TagMobileDriver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MblDriver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TagMobileDriver.class);
 
     private static AppiumDriver<AndroidElement> mobileDriver;
 
@@ -38,14 +38,9 @@ public class MblDriver {
     }
 
     private static void createDriver() {
-	File appDir = new File(System.getProperty("user.dir"), "app");
-	File app = new File(appDir, Props.get("appium.app.name"));
-	LOG.info("Absolute path to app is {}", app.getAbsolutePath());
-
 	DesiredCapabilities capabilities = new DesiredCapabilities();
 	capabilities.setCapability("deviceName", Props.get("appium.device.name"));
 	capabilities.setCapability("platformVersion", Props.get("appium.device.platform"));
-	capabilities.setCapability("app", app.getAbsolutePath());
 	capabilities.setCapability("appPackage", Props.get("appium.app.package"));
 	capabilities.setCapability("appActivity", Props.get("appium.app.activity"));
 	capabilities.setCapability("autoGrantPermissions", "true");

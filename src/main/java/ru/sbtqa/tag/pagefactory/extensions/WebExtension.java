@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.exceptions.GetValueException;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementValueException;
 import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
 import static ru.sbtqa.tag.pagefactory.extensions.DriverExtension.waitUntilElementAppearsInDom;
 import ru.sbtqa.tag.qautils.managers.DateManager;
@@ -22,14 +22,14 @@ public class WebExtension {
      *
      * @param webElement TODO
      * @return text of element
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.GetValueException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementValueException TODO
      */
-    public static String getElementValue(WebElement webElement) throws GetValueException {
+    public static String getElementValue(WebElement webElement) throws ElementValueException {
 	String elementValue = "Cannot parse element";
 	String elementId = webElement.getAttribute("id");
 
 	if (elementId == null) {
-	    throw new GetValueException("Getting value is not support in element without id");
+	    throw new ElementValueException("Getting value is not support in element without id");
 	}
 
 	WebElement possibleTextMatcher = PageFactory.getWebDriver().findElement(By.xpath("//*[@id='" + elementId + "']/.."));

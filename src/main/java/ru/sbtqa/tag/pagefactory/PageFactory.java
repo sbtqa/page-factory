@@ -9,8 +9,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.pagefactory.FieldDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.pagefactory.drivers.MblDriver;
-import ru.sbtqa.tag.pagefactory.drivers.WbDriver;
+import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
+import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
@@ -44,9 +44,9 @@ public class PageFactory {
     public static WebDriver getDriver() {
         switch (getEnvironment()) {
             case WEB:
-                return WbDriver.getDriver();
+                return TagWebDriver.getDriver();
             case MOBILE:
-                return MblDriver.getDriver();
+                return TagMobileDriver.getDriver();
             default:
                 throw new FactoryRuntimeException("Failed to get driver");
         }
@@ -55,10 +55,10 @@ public class PageFactory {
     public static void dispose() {
         switch (getEnvironment()) {
             case WEB:
-                WbDriver.dispose();
+                TagWebDriver.dispose();
                 break;
             case MOBILE:
-                MblDriver.dispose();
+                TagMobileDriver.dispose();
                 break;
             default:
                 throw new FactoryRuntimeException("Failed to dispose");

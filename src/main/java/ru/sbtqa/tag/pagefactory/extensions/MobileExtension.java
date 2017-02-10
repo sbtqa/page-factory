@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 
@@ -16,6 +17,10 @@ public class MobileExtension {
     private static final Logger LOG = LoggerFactory.getLogger(MobileExtension.class);
     private static final int DEFAULT_SWIPE_TIME = 3000;
     private static final int DEFAULT_SWIPE_DEPTH = 256;
+    private static final double INDENT_BOTTOM = 0.80;
+    private static final double INDENT_TOP = 0.20;
+    private static final double INDENT_LEFT = 0.30;
+    private static final double INDENT_RIGHT = 0.70;
 
     /**
      * Swipe element to direction
@@ -73,22 +78,22 @@ public class MobileExtension {
 	switch (direction) {
 	    case DOWN:
 		startx = endx = size.width / 2;
-		starty = (int) (size.height * 0.80);
-		endy = (int) (size.height * 0.20);
+		starty = (int) (size.height * INDENT_BOTTOM);
+		endy = (int) (size.height * INDENT_TOP);
 		break;
 	    case UP:
 		startx = endx = size.width / 2;
-		starty = (int) (size.height * 0.20);
-		endy = (int) (size.height * 0.80);
+		starty = (int) (size.height * INDENT_TOP);
+		endy = (int) (size.height * INDENT_BOTTOM);
 		break;
 	    case RIGHT:
-		startx = (int) (size.width * 0.70);
-		endx = (int) (size.width * 0.30);
+		startx = (int) (size.width * INDENT_RIGHT);
+		endx = (int) (size.width * INDENT_LEFT);
 		starty = endy = size.height / 2;
 		break;
 	    case LEFT:
-		startx = (int) (size.width * 0.30);
-		endx = (int) (size.width * 0.70);
+		startx = (int) (size.width * INDENT_LEFT);
+		endx = (int) (size.width * INDENT_RIGHT);
 		starty = endy = size.height / 2;
 		break;
 	    default:
@@ -101,15 +106,15 @@ public class MobileExtension {
 	PageFactory.getMobileDriver().swipe(x + startx, y + starty, x + endx, y + endy, time);
     }
 
-    public static void swipeToText(DirectionStrategy direction, String text) { 
+    public static void swipeToText(DirectionStrategy direction, String text) throws SwipeException { 
 	swipeToText(direction, text, MatchStrategy.EXACT);
     }
     
-    public static void swipeToText(DirectionStrategy direction, String text, MatchStrategy strategy) { 
+    public static void swipeToText(DirectionStrategy direction, String text, MatchStrategy strategy) throws SwipeException { 
 	swipeToText(direction, text, MatchStrategy.EXACT, DEFAULT_SWIPE_DEPTH);
     }
     
-    public static void swipeToText(DirectionStrategy direction, String text, MatchStrategy strategy, int depth) {
+    public static void swipeToText(DirectionStrategy direction, String text, MatchStrategy strategy, int depth) throws SwipeException {
 	for (int depthCounter = 0; depthCounter < depth; depthCounter++) {
 	    String oldPageSource = PageFactory.getDriver().getPageSource();
 	    switch (strategy) {
@@ -130,10 +135,10 @@ public class MobileExtension {
 	    swipe(direction);
 
 	    if (PageFactory.getDriver().getPageSource().equals(oldPageSource)) {
-		throw new RuntimeException("swipe fail");
+		throw new SwipeException("Swiping limit is reached. Text not found");
 	    }
 	}
 
-	throw new RuntimeException("blablbalbabab");
+	throw new SwipeException("Swiping depth is reached. Text not found");
     }
 }

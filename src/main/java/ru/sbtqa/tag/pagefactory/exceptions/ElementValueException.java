@@ -1,12 +1,12 @@
 package ru.sbtqa.tag.pagefactory.exceptions;
 
-public class GetValueException extends Exception {
+public class ElementValueException extends Exception {
 
     /**
      *
      * @param e a {@link java.lang.Throwable} object.
      */
-    public GetValueException(Throwable e) {
+    public ElementValueException(Throwable e) {
         super(e);
     }
 
@@ -15,7 +15,7 @@ public class GetValueException extends Exception {
      * @param message a {@link java.lang.String} object.
      * @param e a {@link java.lang.Throwable} object.
      */
-    public GetValueException(String message, Throwable e) {
+    public ElementValueException(String message, Throwable e) {
         super(message, e);
     }
 
@@ -23,7 +23,7 @@ public class GetValueException extends Exception {
      *
      * @param message a {@link java.lang.String} object.
      */
-    public GetValueException(String message) {
+    public ElementValueException(String message) {
         super(message);
     }
 
