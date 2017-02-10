@@ -162,17 +162,16 @@ public class WbDriver {
         }
 
         Set<String> windowHandlesSet = webDriver.getWindowHandles();
-        try {
-            if (windowHandlesSet.size() > 1) {
-                windowHandlesSet.
-                      forEach((winHandle) -> {
-                          webDriver.switchTo().window(winHandle);
-                          ((JavascriptExecutor) webDriver).executeScript(
-                                "var objWin = window.self;"
-                                + "objWin.open('','_self','');"
-                                + "objWin.close();");
-                      });
-            }
+        try { 
+            if (windowHandlesSet.size() > 1) { 
+                for (String winHandle : windowHandlesSet) { 
+                    webDriver.switchTo().window(winHandle); 
+                    ((JavascriptExecutor) webDriver).executeScript( 
+                            "var objWin = window.self;" 
+                                    + "objWin.open('','_self','');" 
+                                    + "objWin.close();"); 
+                } 
+            } 
         } catch (Exception e) {
             log.warn("Failed to kill all of the iexplore windows", e);
         }

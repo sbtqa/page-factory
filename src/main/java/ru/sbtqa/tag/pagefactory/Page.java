@@ -1,10 +1,26 @@
 package ru.sbtqa.tag.pagefactory;
 
+import static java.lang.String.format;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.InvalidElementStateException;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
@@ -12,8 +28,18 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.pagefactory.annotations.*;
-import ru.sbtqa.tag.pagefactory.exceptions.*;
+import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
+import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
+import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
+import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
+import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
+import ru.sbtqa.tag.pagefactory.annotations.ValidationRule;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException;
+import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
 import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
@@ -24,15 +50,6 @@ import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.*;
-
-import static java.lang.String.format;
 
 /**
  * Base page object class. Contains basic actions with elements, search methods
@@ -106,7 +123,7 @@ public abstract class Page {
             DriverExtension.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
         } catch (NoSuchElementException | WaitException e) {
             LOG.warn("Failed to find element by title {}", elementTitle, e);
-            webElement = DriverExtensions.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
+            webElement = DriverExtension.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
         clickWebElement(webElement);
     }
@@ -328,7 +345,7 @@ public abstract class Page {
     @ActionTitle("modal.window.with.text.appears")
     public void assertModalWindowAppears(String text) throws WaitException {
         try {
-            String popupHandle = WebExtension.findNewWindowHandle(Stash.getValue("beforeClickHandles"));
+            String popupHandle = WebExtension.findNewWindowHandle((Set<String>)Stash.getValue("beforeClickHandles"));
             if (null != popupHandle && !popupHandle.isEmpty()) {
                 PageFactory.getWebDriver().switchTo().window(popupHandle);
             }

@@ -2,6 +2,8 @@ package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -15,9 +17,6 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 import ru.yandex.qatools.htmlelements.element.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Basic step definitions, that should be available on every project
@@ -394,7 +393,7 @@ public class GenericStepDefs {
      * @param text text on page to swipe to
      * @throws DirectionException if specified unsupported direction
      */
-    @И("^пользователь свайпает экран \"(.*?)\" до текста \"(.*?)\"$")
+    @And("^пользователь свайпает экран \"(.*?)\" до текста \"(.*?)\"$")
     public void swipeToText(String direction, String text) throws DirectionException {
 	switch (direction.toUpperCase()) {
 	    case "ВНИЗ":
