@@ -409,24 +409,9 @@ public class GenericStepDefs {
      * @throws DirectionException if specified unsupported direction
      * @throws SwipeException if the text is not found or swipe depth is reached
      */
-    @And("^пользователь свайпает экран \"(.*?)\" до текста \"(.*?)\"$")
+    @And("swipeToText")
     public void swipeToText(String direction, String text) throws DirectionException, SwipeException {
-	switch (direction.toUpperCase()) {
-	    case "ВНИЗ":
-		MobileExtension.swipeToText(DirectionStrategy.DOWN, text);
-		break;
-	    case "ВВЕРХ":
-		MobileExtension.swipeToText(DirectionStrategy.UP, text);
-		break;
-	    case "ВПРАВО":
-		MobileExtension.swipeToText(DirectionStrategy.RIGHT, text);
-		break;
-	    case "ВЛЕВО":
-		MobileExtension.swipeToText(DirectionStrategy.LEFT, text);
-		break;
-	    default:
-		throw new DirectionException("Failed to swipe to direction '" + direction + "'");
-	}
+        MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
     }
     
     
