@@ -15,6 +15,7 @@ import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 public class MobileExtension {
 
     private static final Logger LOG = LoggerFactory.getLogger(MobileExtension.class);
+    
     private static final int DEFAULT_SWIPE_TIME = 3000;
     private static final int DEFAULT_SWIPE_DEPTH = 256;
     private static final double INDENT_BOTTOM = 0.80;

@@ -14,7 +14,7 @@ import ru.sbtqa.tag.qautils.managers.DateManager;
 
 public class WebExtension {
 
-    private static final Logger log = LoggerFactory.getLogger(WebExtension.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebExtension.class);
 
     /**
      * Get outer element text. Used for get text from checkboxes and radio
@@ -59,9 +59,9 @@ public class WebExtension {
 		}
 		sleep(1);
 	    } catch (Exception | AssertionError e) {
-		log.debug("Page does not become to ready state", e);
+		LOG.debug("Page does not become to ready state", e);
 		PageFactory.getWebDriver().navigate().refresh();
-		log.debug("Page refreshed");
+		LOG.debug("Page refreshed");
 		if ((stopRecursion.length == 0) || (stopRecursion.length > 0 && !stopRecursion[0])) {
 		    waitForPageToLoad(true);
 		}
@@ -157,7 +157,7 @@ public class WebExtension {
 	    js.executeScript("arguments[0].style.border='3px solid red'", webElement);
 	    return style;
 	} catch (Exception e) {
-	    log.warn("Something went wrong with element highlight", e);
+	    LOG.warn("Something went wrong with element highlight", e);
 	    return null;
 	}
     }
@@ -176,7 +176,7 @@ public class WebExtension {
 	    JavascriptExecutor js = (JavascriptExecutor) PageFactory.getWebDriver();
 	    js.executeScript("arguments[0].style.border='" + style + "'", webElement);
 	} catch (Exception e) {
-	    log.debug("Something went wrong with element highlight", e);
+	    LOG.debug("Something went wrong with element highlight", e);
 	}
     }
 
@@ -188,7 +188,7 @@ public class WebExtension {
 	try {
 	    Thread.sleep(sec * 1000L);
 	} catch (InterruptedException e) {
-	    log.warn("Error while thread is sleeping", e);
+	    LOG.warn("Error while thread is sleeping", e);
 	    Thread.currentThread().interrupt();
 	}
     }
