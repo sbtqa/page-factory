@@ -19,7 +19,7 @@ import ru.sbtqa.tag.qautils.managers.DateManager;
 
 public class DriverExtensions {
 
-    private static final Logger log = LoggerFactory.getLogger(DriverExtensions.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DriverExtensions.class);
 
     /**
      * Get outer element text. Used for get text from checkboxes and radio buttons
@@ -100,9 +100,9 @@ public class DriverExtensions {
             new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds() / 2).
                     until(ExpectedConditions.visibilityOf(webElement));
         } catch (Exception | AssertionError e) {
-            log.debug("Element {} does not become visible after timeout", webElement, e);
+            LOG.debug("Element {} does not become visible after timeout", webElement, e);
             PageFactory.getWebDriver().navigate().refresh();
-            log.debug("Page refreshed");
+            LOG.debug("Page refreshed");
             new WebDriverWait(PageFactory.getWebDriver(), PageFactory.getTimeOutInSeconds()).
                     until(ExpectedConditions.visibilityOf(webElement));
         }
@@ -123,9 +123,9 @@ public class DriverExtensions {
                 }
                 sleep(1);
             } catch (Exception | AssertionError e) {
-                log.debug("Page does not become to ready state", e);
+                LOG.debug("Page does not become to ready state", e);
                 PageFactory.getWebDriver().navigate().refresh();
-                log.debug("Page refreshed");
+                LOG.debug("Page refreshed");
                 if ((stopRecursion.length == 0) || (stopRecursion.length > 0 && !stopRecursion[0])) {
                     waitForPageToLoad(true);
                 }
@@ -176,7 +176,7 @@ public class DriverExtensions {
                     return;
                 }
             } catch (NoSuchElementException | StaleElementReferenceException e) {
-                log.debug("There is no element {} in dom", webElement, e);
+                LOG.debug("There is no element {} in dom", webElement, e);
                 return;
             }
             sleep(1);
@@ -246,7 +246,7 @@ public class DriverExtensions {
                     return;
                 }
             } catch (Exception e) {
-                log.debug("Target element still not enable", e);
+                LOG.debug("Target element still not enable", e);
             }
 
         }
@@ -332,7 +332,7 @@ public class DriverExtensions {
                 }
                 return;
             } catch (Exception e) {
-                log.debug("Alert has not appeared yet", e);
+                LOG.debug("Alert has not appeared yet", e);
             }
             sleep(1);
         }
@@ -352,7 +352,7 @@ public class DriverExtensions {
             js.executeScript("arguments[0].style.border='3px solid red'", webElement);
             return style;
         } catch (Exception e) {
-            log.warn("Something went wrong with element highlight", e);
+            LOG.warn("Something went wrong with element highlight", e);
             return null;
         }
     }
@@ -371,7 +371,7 @@ public class DriverExtensions {
             JavascriptExecutor js = (JavascriptExecutor) PageFactory.getWebDriver();
             js.executeScript("arguments[0].style.border='" + style + "'", webElement);
         } catch (Exception e) {
-            log.debug("Something went wrong with element highlight", e);
+            LOG.debug("Something went wrong with element highlight", e);
         }
     }
 
@@ -387,7 +387,7 @@ public class DriverExtensions {
                     .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), '" + text + "')]")));
             return true;
         } catch (TimeoutException e) {
-            log.debug("Element with text {} is not located on page", text, e);
+            LOG.debug("Element with text {} is not located on page", text, e);
             return false;
         }
     }
@@ -400,7 +400,7 @@ public class DriverExtensions {
         try {
             Thread.sleep(sec * 1000L);
         } catch (InterruptedException e) {
-            log.warn("Error while thread is sleeping", e);
+            LOG.warn("Error while thread is sleeping", e);
             Thread.currentThread().interrupt();
         }
     }

@@ -39,7 +39,7 @@ import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
 public class PageFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(PageFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PageFactory.class);
 
     private static WebDriver webDriver;
     private static Actions actions;
@@ -71,18 +71,18 @@ public class PageFactory {
             }
 
             for (int i = 1; i <= ATTEMPTS_TO_START_WEBDRIVER; i++) {
-                log.info("Attempt #" + i + " to start web driver");
+                LOG.info("Attempt #" + i + " to start web driver");
                 try {
                     createWebDriver();
                     break;
                 } catch (UnreachableBrowserException e) {
-                    log.warn("Failed to create web driver. Attempt number {}", i, e);
+                    LOG.warn("Failed to create web driver. Attempt number {}", i, e);
                     if (null != webDriver) {
                         // Don't dispose when driver is already null, cus it causes new driver creation at Init.getWebDriver()
                         dispose();
                     }
                 } catch (UnsupportedBrowserException e) {
-                    log.error("Failed to create web driver", e);
+                    LOG.error("Failed to create web driver", e);
                     break;
                 }
             }
@@ -156,7 +156,7 @@ public class PageFactory {
                 URL remoreUrl = new URL("http://" + Props.get("webdriver.remote.host") + ":4444/wd/hub");
                 setWebDriver(new RemoteWebDriver(remoreUrl, capabilities));
             } catch (MalformedURLException e) {
-                log.error("Can not parse remote url. Check webdriver.remote.host property");
+                LOG.error("Can not parse remote url. Check webdriver.remote.host property");
             }
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
@@ -169,14 +169,14 @@ public class PageFactory {
      */
     public static void dispose() {
         try {
-            log.info("Checking any alert opened");
+            LOG.info("Checking any alert opened");
             WebDriverWait alertAwaiter = new WebDriverWait(webDriver, 2);
             alertAwaiter.until(ExpectedConditions.alertIsPresent());
             Alert alert = webDriver.switchTo().alert();
-            log.info("Got an alert: " + alert.getText() + "\n Closing it.");
+            LOG.info("Got an alert: " + alert.getText() + "\n Closing it.");
             alert.dismiss();
         } catch (WebDriverException e) {
-            log.debug("No alert opened. Closing webdriver.", e);
+            LOG.debug("No alert opened. Closing webdriver.", e);
         }
 
         Set<String> windowHandlesSet = webDriver.getWindowHandles();
@@ -186,12 +186,12 @@ public class PageFactory {
                     webDriver.switchTo().window(winHandle);
                     ((JavascriptExecutor) webDriver).executeScript(
                             "var objWin = window.self;"
-                                    + "objWin.open('','_self','');"
-                                    + "objWin.close();");
+                            + "objWin.open('','_self','');"
+                            + "objWin.close();");
                 }
             }
         } catch (Exception e) {
-            log.warn("Failed to kill all of the iexplore windows", e);
+            LOG.warn("Failed to kill all of the iexplore windows", e);
         }
 
         try {
@@ -204,7 +204,7 @@ public class PageFactory {
                 webDriver.quit();
             }
         } catch (WebDriverException | IOException | InterruptedException e) {
-            log.warn("Failed to quit web driver", e);
+            LOG.warn("Failed to quit web driver", e);
         } finally {
             try {
                 //TODO take out into a separate method
@@ -224,7 +224,7 @@ public class PageFactory {
                     }
                 }
             } catch (IOException | InterruptedException e) {
-                log.warn("Failed to wait for browser processes finish", e);
+                LOG.warn("Failed to wait for browser processes finish", e);
             }
         }
 

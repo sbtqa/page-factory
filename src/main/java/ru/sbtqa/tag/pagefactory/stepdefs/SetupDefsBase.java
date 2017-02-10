@@ -26,7 +26,7 @@ import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 public class SetupDefsBase {
 
-    private static final Logger log = LoggerFactory.getLogger(SetupDefsBase.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetupDefsBase.class);
 
     @Before()
     public void setUp() {
@@ -34,9 +34,9 @@ public class SetupDefsBase {
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
             PropertyConfigurator.configure(path);
-            log.info("Log4j proprties were picked up on the path " + path);
+            LOG.info("Log4j proprties were picked up on the path " + path);
         } else {
-            log.warn("There is no log4j.properties on the path " + path);
+            LOG.warn("There is no log4j.properties on the path " + path);
         }
 
         try {
@@ -48,7 +48,7 @@ public class SetupDefsBase {
                 }
             }
         } catch (Exception e) {
-            log.debug("Failed to kill one of task to kill", e);
+            LOG.debug("Failed to kill one of task to kill", e);
         }
 
         Reflections reflections;
@@ -62,7 +62,7 @@ public class SetupDefsBase {
             try {
                 allClasses.add(Class.forName(clazz));
             } catch (ClassNotFoundException e) {
-                log.warn("Cannot add all classes to set from package storage", e);
+                LOG.warn("Cannot add all classes to set from package storage", e);
             }
         }
 
@@ -89,7 +89,7 @@ public class SetupDefsBase {
                     }
                 }
             }
-            
+
             PageFactory.getPageRepository().put((Class<? extends Page>) page, fieldsMap);
         }
     }
