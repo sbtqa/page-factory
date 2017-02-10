@@ -53,7 +53,7 @@ public class SetupStepDefs {
 
         PageFactory.getDriver();
         PageFactory.getInstance();
-        
+
         Reflections reflections;
         reflections = new Reflections(PageFactory.getPagesPackage());
 
@@ -90,7 +90,7 @@ public class SetupStepDefs {
                     }
                 }
             }
-            
+
             PageFactory.getPageRepository().put((Class<? extends Page>) page, fieldsMap);
         }
     }

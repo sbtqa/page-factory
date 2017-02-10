@@ -403,7 +403,8 @@ public class GenericStepDefs {
     }
     
     /**
-     * Swipe to text
+     * Swipe until text is visible
+     * 
      * @param direction direction to swipe
      * @param text text on page to swipe to
      * @throws DirectionException if specified unsupported direction

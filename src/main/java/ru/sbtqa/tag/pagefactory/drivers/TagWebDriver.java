@@ -211,8 +211,6 @@ public class TagWebDriver {
         }
 
         setWebDriver(null);
-        //TODO
-//        PageFactoryCore = null;
     }
 
     /**

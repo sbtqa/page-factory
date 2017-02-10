@@ -357,7 +357,7 @@ public abstract class Page {
     @ActionTitle("modal.window.with.text.appears")
     public void assertModalWindowAppears(String text) throws WaitException {
         try {
-            String popupHandle = WebExtension.findNewWindowHandle((Set<String>)Stash.getValue("beforeClickHandles"));
+            String popupHandle = WebExtension.findNewWindowHandle((Set<String>) Stash.getValue("beforeClickHandles"));
             if (null != popupHandle && !popupHandle.isEmpty()) {
                 PageFactory.getWebDriver().switchTo().window(popupHandle);
             }
