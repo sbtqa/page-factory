@@ -919,7 +919,7 @@ public abstract class Page {
             for (ActionTitle action : actionList) {
                 String actionValue = action.value();
                 try {
-                    I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.cucumberFeature.getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
+                    I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.getFeature().getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
                     actionValue = i18n.get(action.value());
                 } catch (I18NRuntimeException e) {
                     LOG.debug("There is no bundle for translation class. Leave it as is", e);
