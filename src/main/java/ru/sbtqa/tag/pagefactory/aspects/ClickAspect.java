@@ -27,12 +27,11 @@ public class ClickAspect {
     @Around("clickMethod()")
     public void doAroundClick(ProceedingJoinPoint joinPoint) throws Throwable {
         WebElement targetWebElement;
-        TypifiedElement typifiedElement;
 
         Class<? extends Page> elementRedirect;
         if (joinPoint.getTarget() instanceof TypifiedElement) {
             targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
-            typifiedElement = (TypifiedElement) joinPoint.getTarget();
+            TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
             elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(typifiedElement);
         } else if (joinPoint.getTarget() instanceof WebElement) {
             targetWebElement = (WebElement) joinPoint.getTarget();

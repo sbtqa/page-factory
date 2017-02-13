@@ -63,7 +63,7 @@ public class TagWebDriver {
                 } catch (UnreachableBrowserException e) {
                     log.warn("Failed to create web driver. Attempt number {}", i, e);
                     if (null != webDriver) {
-                        // Don't dispose when driver is already null, cus it causes new driver creation at Init.getWebDriver()
+                        // Don't dispose when driver is already null, cuz it causes new driver creation at Init.getWebDriver()
                         dispose();
                     }
                 } catch (UnsupportedBrowserException e) {

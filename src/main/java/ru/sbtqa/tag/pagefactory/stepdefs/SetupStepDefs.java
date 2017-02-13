@@ -26,7 +26,7 @@ import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 public class SetupStepDefs {
 
-    private static final Logger log = LoggerFactory.getLogger(SetupStepDefs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetupStepDefs.class);
 
     @Before()
     public void setUp() {
@@ -34,9 +34,9 @@ public class SetupStepDefs {
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
             PropertyConfigurator.configure(path);
-            log.info("Log4j proprties were picked up on the path " + path);
+            LOG.info("Log4j proprties were picked up on the path " + path);
         } else {
-            log.warn("There is no log4j.properties on the path " + path);
+            LOG.warn("There is no log4j.properties on the path " + path);
         }
 
         try {
@@ -48,7 +48,7 @@ public class SetupStepDefs {
                 }
             }
         } catch (Exception e) {
-            log.debug("Failed to kill one of task to kill", e);
+            LOG.debug("Failed to kill one of task to kill", e);
         }
 
         PageFactory.getDriver();
@@ -63,7 +63,7 @@ public class SetupStepDefs {
             try {
                 allClasses.add(Class.forName(clazz));
             } catch (ClassNotFoundException e) {
-                log.warn("Cannot add all classes to set from package storage", e);
+                LOG.warn("Cannot add all classes to set from package storage", e);
             }
         }
 

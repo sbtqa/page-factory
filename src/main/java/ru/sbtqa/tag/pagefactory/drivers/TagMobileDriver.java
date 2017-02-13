@@ -56,7 +56,7 @@ public class TagMobileDriver {
 	}
 
 	setAspectsDisabled(true);
-	LOG.info("Aspect disabled");
+	LOG.debug("Aspect disabled");
 	mobileDriver = new AndroidDriver<>(url, capabilities);
 	LOG.info("Mobile driver created {}", mobileDriver);
     }

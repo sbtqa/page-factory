@@ -32,6 +32,9 @@ public class PageFactory {
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
     private static final String BROWSER_NAME = Props.get("browser.name");
+    
+    private static final String ENVIRONMENT_WEB = "web";
+    private static final String ENVIRONMENT_MOBILE = "mobile";
 
     public static WebDriver getWebDriver() {
         return getDriver();
@@ -156,9 +159,9 @@ public class PageFactory {
 
     public static Environment getEnvironment() {
         switch (ENVIRONMENT) {
-            case "web":
+            case ENVIRONMENT_WEB:
                 return Environment.WEB;
-            case "mobile":
+            case ENVIRONMENT_MOBILE:
                 return Environment.MOBILE;
             default:
                 throw new FactoryRuntimeException("Environment '" + ENVIRONMENT + "' is not supported");
