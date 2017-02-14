@@ -9,7 +9,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.exceptions.DirectionException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
@@ -407,11 +406,10 @@ public class GenericStepDefs {
      * 
      * @param direction direction to swipe
      * @param text text on page to swipe to
-     * @throws DirectionException if specified unsupported direction
      * @throws SwipeException if the text is not found or swipe depth is reached
      */
     @And("swipeToText")
-    public void swipeToText(String direction, String text) throws DirectionException, SwipeException {
+    public void swipeToText(String direction, String text) throws SwipeException {
         MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
     }
     

@@ -7,7 +7,6 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
@@ -28,8 +27,9 @@ public class MobileExtension {
      *
      * @param element element to swipe
      * @param direction swipe direction
+     * @throws SwipeException if there is an error while swiping
      */
-    public static void swipe(WebElement element, DirectionStrategy direction) {
+    public static void swipe(WebElement element, DirectionStrategy direction) throws SwipeException {
 	swipe(element, direction, DEFAULT_SWIPE_TIME);
     }
 
@@ -39,8 +39,9 @@ public class MobileExtension {
      * @param element taget element to swipe
      * @param direction swipe direction
      * @param time how fast element should be swiped
+     * @throws SwipeException if there is an error while swiping
      */
-    public static void swipe(WebElement element, DirectionStrategy direction, int time) {
+    public static void swipe(WebElement element, DirectionStrategy direction, int time) throws SwipeException {
 	Dimension size = element.getSize();
 	Point location = element.getLocation();
 	swipe(location, size, direction, time);
@@ -50,8 +51,9 @@ public class MobileExtension {
      * Swipe screen to direction
      *
      * @param direction swipe direction
+     * @throws SwipeException if there is an error while swiping
      */
-    public static void swipe(DirectionStrategy direction) {
+    public static void swipe(DirectionStrategy direction) throws SwipeException {
 	swipe(direction, DEFAULT_SWIPE_TIME);
     }
 
@@ -60,8 +62,9 @@ public class MobileExtension {
      *
      * @param direction swipe direction
      * @param time how fast screen should be swiped
+     * @throws SwipeException if there is an error while swiping
      */
-    public static void swipe(DirectionStrategy direction, int time) {
+    public static void swipe(DirectionStrategy direction, int time) throws SwipeException {
 	Dimension size = PageFactory.getMobileDriver().manage().window().getSize();
 	swipe(new Point(0, 0), size, direction, time);
     }
@@ -73,8 +76,9 @@ public class MobileExtension {
      * @param size width and height of the element
      * @param direction swipe direction
      * @param time how fast screen should be swiped
+     * @throws SwipeException if there is an error while swiping
      */
-    private static void swipe(Point location, Dimension size, DirectionStrategy direction, int time) {
+    private static void swipe(Point location, Dimension size, DirectionStrategy direction, int time) throws SwipeException {
 	int startx, endx, starty, endy;
 	switch (direction) {
 	    case DOWN:
@@ -98,7 +102,7 @@ public class MobileExtension {
 		starty = endy = size.height / 2;
 		break;
 	    default:
-		throw new FactoryRuntimeException("Failed to swipe to direction " + direction);
+		throw new SwipeException("Failed to swipe to direction " + direction);
 	}
 
 	int x = location.getX();
@@ -107,14 +111,38 @@ public class MobileExtension {
 	PageFactory.getMobileDriver().swipe(x + startx, y + starty, x + endx, y + endy, time);
     }
 
+    /**
+     * Swipe until the text becomes visible
+     * 
+     * @param direction swipe direction
+     * @param text text on page to swipe to
+     * @throws SwipeException if there is an error while swiping
+     */
     public static void swipeToText(DirectionStrategy direction, String text) throws SwipeException { 
 	swipeToText(direction, text, MatchStrategy.EXACT);
     }
     
+    /**
+     * Swipe until the text becomes visible
+     * 
+     * @param direction swipe direction
+     * @param text text on page to swipe to
+     * @param strategy contains or exact
+     * @throws SwipeException if there is an error while swiping
+     */
     public static void swipeToText(DirectionStrategy direction, String text, MatchStrategy strategy) throws SwipeException { 
 	swipeToText(direction, text, MatchStrategy.EXACT, DEFAULT_SWIPE_DEPTH);
     }
     
+    /**
+     * Swipe until the text becomes visible
+     * 
+     * @param direction swipe direction
+     * @param text text on page to swipe to
+     * @param strategy contains or exact
+     * @param depth the amount of swipe action
+     * @throws SwipeException if there is an error while swiping
+     */
     public static void swipeToText(DirectionStrategy direction, String text, MatchStrategy strategy, int depth) throws SwipeException {
 	for (int depthCounter = 0; depthCounter < depth; depthCounter++) {
 	    String oldPageSource = PageFactory.getDriver().getPageSource();
