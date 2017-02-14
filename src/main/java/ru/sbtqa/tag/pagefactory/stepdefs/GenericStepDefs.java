@@ -2,6 +2,8 @@ package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -9,10 +11,12 @@ import org.openqa.selenium.WebElement;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
+import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
+import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
+import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 
-import java.util.ArrayList;
-import java.util.List;
 import ru.yandex.qatools.htmlelements.element.Button;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
@@ -208,7 +212,8 @@ public class GenericStepDefs {
      */
     @And("openPage")
     public void openPage(String title) throws PageInitializationException {
-        if (!PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
+        if (PageFactory.getEnvironment() != Environment.MOBILE && 
+	      !PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
             for (String windowHandle : PageFactory.getWebDriver().getWindowHandles()) {
                 PageFactory.getWebDriver().switchTo().window(windowHandle);
             }
@@ -395,4 +400,18 @@ public class GenericStepDefs {
     public void reInitPage() {
         PageFactory.getWebDriver().navigate().refresh();
     }
+    
+    /**
+     * Swipe until text is visible
+     * 
+     * @param direction direction to swipe
+     * @param text text on page to swipe to
+     * @throws SwipeException if the text is not found or swipe depth is reached
+     */
+    @And("swipeToText")
+    public void swipeToText(String direction, String text) throws SwipeException {
+        MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
+    }
+    
+    
 }

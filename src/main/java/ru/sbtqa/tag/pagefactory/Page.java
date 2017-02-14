@@ -1,24 +1,47 @@
 package ru.sbtqa.tag.pagefactory;
 
+import static java.lang.String.format;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidElementStateException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.datajack.Stash;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
+import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
+import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
+import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
+import ru.sbtqa.tag.pagefactory.annotations.ValidationRule;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException;
+import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
+import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
+import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
@@ -27,28 +50,6 @@ import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import java.util.Arrays;
-import java.util.Map;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.slf4j.Logger;
-import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
-import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
-import ru.sbtqa.tag.pagefactory.annotations.ValidationRule;
-import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
-import ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException;
-import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
-import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 
 /**
  * Base page object class. Contains basic actions with elements, search methods
@@ -122,10 +123,10 @@ public abstract class Page {
         WebElement webElement;
         try {
             webElement = getElementByTitle(elementTitle);
-            DriverExtensions.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
+            DriverExtension.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
         } catch (NoSuchElementException | WaitException e) {
             LOG.warn("Failed to find element by title {}", elementTitle, e);
-            webElement = DriverExtensions.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
+            webElement = DriverExtension.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
         clickWebElement(webElement);
     }
@@ -139,7 +140,7 @@ public abstract class Page {
     @ActionTitle("press.key")
     public void pressKey(String keyName) {
         Keys key = Keys.valueOf(keyName.toUpperCase());
-        Actions actions = new Actions(PageFactory.getWebDriver());
+        Actions actions = PageFactory.getActions();
         actions.sendKeys(key).perform();
         Core.addToReport(keyName, " is pressed");
     }
@@ -156,7 +157,7 @@ public abstract class Page {
     @ActionTitle("press.key")
     public void pressKey(String keyName, String elementTitle) throws PageException {
         Keys key = Keys.valueOf(keyName.toUpperCase());
-        Actions actions = new Actions(PageFactory.getWebDriver());
+        Actions actions = PageFactory.getActions();
         actions.moveToElement(getElementByTitle(elementTitle));
         actions.click();
         actions.sendKeys(key);
@@ -265,7 +266,7 @@ public abstract class Page {
                 + " content.push(options[i].text)"
                 + "}"
                 + "return content";
-        List<String> options = (ArrayList<String>) ((JavascriptExecutor) PageFactory.getWebDriver()).
+        List<String> options = (ArrayList<String>) ((JavascriptExecutor) PageFactory.getDriver()).
                 executeScript(jsString, webElement);
 
         boolean isSelectionMade = false;
@@ -304,7 +305,7 @@ public abstract class Page {
      */
     @ActionTitle("accept.alert")
     public void acceptAlert(String text) throws WaitException {
-        DriverExtensions.interactWithAlert(text, true);
+        DriverExtension.interactWithAlert(text, true);
     }
 
     /**
@@ -316,7 +317,7 @@ public abstract class Page {
      */
     @ActionTitle("dismiss.alert")
     public void dismissAlert(String text) throws WaitException {
-        DriverExtensions.interactWithAlert(text, false);
+        DriverExtension.interactWithAlert(text, false);
     }
 
     /**
@@ -329,7 +330,7 @@ public abstract class Page {
      */
     @ActionTitle("text.appears.on.page")
     public void assertTextAppears(String text) throws WaitException {
-        DriverExtensions.waitForTextPresenceInPageSource(text, true);
+        WebExtension.waitForTextPresenceInPageSource(text, true);
     }
 
     /**
@@ -340,7 +341,7 @@ public abstract class Page {
      */
     @ActionTitle("text.absent.on.page")
     public void assertTextIsNotPresent(String text) {
-        DriverExtensions.waitForTextPresenceInPageSource(text, false);
+        WebExtension.waitForTextPresenceInPageSource(text, false);
     }
 
     /**
@@ -356,7 +357,7 @@ public abstract class Page {
     @ActionTitle("modal.window.with.text.appears")
     public void assertModalWindowAppears(String text) throws WaitException {
         try {
-            String popupHandle = DriverExtensions.findNewWindowHandle((Set<String>) Stash.getValue("beforeClickHandles"));
+            String popupHandle = WebExtension.findNewWindowHandle((Set<String>) Stash.getValue("beforeClickHandles"));
             if (null != popupHandle && !popupHandle.isEmpty()) {
                 PageFactory.getWebDriver().switchTo().window(popupHandle);
             }
@@ -533,7 +534,7 @@ public abstract class Page {
         ,
             @ActionTitle("check.text.visible")})
     public void checkElementWithTextIsPresent(String text) {
-        if (!DriverExtensions.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
+        if (!DriverExtension.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
             throw new AutotestError("Text '" + text + "' is not present");
         }
     }
