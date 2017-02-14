@@ -31,7 +31,7 @@ public class PageFactory {
     private static final String INITIAL_URL = Props.get("driver.url");
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
-    private static final String BROWSER_NAME = Props.get("browser.name");
+    private static final String BROWSER_NAME = Props.get("webdriver.browser.name");
     
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";

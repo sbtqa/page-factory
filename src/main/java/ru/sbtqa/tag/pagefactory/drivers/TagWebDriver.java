@@ -41,7 +41,7 @@ public class TagWebDriver {
     private static final Logger log = LoggerFactory.getLogger(TagWebDriver.class);
 
     private static WebDriver webDriver;
-    private static final int ATTEMPTS_TO_START_WEBDRIVER = Integer.parseInt(Props.get("driver.create.attempts", "3"));
+    private static final int ATTEMPTS_TO_START_WEBDRIVER = Integer.parseInt(Props.get("webdriver.create.attempts", "3"));
     private static BrowserMobProxy proxy;
     private static final String WEBDRIVER_PATH = "src/test/resources/webdrivers/";
 
@@ -81,7 +81,7 @@ public class TagWebDriver {
         if (Props.get("webdriver.remote.host").isEmpty()) {
 
             //Local proxy available on local webdriver instances only
-            if (!Props.get("proxy.enable").isEmpty()) {
+            if (!Props.get(".webdriver.proxy.enable").isEmpty()) {
                 setProxy(new BrowserMobProxyServer());
                 proxy.start(0);
                 Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
@@ -178,7 +178,7 @@ public class TagWebDriver {
 
         try {
             if ("IE".equals(PageFactory.getBrowserName())
-                  && Boolean.parseBoolean(Props.get("browser.ie.killOnDispose", "true"))) {
+                  && Boolean.parseBoolean(Props.get("webdriver.browser.ie.killOnDispose", "true"))) {
                 // Kill IE by Windows means instead of webdriver.quit()
                 Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
                 Runtime.getRuntime().exec("taskkill /f /im IEDriverServer.exe").waitFor();
