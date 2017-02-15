@@ -1,6 +1,5 @@
 #mobile or web
 driver.environment = mobile
-driver.url = http://127.0.0.1:4723/wd/hub
 
 #path to page objects
 page.package = ru.sbtqa.tag.mobilefactory.entries
@@ -20,6 +19,7 @@ tasks.to.kill = iexplorer,chrome
 
 #IN CASE OF MOBILE
 #parameters for mobile driver create
+appium.url = http://127.0.0.1:4723/wd/hub
 appium.device.name = Android Emulator
 appium.device.platform = 6.0
 appium.app.package = com.android.settings
@@ -29,7 +29,8 @@ appium.app.activity = .Settings
 #parameters for web driver create
 webdriver.browser.name = Chrome
 webdriver.browser.ie.killOnDispose = true
-webdriver.url.prefix = "/prefix/"
+webdriver.starter.url = "http://google.com"
 webdriver.create.attempts = 3
-webdriver.remote.host = http://remote.host.com
 webdriver.proxy.enable = false
+#optional. In case of using remote WebDriver
+webdriver.url = http://127.0.0.1:4444/wd/hub
