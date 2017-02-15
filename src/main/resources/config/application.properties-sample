@@ -1,21 +1,25 @@
+#COMMON BLOCK
 #mobile or web
 driver.environment = mobile
 
 #path to page objects
 page.package = ru.sbtqa.tag.mobilefactory.entries
+
 #default wait timeout in milliseconds
 page.load.timeout = 60000
 
+#optional. false by default
 video.enabled = false
 video.path.dest = /tmp/video
 video.path.temp = /tmp/video
 video.highlight.enabled = false
 
-#driver or raw
+#optional. driver or raw. Raw by default
 screenshot.strategy = driver
 
-#tasks to kill before test (ONLY FOR WINDOWS)
+#optional. tasks to kill before test (ONLY FOR WINDOWS)
 tasks.to.kill = iexplorer,chrome
+
 
 #IN CASE OF MOBILE
 #parameters for mobile driver create
@@ -25,15 +29,23 @@ appium.device.platform = 6.0
 appium.app.package = com.android.settings
 appium.app.activity = .Settings
 
+
 #IN CASE OF WEB
 #parameters for web driver create
 webdriver.browser.name = Chrome
+webdriver.starter.url = http://google.com
+
+#optional. The number of start  attempts webdriver. 3 by default
+webdriver.create.attempts = 3
+
+#optional. False by default
+webdriver.proxy.enabled = false
+
 #optional. If path is not specified webdrivers will be searched in system PATH
 webdriver.drivers.path = src/test/resources/webdrivers/
-#kill ie browser process after test (ONLY FOR WINDOWS)
-webdriver.browser.ie.killOnDispose = true
-webdriver.starter.url = http://google.com
-webdriver.create.attempts = 3
-webdriver.proxy.enabled = false
+
 #optional. In case of using remote WebDriver
 webdriver.url = http://127.0.0.1:4444/wd/hub
+
+#optional. kill ie browser process after test (ONLY FOR WINDOWS)
+webdriver.browser.ie.killOnDispose = true
