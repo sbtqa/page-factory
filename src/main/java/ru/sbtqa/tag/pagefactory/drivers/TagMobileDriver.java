@@ -25,7 +25,7 @@ public class TagMobileDriver {
     private static final String APPIUM_DEVICE_PLATFORM = Props.get("appium.device.platform");
     private static final String APPIUM_APP_PACKAGE = Props.get("appium.app.package");
     private static final String APPIUM_APP_ACTIVITY = Props.get("appium.app.activity");
-    private static final String VIDEO_ENABLE = Props.get("video.enable", "false");
+    private static final String VIDEO_ENABLE = Props.get("video.enabled", "false");
     
     public static AppiumDriver<AndroidElement> getDriver() {
 	if (Environment.MOBILE != PageFactory.getEnvironment()) {
@@ -57,7 +57,7 @@ public class TagMobileDriver {
 	try {
 	    url = new URL(APPIUM_URL);
 	} catch (MalformedURLException e) {
-	    throw new FactoryRuntimeException("Appium url is malformed", e);
+	    throw new FactoryRuntimeException("Could not parse appium url. Check 'appium.url' property", e);
 	}
 
 	setAspectsDisabled(true);

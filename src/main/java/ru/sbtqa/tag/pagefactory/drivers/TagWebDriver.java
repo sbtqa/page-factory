@@ -46,9 +46,9 @@ public class TagWebDriver {
     private static final String WEBDRIVER_PATH = "src/test/resources/webdrivers/";
     private static final String WEBDRIVER_URL = Props.get("webdriver.url");
     private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
-    private static final String WEBDRIVER_PROXY_ENABLE = Props.get("webdriver.proxy.enable", "false");
+    private static final String WEBDRIVER_PROXY_ENABLE = Props.get("webdriver.proxy.enabled", "false");
     private static final String WEBDRIVER_BROWSER_IE_KILLONDISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
-    private static final String VIDEO_ENABLE = Props.get("video.enable", "false");
+    private static final String VIDEO_ENABLE = Props.get("video.enabled", "false");
     
 
     public static org.openqa.selenium.WebDriver getDriver() {
@@ -147,7 +147,7 @@ public class TagWebDriver {
                 URL remoteUrl = new URL(WEBDRIVER_URL);
                 setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
             } catch (MalformedURLException e) {
-                log.error("Can not parse remote url. Check webdriver.url property");
+                log.error("Could not parse remote url. Check 'webdriver.url' property");
             }
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);

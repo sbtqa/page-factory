@@ -6,10 +6,10 @@ page.package = ru.sbtqa.tag.mobilefactory.entries
 #default wait timeout in milliseconds
 page.load.timeout = 60000
 
-video.enable = false
+video.enabled = false
 video.path.dest = /tmp/video
 video.path.temp = /tmp/video
-video.highlight.enable = false
+video.highlight.enabled = false
 
 #driver or raw
 screenshot.strategy = driver
@@ -31,6 +31,6 @@ webdriver.browser.name = Chrome
 webdriver.browser.ie.killOnDispose = true
 webdriver.starter.url = "http://google.com"
 webdriver.create.attempts = 3
-webdriver.proxy.enable = false
+webdriver.proxy.enabled = false
 #optional. In case of using remote WebDriver
 webdriver.url = http://127.0.0.1:4444/wd/hub

@@ -41,7 +41,7 @@ public class ClickAspect {
         }
 
         String elementHighlightStyle = null;
-        boolean isVideoHighlightEnable = Boolean.valueOf(Props.get("video.highlight.enable"));
+        boolean isVideoHighlightEnable = Boolean.valueOf(Props.get("video.highlight.enabled"));
         if (isVideoHighlightEnable) {
             elementHighlightStyle = WebExtension.highlightElementOn(targetWebElement);
         }
