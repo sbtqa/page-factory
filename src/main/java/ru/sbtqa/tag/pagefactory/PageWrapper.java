@@ -24,7 +24,6 @@ public class PageWrapper {
     private Page currentPage;
 
     private final String pagesPackage;
-    private static final String COLON_TWO_SLASHES = "://";
 
     /**
      *
@@ -142,7 +141,7 @@ public class PageWrapper {
             } else {
                 try {
                     URL currentUrl = new URL(PageFactory.getWebDriver().getCurrentUrl());
-                    String finalUrl = currentUrl.getProtocol() + COLON_TWO_SLASHES + currentUrl.getAuthority() + ((PageEntry) annotation).url();
+                    String finalUrl = new URL(currentUrl.getProtocol(), currentUrl.getHost(), currentUrl.getPort(), ((PageEntry) annotation).url()).toString();
                     PageFactory.getWebDriver().navigate().to(finalUrl);
                 } catch (MalformedURLException ex) {
                     LOG.error("Failed to get current url", ex);
