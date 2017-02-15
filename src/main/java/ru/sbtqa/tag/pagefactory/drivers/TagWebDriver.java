@@ -50,6 +50,7 @@ public class TagWebDriver {
     private static final String WEBDRIVER_PROXY_ENABLED = Props.get("webdriver.proxy.enabled", "false");
     private static final String WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
     private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name").toLowerCase().equals("ie")
+            // Normalize it for ie shorten name (ie)
             ? BrowserType.IE : Props.get("webdriver.browser.name").toLowerCase();
 
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
