@@ -46,9 +46,9 @@ public class TagWebDriver {
     private static final String WEBDRIVER_PATH = "src/test/resources/webdrivers/";
     private static final String WEBDRIVER_URL = Props.get("webdriver.url");
     private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
-    private static final String WEBDRIVER_PROXY_ENABLE = Props.get("webdriver.proxy.enabled", "false");
+    private static final String WEBDRIVER_PROXY_ENABLED = Props.get("webdriver.proxy.enabled", "false");
     private static final String WEBDRIVER_BROWSER_IE_KILLONDISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
-    private static final String VIDEO_ENABLE = Props.get("video.enabled", "false");
+    private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
     
 
     public static org.openqa.selenium.WebDriver getDriver() {
@@ -57,7 +57,7 @@ public class TagWebDriver {
 	}
 	
         if (null == webDriver) {
-            if (Boolean.valueOf(VIDEO_ENABLE)) {
+            if (Boolean.valueOf(VIDEO_ENABLED)) {
                 VideoRecorder.getInstance().startRecording();
             }
 
@@ -87,7 +87,7 @@ public class TagWebDriver {
         if (WEBDRIVER_URL.isEmpty()) {
 
             //Local proxy available on local webdriver instances only
-            if (!WEBDRIVER_PROXY_ENABLE.isEmpty()) {
+            if (!WEBDRIVER_PROXY_ENABLED.isEmpty()) {
                 setProxy(new BrowserMobProxyServer());
                 proxy.start(0);
                 Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);

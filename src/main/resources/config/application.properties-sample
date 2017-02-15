@@ -14,7 +14,7 @@ video.highlight.enabled = false
 #driver or raw
 screenshot.strategy = driver
 
-#tasks to kill before test
+#tasks to kill before test (ONLY FOR WINDOWS)
 tasks.to.kill = iexplorer,chrome
 
 #IN CASE OF MOBILE
@@ -28,6 +28,7 @@ appium.app.activity = .Settings
 #IN CASE OF WEB
 #parameters for web driver create
 webdriver.browser.name = Chrome
+#kill ie browser process after test (ONLY FOR WINDOWS)
 webdriver.browser.ie.killOnDispose = true
 webdriver.starter.url = "http://google.com"
 webdriver.create.attempts = 3
