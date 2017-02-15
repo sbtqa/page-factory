@@ -4,7 +4,7 @@ driver.url = http://127.0.0.1:4723/wd/hub
 
 #path to page objects
 page.package = ru.sbtqa.tag.mobilefactory.entries
-#default wait timeout
+#default wait timeout in milliseconds
 page.load.timeout = 60000
 
 video.enable = false

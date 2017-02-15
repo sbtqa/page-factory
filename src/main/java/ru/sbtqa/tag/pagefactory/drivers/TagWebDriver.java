@@ -41,9 +41,15 @@ public class TagWebDriver {
     private static final Logger log = LoggerFactory.getLogger(TagWebDriver.class);
 
     private static WebDriver webDriver;
-    private static final int ATTEMPTS_TO_START_WEBDRIVER = Integer.parseInt(Props.get("webdriver.create.attempts", "3"));
     private static BrowserMobProxy proxy;
+    private static final int WEBDRIVER_CREATE_ATTEMPTS = Integer.parseInt(Props.get("webdriver.create.attempts", "3"));
     private static final String WEBDRIVER_PATH = "src/test/resources/webdrivers/";
+    private static final String WEBDRIVER_URL = Props.get("webdriver.url");
+    private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
+    private static final String WEBDRIVER_PROXY_ENABLE = Props.get("webdriver.proxy.enable", "false");
+    private static final String WEBDRIVER_BROWSER_IE_KILLONDISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
+    private static final String VIDEO_ENABLE = Props.get("video.enable", "false");
+    
 
     public static org.openqa.selenium.WebDriver getDriver() {
 	if (Environment.WEB != PageFactory.getEnvironment()) {
@@ -51,11 +57,11 @@ public class TagWebDriver {
 	}
 	
         if (null == webDriver) {
-            if (Boolean.valueOf(Props.get("video.enable"))) {
+            if (Boolean.valueOf(VIDEO_ENABLE)) {
                 VideoRecorder.getInstance().startRecording();
             }
 
-            for (int i = 1; i <= ATTEMPTS_TO_START_WEBDRIVER; i++) {
+            for (int i = 1; i <= WEBDRIVER_CREATE_ATTEMPTS; i++) {
                 log.info("Attempt #" + i + " to start web driver");
                 try {
                     createDriver();
@@ -78,10 +84,10 @@ public class TagWebDriver {
     private static void createDriver() throws UnsupportedBrowserException {
         DesiredCapabilities capabilities = new DesiredCapabilitiesParser().parse();
 
-        if (Props.get("webdriver.remote.host").isEmpty()) {
+        if (WEBDRIVER_URL.isEmpty()) {
 
             //Local proxy available on local webdriver instances only
-            if (!Props.get(".webdriver.proxy.enable").isEmpty()) {
+            if (!WEBDRIVER_PROXY_ENABLE.isEmpty()) {
                 setProxy(new BrowserMobProxyServer());
                 proxy.start(0);
                 Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
@@ -138,15 +144,15 @@ public class TagWebDriver {
                     throw new UnsupportedBrowserException("'" + PageFactory.getBrowserName() + "' is not supported yet");
             }
             try {
-                URL remoreUrl = new URL("http://" + Props.get("webdriver.remote.host") + ":4444/wd/hub");
-                setWebDriver(new RemoteWebDriver(remoreUrl, capabilities));
+                URL remoteUrl = new URL(WEBDRIVER_URL);
+                setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
             } catch (MalformedURLException e) {
-                log.error("Can not parse remote url. Check webdriver.remote.host property");
+                log.error("Can not parse remote url. Check webdriver.url property");
             }
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
         webDriver.manage().window().maximize();
-        webDriver.get(PageFactory.getInitialUrl());
+        webDriver.get(WEBDRIVER_STARTING_URL);
     }
 
     public static void dispose() {
@@ -178,7 +184,7 @@ public class TagWebDriver {
 
         try {
             if ("IE".equals(PageFactory.getBrowserName())
-                  && Boolean.parseBoolean(Props.get("webdriver.browser.ie.killOnDispose", "true"))) {
+                  && Boolean.parseBoolean(WEBDRIVER_BROWSER_IE_KILLONDISPOSE)) {
                 // Kill IE by Windows means instead of webdriver.quit()
                 Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
                 Runtime.getRuntime().exec("taskkill /f /im IEDriverServer.exe").waitFor();
