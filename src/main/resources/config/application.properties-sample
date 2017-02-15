@@ -42,7 +42,7 @@ webdriver.create.attempts = 3
 webdriver.proxy.enabled = false
 
 #optional. If path is not specified webdrivers will be searched in system PATH
-webdriver.drivers.path = src/test/resources/webdrivers/
+webdriver.drivers.path = src/test/resources/webdrivers/chromedriver.exe
 
 #optional. In case of using remote WebDriver
 webdriver.url = http://127.0.0.1:4444/wd/hub
