@@ -47,7 +47,7 @@ public class TagWebDriver {
     private static final String WEBDRIVER_URL = Props.get("webdriver.url");
     private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
     private static final String WEBDRIVER_PROXY_ENABLED = Props.get("webdriver.proxy.enabled", "false");
-    private static final String WEBDRIVER_BROWSER_IE_KILLONDISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
+    private static final String WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
     private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name");
 
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
@@ -105,8 +105,7 @@ public class TagWebDriver {
                     break;
                 case "Chrome":
                     if (!WEBDRIVER_PATH.isEmpty()) {
-                        File chromeDriver = new File(WEBDRIVER_PATH + "chromedriver.exe");
-                        System.setProperty("webdriver.chrome.driver", chromeDriver.getAbsolutePath());
+                        System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
                     } else {
                         LOG.warn("The value of property 'webdriver.drivers.path is not specified."
                                 + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
@@ -118,8 +117,7 @@ public class TagWebDriver {
                     throw new UnsupportedOperationException("Opera browser is not supported yet.");
                 case "IE":
                     if (!WEBDRIVER_PATH.isEmpty()) {
-                        File IEdriver = new File(WEBDRIVER_PATH + "IEDriverServer.exe");
-                        System.setProperty("webdriver.ie.driver", IEdriver.getAbsolutePath());
+                        System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
                     } else {
                         LOG.warn("The value of property 'webdriver.drivers.path is not specified."
                                 + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
@@ -141,8 +139,7 @@ public class TagWebDriver {
                     break;
                 case "Chrome":
                     if (!WEBDRIVER_PATH.isEmpty()) {
-                        File chromeDriver = new File(WEBDRIVER_PATH + "chromedriver.exe");
-                        System.setProperty("webdriver.chrome.driver", chromeDriver.getAbsolutePath());
+                        System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
                     } else {
                         LOG.warn("The value of property 'webdriver.drivers.path is not specified."
                                 + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
@@ -153,8 +150,7 @@ public class TagWebDriver {
                     throw new UnsupportedOperationException("Opera browser supported as Chrome So change config to chrome.");
                 case "IE":
                     if (!WEBDRIVER_PATH.isEmpty()) {
-                        File IEdriver = new File(WEBDRIVER_PATH + "IEDriverServer.exe");
-                        System.setProperty("webdriver.ie.driver", IEdriver.getAbsolutePath());
+                        System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
                     } else {
                         LOG.warn("The value of property 'webdriver.drivers.path is not specified."
                                 + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
@@ -205,7 +201,7 @@ public class TagWebDriver {
 
         try {
             if ("IE".equals(WEBDRIVER_BROWSER_NAME)
-                    && Boolean.parseBoolean(WEBDRIVER_BROWSER_IE_KILLONDISPOSE)) {
+                    && Boolean.parseBoolean(WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE)) {
                 // Kill IE by Windows means instead of webdriver.quit()
                 Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
                 Runtime.getRuntime().exec("taskkill /f /im IEDriverServer.exe").waitFor();
