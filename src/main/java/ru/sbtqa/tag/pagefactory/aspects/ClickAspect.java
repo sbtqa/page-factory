@@ -12,6 +12,7 @@ import org.openqa.selenium.interactions.Actions;
 import ru.sbtqa.tag.datajack.Stash;
 import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
@@ -52,7 +53,7 @@ public class ClickAspect {
 
         if (!PageFactory.isAspectsDisabled()) {
             Actions actions = new Actions(PageFactory.getWebDriver());
-            if ("IE".equals(PageFactory.getBrowserName())) {
+            if ("IE".equals(TagWebDriver.getBrowserName())) {
                 Dimension size = PageFactory.getWebDriver().manage().window().getSize();
                 Point elementLocation = (targetWebElement).getLocation();
                 Dimension elementSize = (targetWebElement).getSize();
@@ -64,7 +65,7 @@ public class ClickAspect {
                 }
             }
 
-            switch (PageFactory.getBrowserName()) {
+            switch (TagWebDriver.getBrowserName()) {
                 case "Chrome":
                 case "IE":
                     actions.moveToElement(targetWebElement);

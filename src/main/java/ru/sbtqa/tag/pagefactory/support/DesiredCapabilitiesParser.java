@@ -10,7 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import static ru.sbtqa.tag.pagefactory.PageFactory.getBrowserName;
+import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
 
 public class DesiredCapabilitiesParser {
@@ -25,7 +25,7 @@ public class DesiredCapabilitiesParser {
 
         capabilities.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 
-        final String capsPrefix = "webdriver." + PageFactory.getBrowserName().toLowerCase() + ".capability.";
+        final String capsPrefix = "webdriver." + TagWebDriver.getBrowserName().toLowerCase() + ".capability.";
         Set<String> propKeys = Props.getProps().stringPropertyNames();
         List<String> capabilitiesFromProps = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class DesiredCapabilitiesParser {
 
             String capability = rawCapabilityKey.substring(capsPrefix.length());
 
-            if (capability.startsWith("options") && "Chrome".equals(getBrowserName())) {
+            if (capability.startsWith("options") && "Chrome".equals(TagWebDriver.getBrowserName())) {
                 // For Chrome options must be parsed and specified as a data structure.
                 // For non-chrome browsers options could be passed as string
                 String optionsCapability = capability.substring("options.".length());

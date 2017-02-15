@@ -30,7 +30,6 @@ public class PageFactory {
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
-    private static final String BROWSER_NAME = Props.get("webdriver.browser.name");
     
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
@@ -97,13 +96,6 @@ public class PageFactory {
             actions = new Actions(getWebDriver());
         }
         return actions;
-    }
-
-    /**
-     * @return the browserName
-     */
-    public static String getBrowserName() {
-        return BROWSER_NAME;
     }
 
     /**

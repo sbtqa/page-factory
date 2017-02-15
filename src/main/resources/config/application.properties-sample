@@ -28,9 +28,10 @@ appium.app.activity = .Settings
 #IN CASE OF WEB
 #parameters for web driver create
 webdriver.browser.name = Chrome
+webdriver.drivers.path = src/test/resources/webdrivers/
 #kill ie browser process after test (ONLY FOR WINDOWS)
 webdriver.browser.ie.killOnDispose = true
-webdriver.starter.url = "http://google.com"
+webdriver.starter.url = http://google.com
 webdriver.create.attempts = 3
 webdriver.proxy.enabled = false
 #optional. In case of using remote WebDriver
