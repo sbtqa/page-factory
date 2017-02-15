@@ -141,7 +141,8 @@ public class PageWrapper {
             } else {
                 try {
                     URL currentUrl = new URL(PageFactory.getWebDriver().getCurrentUrl());
-                    String finalUrl = new URL(currentUrl.getProtocol(), currentUrl.getHost(), currentUrl.getPort(), ((PageEntry) annotation).url()).toString();
+                    String finalUrl = new URL(currentUrl.getProtocol(), currentUrl.getHost(), currentUrl.getPort(),
+                            ((PageEntry) annotation).url()).toString();
                     PageFactory.getWebDriver().navigate().to(finalUrl);
                 } catch (MalformedURLException ex) {
                     LOG.error("Failed to get current url", ex);
