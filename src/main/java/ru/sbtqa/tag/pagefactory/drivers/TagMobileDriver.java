@@ -3,7 +3,6 @@ package ru.sbtqa.tag.pagefactory.drivers;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -21,14 +20,20 @@ public class TagMobileDriver {
     private static final Logger LOG = LoggerFactory.getLogger(TagMobileDriver.class);
 
     private static AppiumDriver<AndroidElement> mobileDriver;
-
+    private static final String APPIUM_URL = Props.get("appium.url");
+    private static final String APPIUM_DEVICE_NAME = Props.get("appium.device.name");
+    private static final String APPIUM_DEVICE_PLATFORM = Props.get("appium.device.platform");
+    private static final String APPIUM_APP_PACKAGE = Props.get("appium.app.package");
+    private static final String APPIUM_APP_ACTIVITY = Props.get("appium.app.activity");
+    private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
+    
     public static AppiumDriver<AndroidElement> getDriver() {
 	if (Environment.MOBILE != PageFactory.getEnvironment()) {
 	    throw new FactoryRuntimeException("Failed to get mobile driver while environment is not mobile");
 	}
 	
 	if (null == mobileDriver) {
-	    if (Boolean.valueOf(Props.get("video.enable"))) {
+	    if (Boolean.valueOf(VIDEO_ENABLED)) {
 		VideoRecorder.getInstance().startRecording();
 	    }
 
@@ -39,10 +44,10 @@ public class TagMobileDriver {
 
     private static void createDriver() {
 	DesiredCapabilities capabilities = new DesiredCapabilities();
-	capabilities.setCapability("deviceName", Props.get("appium.device.name"));
-	capabilities.setCapability("platformVersion", Props.get("appium.device.platform"));
-	capabilities.setCapability("appPackage", Props.get("appium.app.package"));
-	capabilities.setCapability("appActivity", Props.get("appium.app.activity"));
+	capabilities.setCapability("deviceName", APPIUM_DEVICE_NAME);
+	capabilities.setCapability("platformVersion", APPIUM_DEVICE_PLATFORM);
+	capabilities.setCapability("appPackage", APPIUM_APP_PACKAGE);
+	capabilities.setCapability("appActivity", APPIUM_APP_ACTIVITY);
 	capabilities.setCapability("autoGrantPermissions", "true");
 	capabilities.setCapability("unicodeKeyboard", "true");
 	capabilities.setCapability("resetKeyboard", "true");
@@ -50,9 +55,9 @@ public class TagMobileDriver {
 
 	URL url;
 	try {
-	    url = new URL(PageFactory.getInitialUrl());
+	    url = new URL(APPIUM_URL);
 	} catch (MalformedURLException e) {
-	    throw new FactoryRuntimeException("Failed to connect to appium on url " + PageFactory.getInitialUrl(), e);
+	    throw new FactoryRuntimeException("Could not parse appium url. Check 'appium.url' property", e);
 	}
 
 	setAspectsDisabled(true);

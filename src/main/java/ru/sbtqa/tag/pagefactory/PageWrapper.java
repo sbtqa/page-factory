@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
-import ru.sbtqa.tag.qautils.properties.Props;
 
 public class PageWrapper {
 
@@ -142,7 +141,8 @@ public class PageWrapper {
             } else {
                 try {
                     URL currentUrl = new URL(PageFactory.getWebDriver().getCurrentUrl());
-                    String finalUrl = currentUrl.getProtocol() + "://" + currentUrl.getAuthority() + getUrlPrefix() + ((PageEntry) annotation).url();
+                    String finalUrl = new URL(currentUrl.getProtocol(), currentUrl.getHost(), currentUrl.getPort(),
+                            ((PageEntry) annotation).url()).toString();
                     PageFactory.getWebDriver().navigate().to(finalUrl);
                 } catch (MalformedURLException ex) {
                     LOG.error("Failed to get current url", ex);
@@ -153,20 +153,6 @@ public class PageWrapper {
         }
 
         throw new AutotestError("Page " + title + " doesn't have fast URL in PageEntry");
-    }
-
-    /**
-     *
-     * @return
-     */
-    private String getUrlPrefix() {
-        String prefix = Props.get("webdriver.url.prefix");
-        if (!"".equals(prefix)) {
-            return ((prefix.startsWith("/")) ? "" : "/")
-                    + prefix
-                    + ((prefix.endsWith("/")) ? "" : "/");
-        }
-        return "/";
     }
 
     /**

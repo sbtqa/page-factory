@@ -28,10 +28,8 @@ public class PageFactory {
     private static boolean aspectsDisabled = false;
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
-    private static final String INITIAL_URL = Props.get("driver.url");
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
-    private static final String BROWSER_NAME = Props.get("browser.name");
     
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
@@ -101,13 +99,6 @@ public class PageFactory {
     }
 
     /**
-     * @return the browserName
-     */
-    public static String getBrowserName() {
-        return BROWSER_NAME;
-    }
-
-    /**
      * @return the pagesPackage
      */
     public static String getPagesPackage() {
@@ -166,12 +157,5 @@ public class PageFactory {
             default:
                 throw new FactoryRuntimeException("Environment '" + ENVIRONMENT + "' is not supported");
         }
-    }
-
-    /**
-     * @return the INITIAL_URL
-     */
-    public static String getInitialUrl() {
-        return INITIAL_URL;
     }
 }

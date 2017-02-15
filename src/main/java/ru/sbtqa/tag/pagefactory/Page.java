@@ -1,6 +1,5 @@
 package ru.sbtqa.tag.pagefactory;
 
-import static java.lang.String.format;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
