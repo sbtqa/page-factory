@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
-import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Proxy;
@@ -48,14 +47,17 @@ public class TagWebDriver {
     private static final String WEBDRIVER_URL = Props.get("webdriver.url");
     private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
     private static final String WEBDRIVER_PROXY_ENABLED = Props.get("webdriver.proxy.enabled", "false");
-    private static final String WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
+    private static final boolean WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Boolean.parseBoolean(Props.get("webdriver.browser.ie.killOnDispose", "false"));
     private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name").toLowerCase().equals("ie")
             // Normalize it for ie shorten name (ie)
             ? BrowserType.IE : Props.get("webdriver.browser.name").toLowerCase();
+    private static final boolean IS_IE = WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE.toLowerCase())
+            || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
+            || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
 
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
 
-    public static org.openqa.selenium.WebDriver getDriver() {
+    public static WebDriver getDriver() {
         if (Environment.WEB != PageFactory.getEnvironment()) {
             throw new FactoryRuntimeException("Failed to get web driver while environment is not web");
         }
@@ -158,49 +160,31 @@ public class TagWebDriver {
                     webDriver.switchTo().window(winHandle);
                     ((JavascriptExecutor) webDriver).executeScript(
                             "var objWin = window.self;"
-                            + "objWin.open('','_self','');"
-                            + "objWin.close();");
+                                    + "objWin.open('','_self','');"
+                                    + "objWin.close();");
                 }
             }
         } catch (Exception e) {
             LOG.warn("Failed to kill all of the iexplore windows", e);
         }
 
-        try {
-            if ("IE".equals(WEBDRIVER_BROWSER_NAME)
-                    && Boolean.parseBoolean(WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE)) {
-                // Kill IE by Windows means instead of webdriver.quit()
-                Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
-                Runtime.getRuntime().exec("taskkill /f /im IEDriverServer.exe").waitFor();
-            } else {
-                webDriver.quit();
-            }
-        } catch (WebDriverException | IOException | InterruptedException e) {
-            LOG.warn("Failed to quit web driver", e);
-        } finally {
-            try {
-                //TODO take out into a separate method
-                // Wait for processes disappear, this might take a few seconds
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    String brwsrNm = WEBDRIVER_BROWSER_NAME.toLowerCase().trim();
-                    if ("ie".equals(brwsrNm)) {
-                        brwsrNm = "iexplore";
-                    }
-                    int i = 0;
-                    while (i <= 10) {
-                        if (Runtime.getRuntime().exec("tasklist | findstr " + brwsrNm).waitFor() == 0) {
-                            Thread.sleep(1000);
-                        } else {
-                            i = 10;
-                        }
-                    }
-                }
-            } catch (IOException | InterruptedException e) {
-                LOG.warn("Failed to wait for browser processes finish", e);
-            }
+        if (IS_IE && WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE) {
+            killIE();
         }
 
-        setWebDriver(null);
+        try {
+            webDriver.quit();
+        } finally {
+            setWebDriver(null);
+        }
+    }
+
+    private static void killIE() {
+        try {
+            Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
+        } catch (IOException | InterruptedException e) {
+            LOG.warn("Failed to wait for browser processes finish", e);
+        }
     }
 
     /**
