@@ -97,58 +97,48 @@ public class TagWebDriver {
         }
         capabilities.setBrowserName(WEBDRIVER_BROWSER_NAME);
 
-
-        switch (WEBDRIVER_BROWSER_NAME) {
-            case BrowserType.FIREFOX:
-                if (WEBDRIVER_URL.isEmpty()) {
-                    setWebDriver(new FirefoxDriver(capabilities));
-                }
-                break;
-            case BrowserType.SAFARI:
-                if (WEBDRIVER_URL.isEmpty()) {
-                    setWebDriver(new SafariDriver(capabilities));
-                }
-                break;
-            case BrowserType.CHROME:
-                if (!WEBDRIVER_PATH.isEmpty()) {
-                    System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
-                } else {
-                    LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                            + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
-                }
-                if (WEBDRIVER_URL.isEmpty()) {
-                    setWebDriver(new ChromeDriver(capabilities));
-                }
-                break;
-            case BrowserType.IE:
-            case BrowserType.IE_HTA:
-            case BrowserType.IEXPLORE:
-                if (!WEBDRIVER_PATH.isEmpty()) {
-                    System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
-                } else {
-                    LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                            + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
-                }
-                if (WEBDRIVER_URL.isEmpty()) {
-                    setWebDriver(new InternetExplorerDriver(capabilities));
-                }
-                break;
-            default:
-                throw new UnsupportedBrowserException("'" + WEBDRIVER_BROWSER_NAME + "' is not supported yet");
+        if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.FIREFOX.toLowerCase())) {
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new FirefoxDriver(capabilities));
+            }
+        } else if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.SAFARI.toLowerCase())) {
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new SafariDriver(capabilities));
+            }
+        } else if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.CHROME.toLowerCase())) {
+            if (!WEBDRIVER_PATH.isEmpty()) {
+                System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
+            } else {
+                LOG.warn("The value of property 'webdriver.drivers.path is not specified."
+                        + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+            }
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new ChromeDriver(capabilities));
+            }
+        } else if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE.toLowerCase())
+                || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
+                || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase())) {
+            if (!WEBDRIVER_PATH.isEmpty()) {
+                System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
+            } else {
+                LOG.warn("The value of property 'webdriver.drivers.path is not specified."
+                        + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+            }
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new InternetExplorerDriver(capabilities));
+            }
+        } else {
+            throw new UnsupportedBrowserException("'" + WEBDRIVER_BROWSER_NAME + "' is not supported yet");
         }
         if (!WEBDRIVER_URL.isEmpty()) {
-            try {
-                URL remoteUrl = new URL(WEBDRIVER_URL);
-                setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
-            } catch (MalformedURLException e) {
-                LOG.error("Could not parse remote url. Check 'webdriver.url' property", e);
-                throw e;
-            }
+            URL remoteUrl = new URL(WEBDRIVER_URL);
+            setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
         webDriver.manage().window().maximize();
         webDriver.get(WEBDRIVER_STARTING_URL);
     }
+
 
     public static void dispose() {
         try {
