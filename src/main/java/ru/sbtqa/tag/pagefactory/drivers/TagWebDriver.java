@@ -139,7 +139,6 @@ public class TagWebDriver {
         webDriver.get(WEBDRIVER_STARTING_URL);
     }
 
-
     public static void dispose() {
         try {
             LOG.info("Checking any alert opened");
