@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
-import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Proxy;
@@ -18,6 +17,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -47,12 +47,17 @@ public class TagWebDriver {
     private static final String WEBDRIVER_URL = Props.get("webdriver.url");
     private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
     private static final String WEBDRIVER_PROXY_ENABLED = Props.get("webdriver.proxy.enabled", "false");
-    private static final String WEBDRIVER_BROWSER_IE_KILLONDISPOSE = Props.get("webdriver.browser.ie.killOnDispose", "false");
-    private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name");
+    private static final boolean WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Boolean.parseBoolean(Props.get("webdriver.browser.ie.killOnDispose", "false"));
+    private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name").toLowerCase().equals("ie")
+            // Normalize it for ie shorten name (ie)
+            ? BrowserType.IE : Props.get("webdriver.browser.name").toLowerCase();
+    private static final boolean IS_IE = WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE.toLowerCase())
+            || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
+            || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
 
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
 
-    public static org.openqa.selenium.WebDriver getDriver() {
+    public static WebDriver getDriver() {
         if (Environment.WEB != PageFactory.getEnvironment()) {
             throw new FactoryRuntimeException("Failed to get web driver while environment is not web");
         }
@@ -73,7 +78,7 @@ public class TagWebDriver {
                         // Don't dispose when driver is already null, cuz it causes new driver creation at Init.getWebDriver()
                         dispose();
                     }
-                } catch (UnsupportedBrowserException e) {
+                } catch (UnsupportedBrowserException | MalformedURLException e) {
                     LOG.error("Failed to create web driver", e);
                     break;
                 }
@@ -82,94 +87,54 @@ public class TagWebDriver {
         return webDriver;
     }
 
-    private static void createDriver() throws UnsupportedBrowserException {
+    private static void createDriver() throws UnsupportedBrowserException, MalformedURLException {
         DesiredCapabilities capabilities = new DesiredCapabilitiesParser().parse();
 
-        if (WEBDRIVER_URL.isEmpty()) {
+        //Local proxy available on local webdriver instances only
+        if (!WEBDRIVER_PROXY_ENABLED.isEmpty()) {
+            setProxy(new BrowserMobProxyServer());
+            proxy.start(0);
+            Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
+            capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
+        }
+        capabilities.setBrowserName(WEBDRIVER_BROWSER_NAME);
 
-            //Local proxy available on local webdriver instances only
-            if (!WEBDRIVER_PROXY_ENABLED.isEmpty()) {
-                setProxy(new BrowserMobProxyServer());
-                proxy.start(0);
-                Proxy seleniumProxy = ClientUtil.createSeleniumProxy(proxy);
-                capabilities.setCapability(CapabilityType.PROXY, seleniumProxy);
+        if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.FIREFOX.toLowerCase())) {
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new FirefoxDriver(capabilities));
             }
-            switch (WEBDRIVER_BROWSER_NAME) {
-                case "Firefox":
-                    capabilities.setBrowserName("firefox");
-                    setWebDriver(new FirefoxDriver(capabilities));
-                    break;
-                case "Safari":
-                    capabilities.setBrowserName("safari");
-                    setWebDriver(new SafariDriver(capabilities));
-                    break;
-                case "Chrome":
-                    if (!WEBDRIVER_PATH.isEmpty()) {
-                        File chromeDriver = new File(WEBDRIVER_PATH + "chromedriver.exe");
-                        System.setProperty("webdriver.chrome.driver", chromeDriver.getAbsolutePath());
-                    } else {
-                        LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                                + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
-                    }
-                    capabilities.setBrowserName("chrome");
-                    setWebDriver(new ChromeDriver(capabilities));
-                    break;
-                case "Opera":
-                    throw new UnsupportedOperationException("Opera browser is not supported yet.");
-                case "IE":
-                    if (!WEBDRIVER_PATH.isEmpty()) {
-                        File IEdriver = new File(WEBDRIVER_PATH + "IEDriverServer.exe");
-                        System.setProperty("webdriver.ie.driver", IEdriver.getAbsolutePath());
-                    } else {
-                        LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                                + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
-                    }
-                    capabilities.setBrowserName("internet explorer");
-                    setWebDriver(new InternetExplorerDriver(capabilities));
-                    break;
-                default:
-                    throw new UnsupportedBrowserException("'" + WEBDRIVER_BROWSER_NAME + "' is not supported yet");
+        } else if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.SAFARI.toLowerCase())) {
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new SafariDriver(capabilities));
+            }
+        } else if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.CHROME.toLowerCase())) {
+            if (!WEBDRIVER_PATH.isEmpty()) {
+                System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
+            } else {
+                LOG.warn("The value of property 'webdriver.drivers.path is not specified."
+                        + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+            }
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new ChromeDriver(capabilities));
+            }
+        } else if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE.toLowerCase())
+                || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
+                || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase())) {
+            if (!WEBDRIVER_PATH.isEmpty()) {
+                System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
+            } else {
+                LOG.warn("The value of property 'webdriver.drivers.path is not specified."
+                        + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+            }
+            if (WEBDRIVER_URL.isEmpty()) {
+                setWebDriver(new InternetExplorerDriver(capabilities));
             }
         } else {
-
-            switch (WEBDRIVER_BROWSER_NAME) {
-                case "Firefox":
-                    capabilities.setBrowserName("firefox");
-                    break;
-                case "Safari":
-                    capabilities.setBrowserName("safari");
-                    break;
-                case "Chrome":
-                    if (!WEBDRIVER_PATH.isEmpty()) {
-                        File chromeDriver = new File(WEBDRIVER_PATH + "chromedriver.exe");
-                        System.setProperty("webdriver.chrome.driver", chromeDriver.getAbsolutePath());
-                    } else {
-                        LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                                + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
-                    }
-                    capabilities.setBrowserName("chrome");
-                    break;
-                case "Opera":
-                    throw new UnsupportedOperationException("Opera browser supported as Chrome So change config to chrome.");
-                case "IE":
-                    if (!WEBDRIVER_PATH.isEmpty()) {
-                        File IEdriver = new File(WEBDRIVER_PATH + "IEDriverServer.exe");
-                        System.setProperty("webdriver.ie.driver", IEdriver.getAbsolutePath());
-                    } else {
-                        LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                                + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
-                    }
-                    capabilities.setBrowserName("internet explorer");
-                    break;
-                default:
-                    throw new UnsupportedBrowserException("'" + WEBDRIVER_BROWSER_NAME + "' is not supported yet");
-            }
-            try {
-                URL remoteUrl = new URL(WEBDRIVER_URL);
-                setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
-            } catch (MalformedURLException e) {
-                LOG.error("Could not parse remote url. Check 'webdriver.url' property");
-            }
+            throw new UnsupportedBrowserException("'" + WEBDRIVER_BROWSER_NAME + "' is not supported yet");
+        }
+        if (!WEBDRIVER_URL.isEmpty()) {
+            URL remoteUrl = new URL(WEBDRIVER_URL);
+            setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
         webDriver.manage().window().maximize();
@@ -195,49 +160,31 @@ public class TagWebDriver {
                     webDriver.switchTo().window(winHandle);
                     ((JavascriptExecutor) webDriver).executeScript(
                             "var objWin = window.self;"
-                            + "objWin.open('','_self','');"
-                            + "objWin.close();");
+                                    + "objWin.open('','_self','');"
+                                    + "objWin.close();");
                 }
             }
         } catch (Exception e) {
             LOG.warn("Failed to kill all of the iexplore windows", e);
         }
 
-        try {
-            if ("IE".equals(WEBDRIVER_BROWSER_NAME)
-                    && Boolean.parseBoolean(WEBDRIVER_BROWSER_IE_KILLONDISPOSE)) {
-                // Kill IE by Windows means instead of webdriver.quit()
-                Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
-                Runtime.getRuntime().exec("taskkill /f /im IEDriverServer.exe").waitFor();
-            } else {
-                webDriver.quit();
-            }
-        } catch (WebDriverException | IOException | InterruptedException e) {
-            LOG.warn("Failed to quit web driver", e);
-        } finally {
-            try {
-                //TODO take out into a separate method
-                // Wait for processes disappear, this might take a few seconds
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    String brwsrNm = WEBDRIVER_BROWSER_NAME.toLowerCase().trim();
-                    if ("ie".equals(brwsrNm)) {
-                        brwsrNm = "iexplore";
-                    }
-                    int i = 0;
-                    while (i <= 10) {
-                        if (Runtime.getRuntime().exec("tasklist | findstr " + brwsrNm).waitFor() == 0) {
-                            Thread.sleep(1000);
-                        } else {
-                            i = 10;
-                        }
-                    }
-                }
-            } catch (IOException | InterruptedException e) {
-                LOG.warn("Failed to wait for browser processes finish", e);
-            }
+        if (IS_IE && WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE) {
+            killIE();
         }
 
-        setWebDriver(null);
+        try {
+            webDriver.quit();
+        } finally {
+            setWebDriver(null);
+        }
+    }
+
+    private static void killIE() {
+        try {
+            Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
+        } catch (IOException | InterruptedException e) {
+            LOG.warn("Failed to wait for browser processes finish", e);
+        }
     }
 
     /**
