@@ -7,7 +7,7 @@ import ru.yandex.qatools.allure.cucumberjvm.callback.OnFailureCallback;
 
 public class OnFailureScheduler implements OnFailureCallback {
 
-    public static void addVideoParameter(String videoPath) {
+    private void addVideoParameter(String videoPath) {
         ParamsHelper.addParam("Video url", videoPath);
     }
 
