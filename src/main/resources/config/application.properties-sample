@@ -38,8 +38,8 @@ webdriver.starting.url = http://google.com
 #optional. The number of start  attempts webdriver. 3 by default
 webdriver.create.attempts = 3
 
-#optional. False by default
-webdriver.proxy.enabled = false
+#optional
+webdriver.proxy = http://proxy.com:8080
 
 #optional. If path is not specified webdrivers will be searched in system PATH
 webdriver.drivers.path = src/test/resources/webdrivers/chromedriver.exe
