@@ -22,6 +22,8 @@ import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.qautils.reflect.ClassUtilsExt;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
+import ru.yandex.qatools.allure.cucumberjvm.AllureReporter;
+import ru.yandex.qatools.allure.cucumberjvm.callback.OnFailureCallback;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 public class SetupStepDefs {
@@ -30,6 +32,10 @@ public class SetupStepDefs {
 
     @Before()
     public void setUp() {
+        
+        //Apply failure callback
+        AllureReporter.applyFailureCallback(OnFailureCallback.class);
+        
         //try to connect logger property file if exists
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
