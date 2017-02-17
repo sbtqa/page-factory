@@ -33,7 +33,7 @@ appium.app.activity = .Settings
 #IN CASE OF WEB
 #parameters for web driver create
 webdriver.browser.name = Chrome
-webdriver.starter.url = http://google.com
+webdriver.starting.url = http://google.com
 
 #optional. The number of start  attempts webdriver. 3 by default
 webdriver.create.attempts = 3

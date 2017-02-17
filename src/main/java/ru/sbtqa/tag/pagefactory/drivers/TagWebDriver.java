@@ -46,7 +46,7 @@ public class TagWebDriver {
     private static final String WEBDRIVER_PATH = Props.get("webdriver.drivers.path");
     private static final String WEBDRIVER_URL = Props.get("webdriver.url");
     private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
-    private static final String WEBDRIVER_PROXY_ENABLED = Props.get("webdriver.proxy.enabled", "false");
+    private static final String WEBDRIVER_PROXY_ENABLED = Props.get("webdriver.proxy.enabled");
     private static final boolean WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Boolean.parseBoolean(Props.get("webdriver.browser.ie.killOnDispose", "false"));
     private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name").toLowerCase().equals("ie")
             // Normalize it for ie shorten name (ie)
