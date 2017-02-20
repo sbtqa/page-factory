@@ -7,10 +7,6 @@ import ru.yandex.qatools.allure.cucumberjvm.callback.OnFailureCallback;
 
 public class OnFailureScheduler implements OnFailureCallback {
 
-    private void addVideoParameter(String videoPath) {
-        ParamsHelper.addParam("Video url", videoPath);
-    }
-
     private void takeScreenshot() {
         String screenshotStrategy = Props.get("screenshot.strategy", "raw");
 
@@ -26,14 +22,7 @@ public class OnFailureScheduler implements OnFailureCallback {
     }
 
     @Override
-    public Object call() {
-        if (VideoRecorder.getInstance().isVideoStarted()) {
-            String videoPath = VideoRecorder.getInstance().stopRecording();
-            if (videoPath != null) {
-                addVideoParameter(VideoRecorder.getInstance().getVideoPath());
-                VideoRecorder.getInstance().resetVideoRecorder();
-            }
-        }
+    public Object call() {   
         takeScreenshot();
         return null;
     }

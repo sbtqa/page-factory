@@ -15,6 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
@@ -23,6 +24,7 @@ import ru.sbtqa.tag.pagefactory.support.OnFailureScheduler;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.qautils.reflect.ClassUtilsExt;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
+import ru.sbtqa.tag.videorecorder.VideoRecorder;
 import ru.yandex.qatools.allure.cucumberjvm.AllureReporter;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
@@ -32,10 +34,10 @@ public class SetupStepDefs {
 
     @Before()
     public void setUp() {
-        
+
         //Apply failure callback
         AllureReporter.applyFailureCallback(OnFailureScheduler.class);
-        
+
         //try to connect logger property file if exists
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
@@ -103,6 +105,13 @@ public class SetupStepDefs {
 
     @After
     public void tearDown() {
+        if (VideoRecorder.getInstance().isVideoStarted()) {
+            String videoPath = VideoRecorder.getInstance().stopRecording();
+            if (videoPath != null) {
+                ParamsHelper.addVideoParameter(VideoRecorder.getInstance().getVideoPath());
+                VideoRecorder.getInstance().resetVideoRecorder();
+            }
+        }
         PageFactory.dispose();
     }
 }
