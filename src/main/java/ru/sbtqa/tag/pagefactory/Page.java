@@ -80,7 +80,9 @@ public abstract class Page {
         }
         
         if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
+            //set ADBKeyBoard as default
             AdbConsole.execute("ime set com.android.adbkeyboard/.AdbIME");
+            //send broadcast intent via adb
             AdbConsole.execute(String.format("am broadcast -a ADB_INPUT_TEXT --es msg '%s'", text));
         } else {
             webElement.sendKeys(text);
@@ -116,6 +118,7 @@ public abstract class Page {
      */
     public void clickWebElement(WebElement webElement) {
         if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
+            //get center point of element to tap on it
             int x = webElement.getLocation().getX() + webElement.getSize().getWidth() / 2;
             int y = webElement.getLocation().getY() + webElement.getSize().getHeight() / 2;
             AdbConsole.execute(String.format("input tap %s %s", x, y));

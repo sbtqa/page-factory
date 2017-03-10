@@ -22,9 +22,8 @@ public class AdbConsole {
     public static boolean execute(String deviceUDID, String command) {
         ProcessBuilder processBuilder = new ProcessBuilder(new String[]{"adb", "-s", deviceUDID, "shell", command});
         LOG.info("Command '{}' is processing...", command);
-        Process process;
         try {
-            process = processBuilder.start();
+            Process process = processBuilder.start();
 
             BufferedReader reader
                     = new BufferedReader(new InputStreamReader(process.getInputStream()));
