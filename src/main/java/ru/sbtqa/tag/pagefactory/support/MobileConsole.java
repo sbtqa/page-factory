@@ -5,16 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
 
 public class MobileConsole {
     
     private static final Logger LOG = LoggerFactory.getLogger(MobileConsole.class);
     
     public static boolean execute(String command) {
-        //TODO get static variable from mobile driver
-        String deviceUDID = (String) PageFactory.getMobileDriver().getSessionDetails().get("deviceUDID");
+        return execute(TagMobileDriver.getDeviceUDID(), command);
+    }
 
+    public static boolean execute(String deviceUDID, String command) {
         ProcessBuilder processBuilder = new ProcessBuilder(new String[]{"adb", "-s", deviceUDID, "shell", command});
         LOG.info("Command '{}' is processing...", command);
         Process process;

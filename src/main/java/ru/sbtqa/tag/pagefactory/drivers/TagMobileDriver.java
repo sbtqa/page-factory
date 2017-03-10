@@ -28,6 +28,7 @@ public class TagMobileDriver {
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
     private static final boolean APPIUM_FILL_ADB = !("false".equals(Props.get("appium.fill.adb").toLowerCase()));
     private static final boolean APPIUM_CLICK_ADB = !("false".equals(Props.get("appium.click.adb").toLowerCase()));
+    private static String DEVICEUDID;
     
     public static AppiumDriver<AndroidElement> getDriver() {
 	if (Environment.MOBILE != PageFactory.getEnvironment()) {
@@ -66,6 +67,7 @@ public class TagMobileDriver {
 	LOG.debug("Aspect disabled");
 	mobileDriver = new AndroidDriver<>(url, capabilities);
 	LOG.info("Mobile driver created {}", mobileDriver);
+        DEVICEUDID = (String) mobileDriver.getSessionDetails().get("deviceUDID");
     }
 
     public static void dispose() {
@@ -86,5 +88,12 @@ public class TagMobileDriver {
      */
     public static boolean getAppiumClickAdb() {
         return APPIUM_CLICK_ADB;
+    }
+
+    /**
+     * @return the DEVICEUDID
+     */
+    public static String getDeviceUDID() {
+        return DEVICEUDID;
     }
 }
