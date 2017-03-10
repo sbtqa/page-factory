@@ -29,11 +29,9 @@ appium.device.platform = 6.0
 appium.app.package = com.android.settings
 appium.app.activity = .Settings
 
-#TODO add more information
-#optional. False by default
+#optional. Avoid appium and fill fields throw adb (make sure that ADBKeyBoard is installed on android emulator). False by default
 appium.fill.adb = false
-#TODO add more information and note about ADBKeyBoard
-#optional. False by default
+#optional. Avoid appium and click on elements throw adb by location. False by default
 appium.click.adb = false
 
 #IN CASE OF WEB
