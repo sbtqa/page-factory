@@ -7,10 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
 
-public class MobileConsole {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(MobileConsole.class);
-    
+public class AdbConsole {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdbConsole.class);
+
+    private AdbConsole() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     public static boolean execute(String command) {
         return execute(TagMobileDriver.getDeviceUDID(), command);
     }
@@ -31,12 +35,12 @@ public class MobileConsole {
                 builder.append(System.getProperty("line.separator"));
             }
             LOG.debug(builder.toString());
-            
-            return (process.waitFor() == 0);
+
+            return process.waitFor() == 0;
         } catch (IOException | InterruptedException ex) {
-            LOG.error("Failed to process command '{}'", command);
+            LOG.error("Failed to process command '{}'", command, ex);
         }
-        
+
         return false;
     }
 }

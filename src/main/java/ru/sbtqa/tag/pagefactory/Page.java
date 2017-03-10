@@ -43,7 +43,7 @@ import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
 import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
-import ru.sbtqa.tag.pagefactory.support.MobileConsole;
+import ru.sbtqa.tag.pagefactory.support.AdbConsole;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
@@ -80,8 +80,8 @@ public abstract class Page {
         }
         
         if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
-            MobileConsole.execute("ime set com.android.adbkeyboard/.AdbIME");
-            MobileConsole.execute(String.format("am broadcast -a ADB_INPUT_TEXT --es msg '%s'", text));
+            AdbConsole.execute("ime set com.android.adbkeyboard/.AdbIME");
+            AdbConsole.execute(String.format("am broadcast -a ADB_INPUT_TEXT --es msg '%s'", text));
         } else {
             webElement.sendKeys(text);
         }
@@ -118,7 +118,7 @@ public abstract class Page {
         if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
             int x = webElement.getLocation().getX() + webElement.getSize().getWidth() / 2;
             int y = webElement.getLocation().getY() + webElement.getSize().getHeight() / 2;
-            MobileConsole.execute(String.format("input tap %s %s", x, y));
+            AdbConsole.execute(String.format("input tap %s %s", x, y));
         } else {
             webElement.click();
         }

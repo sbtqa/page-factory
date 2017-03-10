@@ -26,9 +26,9 @@ public class TagMobileDriver {
     private static final String APPIUM_APP_PACKAGE = Props.get("appium.app.package");
     private static final String APPIUM_APP_ACTIVITY = Props.get("appium.app.activity");
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
-    private static final boolean APPIUM_FILL_ADB = "true".equals(Props.get("appium.fill.adb").toLowerCase());
-    private static final boolean APPIUM_CLICK_ADB = "true".equals(Props.get("appium.click.adb").toLowerCase());
-    private static String DEVICEUDID;
+    private static final boolean APPIUM_FILL_ADB = "true".equalsIgnoreCase(Props.get("appium.fill.adb"));
+    private static final boolean APPIUM_CLICK_ADB = "true".equalsIgnoreCase(Props.get("appium.click.adb"));
+    private static String deviceUdId;
     
     public static AppiumDriver<AndroidElement> getDriver() {
 	if (Environment.MOBILE != PageFactory.getEnvironment()) {
@@ -67,7 +67,7 @@ public class TagMobileDriver {
 	LOG.debug("Aspect disabled");
 	mobileDriver = new AndroidDriver<>(url, capabilities);
 	LOG.info("Mobile driver created {}", mobileDriver);
-        DEVICEUDID = (String) mobileDriver.getSessionDetails().get("deviceUDID");
+        deviceUdId = (String) mobileDriver.getSessionDetails().get("deviceUDID");
     }
 
     public static void dispose() {
@@ -91,9 +91,9 @@ public class TagMobileDriver {
     }
 
     /**
-     * @return the DEVICEUDID
+     * @return the deviceUdId
      */
     public static String getDeviceUDID() {
-        return DEVICEUDID;
+        return deviceUdId;
     }
 }
