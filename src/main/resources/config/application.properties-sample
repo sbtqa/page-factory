@@ -29,6 +29,12 @@ appium.device.platform = 6.0
 appium.app.package = com.android.settings
 appium.app.activity = .Settings
 
+#TODO add more information
+#optional. False by default
+appium.fill.adb = false
+#TODO add more information and note about ADBKeyBoard
+#optional. False by default
+appium.click.adb = false
 
 #IN CASE OF WEB
 #parameters for web driver create

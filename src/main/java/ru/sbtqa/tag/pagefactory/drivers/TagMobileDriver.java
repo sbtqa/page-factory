@@ -26,6 +26,8 @@ public class TagMobileDriver {
     private static final String APPIUM_APP_PACKAGE = Props.get("appium.app.package");
     private static final String APPIUM_APP_ACTIVITY = Props.get("appium.app.activity");
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
+    private static final boolean APPIUM_FILL_ADB = !("false".equals(Props.get("appium.fill.adb").toLowerCase()));
+    private static final boolean APPIUM_CLICK_ADB = !("false".equals(Props.get("appium.click.adb").toLowerCase()));
     
     public static AppiumDriver<AndroidElement> getDriver() {
 	if (Environment.MOBILE != PageFactory.getEnvironment()) {
@@ -70,5 +72,19 @@ public class TagMobileDriver {
 	if (mobileDriver != null) {
 	    mobileDriver.quit();
 	}
+    }
+
+    /**
+     * @return the APPIUM_FILL_ADB
+     */
+    public static boolean getAppiumFillAdb() {
+        return APPIUM_FILL_ADB;
+    }
+
+    /**
+     * @return the APPIUM_CLICK_ADB
+     */
+    public static boolean getAppiumClickAdb() {
+        return APPIUM_CLICK_ADB;
     }
 }

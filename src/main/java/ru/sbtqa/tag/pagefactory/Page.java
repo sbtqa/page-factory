@@ -33,6 +33,7 @@ import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
 import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
 import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
 import ru.sbtqa.tag.pagefactory.annotations.ValidationRule;
+import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
 import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
 import ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
@@ -41,6 +42,8 @@ import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
 import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
+import ru.sbtqa.tag.pagefactory.support.Environment;
+import ru.sbtqa.tag.pagefactory.support.MobileConsole;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
@@ -71,8 +74,19 @@ public abstract class Page {
     public void fillField(String elementTitle, String text) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         webElement.click();
-        webElement.clear();
-        webElement.sendKeys(text);
+        
+        if (PageFactory.getEnvironment() == Environment.WEB) {
+            webElement.clear();
+        }
+        
+        if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
+            int x = webElement.getLocation().getX() + webElement.getSize().getWidth() / 2;
+            int y = webElement.getLocation().getY() + webElement.getSize().getHeight() / 2;
+            MobileConsole.execute(String.format("input tap %s %s", x, y));
+        } else {
+            webElement.sendKeys(text);
+        }
+        
         Core.addToReport(elementTitle, text);
     }
 
@@ -102,7 +116,13 @@ public abstract class Page {
      * @param webElement a WebElement object to click
      */
     public void clickWebElement(WebElement webElement) {
-        webElement.click();
+        if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
+            int x = webElement.getLocation().getX() + webElement.getSize().getWidth() / 2;
+            int y = webElement.getLocation().getY() + webElement.getSize().getHeight() / 2;
+            MobileConsole.execute(String.format("input tap %s %s", x, y));
+        } else {
+            webElement.click();
+        }
         Core.addToReport(webElement, " is clicked");
     }
 
