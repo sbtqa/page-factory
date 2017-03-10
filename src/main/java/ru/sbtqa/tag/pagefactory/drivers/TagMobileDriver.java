@@ -26,8 +26,8 @@ public class TagMobileDriver {
     private static final String APPIUM_APP_PACKAGE = Props.get("appium.app.package");
     private static final String APPIUM_APP_ACTIVITY = Props.get("appium.app.activity");
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
-    private static final boolean APPIUM_FILL_ADB = !("false".equals(Props.get("appium.fill.adb").toLowerCase()));
-    private static final boolean APPIUM_CLICK_ADB = !("false".equals(Props.get("appium.click.adb").toLowerCase()));
+    private static final boolean APPIUM_FILL_ADB = "true".equals(Props.get("appium.fill.adb").toLowerCase());
+    private static final boolean APPIUM_CLICK_ADB = "true".equals(Props.get("appium.click.adb").toLowerCase());
     private static String DEVICEUDID;
     
     public static AppiumDriver<AndroidElement> getDriver() {

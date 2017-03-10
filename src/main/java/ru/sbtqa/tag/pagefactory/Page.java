@@ -80,9 +80,8 @@ public abstract class Page {
         }
         
         if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
-            int x = webElement.getLocation().getX() + webElement.getSize().getWidth() / 2;
-            int y = webElement.getLocation().getY() + webElement.getSize().getHeight() / 2;
-            MobileConsole.execute(String.format("input tap %s %s", x, y));
+            MobileConsole.execute("ime set com.android.adbkeyboard/.AdbIME");
+            MobileConsole.execute(String.format("am broadcast -a ADB_INPUT_TEXT --es msg '%s'", text));
         } else {
             webElement.sendKeys(text);
         }
