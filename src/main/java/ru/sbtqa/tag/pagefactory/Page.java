@@ -831,7 +831,7 @@ public abstract class Page {
     public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
         for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
             if (Core.isRequiredElement(field, title) && Core.isChildOf(TypifiedElement.class, field)) {
-                return (T) Core.getElementByField(this, field);
+                return Core.getElementByField(this, field);
             }
         }
         throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
