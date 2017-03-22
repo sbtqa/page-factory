@@ -170,8 +170,8 @@ public class PageWrapper {
                     allClasses.add(info.load());
                 }
             }
-        } catch (IOException | NoClassDefFoundError ex) {
-            LOG.debug("Failed to shape class info set", ex);
+        } catch (IOException ex) {
+            LOG.warn("Failed to shape class info set", ex);
         }
 
         for (Class<?> page : allClasses) {
