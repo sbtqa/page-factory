@@ -165,13 +165,13 @@ public class PageWrapper {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final Set<Class<?>> allClasses = new HashSet<>();
         try {
-            for (ClassPath.ClassInfo info: ClassPath.from(loader).getAllClasses()) {
+            for (ClassPath.ClassInfo info : ClassPath.from(loader).getAllClasses()) {
                 if (info.getName().startsWith(packageName + ".")) {
                     allClasses.add(info.load());
                 }
             }
-        } catch (IOException ex) {
-            LOG.warn("Failed to shape class info set", ex);
+        } catch (IOException | NoClassDefFoundError ex) {
+            LOG.debug("Failed to shape class info set", ex);
         }
 
         for (Class<?> page : allClasses) {
