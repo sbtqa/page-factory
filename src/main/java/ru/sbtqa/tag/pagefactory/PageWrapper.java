@@ -165,7 +165,7 @@ public class PageWrapper {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final Set<Class<?>> allClasses = new HashSet<>();
         try {
-            for (ClassPath.ClassInfo info: ClassPath.from(loader).getAllClasses()) {
+            for (ClassPath.ClassInfo info : ClassPath.from(loader).getAllClasses()) {
                 if (info.getName().startsWith(packageName + ".")) {
                     allClasses.add(info.load());
                 }
