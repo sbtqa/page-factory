@@ -2,20 +2,13 @@ package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.WebElement;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
+import ru.sbtqa.tag.cucumber.TagAllureReporter;
 import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
@@ -25,8 +18,16 @@ import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.qautils.reflect.ClassUtilsExt;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
-import ru.yandex.qatools.allure.cucumberjvm.AllureReporter;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SetupStepDefs {
 
@@ -36,7 +37,7 @@ public class SetupStepDefs {
     public void setUp() {
 
         //Apply failure callback
-        AllureReporter.applyFailureCallback(OnFailureScheduler.class);
+        TagAllureReporter.applyFailureCallback(OnFailureScheduler.class);
 
         //try to connect logger property file if exists
         String path = "src/test/resources/config/log4j.properties";
