@@ -156,7 +156,11 @@ public class PageFactory {
             case ENVIRONMENT_MOBILE:
                 return Environment.MOBILE;
             default:
-                throw new FactoryRuntimeException("Environment '" + ENVIRONMENT + "' is not supported");
+                if(ENVIRONMENT.equals("")) {
+                    throw new FactoryRuntimeException("Please add 'driver.environment = web' or 'driver.environment = mobile' to application.properties");
+                } else {
+                    throw new FactoryRuntimeException("Environment '" + ENVIRONMENT + "' is not supported");
+                }
         }
     }
 }
