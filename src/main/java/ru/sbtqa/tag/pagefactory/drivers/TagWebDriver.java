@@ -112,7 +112,7 @@ public class TagWebDriver {
                 System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
             } else {
                 LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                        + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+                        + " Trying to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
             }
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new ChromeDriver(capabilities));
@@ -124,7 +124,7 @@ public class TagWebDriver {
                 System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
             } else {
                 LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                        + " Try to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+                        + " Trying to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
             }
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new InternetExplorerDriver(capabilities));
@@ -181,7 +181,9 @@ public class TagWebDriver {
 
     private static void killIE() {
         try {
+            LOG.info("Trying to terminate iexplorer process");
             Runtime.getRuntime().exec("taskkill /f /im iexplore.exe").waitFor();
+            LOG.info("All iexplorer processes were terminated");
         } catch (IOException | InterruptedException e) {
             LOG.warn("Failed to wait for browser processes finish", e);
         }
