@@ -20,6 +20,10 @@ screenshot.strategy = driver
 #optional. tasks to kill before test (ONLY FOR WINDOWS)
 tasks.to.kill = iexplorer,chrome
 
+#runtime options for cmd\bash commands
+
+# If you use this option, make sure your user in sudoers
+runtime.linux.use_sudo = true
 
 #IN CASE OF MOBILE
 #parameters for mobile driver create
