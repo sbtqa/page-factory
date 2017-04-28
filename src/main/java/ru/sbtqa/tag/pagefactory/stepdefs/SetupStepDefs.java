@@ -48,7 +48,6 @@ public class SetupStepDefs {
         }
 
         try {
-            //TODO fix if task.to.kill does not exist in application.properties
             String[] tasks = Props.get("tasks.to.kill").split(",");
             if (tasks.length > 0) {
                 for (String task : tasks) {
