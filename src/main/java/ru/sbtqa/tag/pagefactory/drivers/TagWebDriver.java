@@ -54,6 +54,7 @@ public class TagWebDriver {
     private static final boolean IS_IE = WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
+    private static final boolean WEBDRIVER_SHARED = Boolean.parseBoolean(Props.get("webdriver.shared", "false"));
 
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
 
@@ -142,40 +143,42 @@ public class TagWebDriver {
     }
 
     public static void dispose() {
-        try {
-            LOG.info("Checking any alert opened");
-            WebDriverWait alertAwaiter = new WebDriverWait(webDriver, 2);
-            alertAwaiter.until(ExpectedConditions.alertIsPresent());
-            Alert alert = webDriver.switchTo().alert();
-            LOG.info("Got an alert: " + alert.getText() + "\n Closing it.");
-            alert.dismiss();
-        } catch (WebDriverException e) {
-            LOG.debug("No alert opened. Closing webdriver.", e);
-        }
-
-        Set<String> windowHandlesSet = webDriver.getWindowHandles();
-        try {
-            if (windowHandlesSet.size() > 1) {
-                for (String winHandle : windowHandlesSet) {
-                    webDriver.switchTo().window(winHandle);
-                    ((JavascriptExecutor) webDriver).executeScript(
-                            "var objWin = window.self;"
-                                    + "objWin.open('','_self','');"
-                                    + "objWin.close();");
-                }
+        if (!WEBDRIVER_SHARED) {
+            try {
+                LOG.info("Checking any alert opened");
+                WebDriverWait alertAwaiter = new WebDriverWait(webDriver, 2);
+                alertAwaiter.until(ExpectedConditions.alertIsPresent());
+                Alert alert = webDriver.switchTo().alert();
+                LOG.info("Got an alert: " + alert.getText() + "\n Closing it.");
+                alert.dismiss();
+            } catch (WebDriverException e) {
+                LOG.debug("No alert opened. Closing webdriver.", e);
             }
-        } catch (Exception e) {
-            LOG.warn("Failed to kill all of the iexplore windows", e);
-        }
 
-        if (IS_IE && WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE) {
-            killIE();
-        }
+            Set<String> windowHandlesSet = webDriver.getWindowHandles();
+            try {
+                if (windowHandlesSet.size() > 1) {
+                    for (String winHandle : windowHandlesSet) {
+                        webDriver.switchTo().window(winHandle);
+                        ((JavascriptExecutor) webDriver).executeScript(
+                                "var objWin = window.self;"
+                                + "objWin.open('','_self','');"
+                                + "objWin.close();");
+                    }
+                }
+            } catch (Exception e) {
+                LOG.warn("Failed to kill all of the iexplore windows", e);
+            }
 
-        try {
-            webDriver.quit();
-        } finally {
-            setWebDriver(null);
+            if (IS_IE && WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE) {
+                killIE();
+            }
+
+            try {
+                webDriver.quit();
+            } finally {
+                setWebDriver(null);
+            }
         }
     }
 
