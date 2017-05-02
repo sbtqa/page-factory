@@ -1,15 +1,5 @@
 package ru.sbtqa.tag.pagefactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
@@ -42,8 +32,8 @@ import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
 import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
-import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.pagefactory.support.AdbConsole;
+import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
@@ -52,6 +42,17 @@ import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Base page object class. Contains basic actions with elements, search methods
@@ -70,7 +71,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not
      * initialized, or required element couldn't be found
      */
-    @ActionTitle("fill.field")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.fill.field")
     public void fillField(String elementTitle, String text) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         webElement.click();
@@ -137,9 +138,9 @@ public abstract class Page {
      * initialized, or required element couldn't be found
      */
     @ActionTitles({
-        @ActionTitle("click.link")
+        @ActionTitle("ru.sbtqa.tag.pagefactory.click.link")
         ,
-            @ActionTitle("click.button")})
+            @ActionTitle("ru.sbtqa.tag.pagefactory.click.button")})
     public void clickElementByTitle(String elementTitle) throws PageException {
         WebElement webElement;
         try {
@@ -158,7 +159,7 @@ public abstract class Page {
      *
      * @param keyName name of the key. See available key names in {@link Keys}
      */
-    @ActionTitle("press.key")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.press.key")
     public void pressKey(String keyName) {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = PageFactory.getActions();
@@ -175,7 +176,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * couldn't find element with required title
      */
-    @ActionTitle("press.key")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.press.key")
     public void pressKey(String keyName, String elementTitle) throws PageException {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = PageFactory.getActions();
@@ -206,7 +207,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not
      * initialized, or required element couldn't be found
      */
-    @ActionTitle("select.checkBox")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.select.checkBox")
     public void setCheckBox(String elementTitle) throws PageException {
         WebElement targetElement = getElementByTitle(elementTitle);
         if (targetElement.getClass().isAssignableFrom(CheckBox.class)) {
@@ -244,7 +245,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if required
      * element couldn't be found, or current page isn't initialized
      */
-    @ActionTitle("select")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.select")
     public void select(String elementTitle, String option) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         if (null != option) {
@@ -324,7 +325,7 @@ public abstract class Page {
      * @throws WaitException in case if alert didn't appear during default wait
      * timeout
      */
-    @ActionTitle("accept.alert")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.accept.alert")
     public void acceptAlert(String text) throws WaitException {
         DriverExtension.interactWithAlert(text, true);
     }
@@ -336,7 +337,7 @@ public abstract class Page {
      * @throws WaitException in case if alert didn't appear during default wait
      * timeout
      */
-    @ActionTitle("dismiss.alert")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.dismiss.alert")
     public void dismissAlert(String text) throws WaitException {
         DriverExtension.interactWithAlert(text, false);
     }
@@ -349,7 +350,7 @@ public abstract class Page {
      * @throws WaitException if text didn't appear on the page during the
      * timeout
      */
-    @ActionTitle("text.appears.on.page")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.text.appears.on.page")
     public void assertTextAppears(String text) throws WaitException {
         WebExtension.waitForTextPresenceInPageSource(text, true);
     }
@@ -360,7 +361,7 @@ public abstract class Page {
      *
      * @param text text to search for
      */
-    @ActionTitle("text.absent.on.page")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.text.absent.on.page")
     public void assertTextIsNotPresent(String text) {
         WebExtension.waitForTextPresenceInPageSource(text, false);
     }
@@ -375,7 +376,7 @@ public abstract class Page {
      * @param text text that will be searched inside of the window
      * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException if
      */
-    @ActionTitle("modal.window.with.text.appears")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.modal.window.with.text.appears")
     public void assertModalWindowAppears(String text) throws WaitException {
         try {
             String popupHandle = WebExtension.findNewWindowHandle((Set<String>) Stash.getValue("beforeClickHandles"));
@@ -398,7 +399,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * couldn't find element by given title, or current page isn't initialized
      */
-    @ActionTitle("check.value")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.check.value")
     public void checkValue(String elementTitle, String text) throws PageException {
         checkValue(text, getElementByTitle(elementTitle), MatchStrategy.EXACT);
     }
@@ -486,7 +487,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page
      * was not initialized, or element wasn't found on the page
      */
-    @ActionTitle("check.field.not.empty")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.check.field.not.empty")
     public void checkFieldIsNotEmpty(String elementTitle) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         checkFieldIsNotEmpty(webElement);
@@ -519,7 +520,7 @@ public abstract class Page {
      * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if current page
      * wasn't initialized, or element with required title was not found
      */
-    @ActionTitle("check.values.not.equal")
+    @ActionTitle("ru.sbtqa.tag.pagefactory.check.values.not.equal")
     public void checkValuesAreNotEqual(String text, String elementTitle) throws PageException {
         WebElement webElement = this.getElementByTitle(elementTitle);
         if (checkValuesAreNotEqual(text, webElement)) {
@@ -551,9 +552,9 @@ public abstract class Page {
      * @param text a {@link java.lang.String} object.
      */
     @ActionTitles({
-        @ActionTitle("check.element.with.text.present")
+        @ActionTitle("ru.sbtqa.tag.pagefactory.check.element.with.text.present")
         ,
-            @ActionTitle("check.text.visible")})
+            @ActionTitle("ru.sbtqa.tag.pagefactory.check.text.visible")})
     public void checkElementWithTextIsPresent(String text) {
         if (!DriverExtension.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
             throw new AutotestError("Text '" + text + "' is not present");
