@@ -114,11 +114,11 @@ public class SetupStepDefs {
                 VideoRecorder.getInstance().resetVideoRecorder();
             }
         }
-	
-        if(PageFactory.getEnvironment() == Environment.WEB && TagWebDriver.isWebDriverShared()) {
+
+        if (PageFactory.getEnvironment() == Environment.WEB && TagWebDriver.isWebDriverShared()) {
             return;
+        } else {
+            PageFactory.dispose();
         }
-	
-        PageFactory.dispose();
     }
 }
