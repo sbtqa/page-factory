@@ -15,7 +15,7 @@ video.path.temp = /tmp/video
 video.highlight.enabled = false
 
 #optional. driver or raw. Raw by default
-screenshot.strategy = driver
+screenshot.strategy = raw
 
 #optional. tasks to kill before test (ONLY FOR WINDOWS)
 tasks.to.kill = iexplorer,chrome
@@ -54,7 +54,7 @@ webdriver.drivers.path = src/test/resources/webdrivers/chromedriver.exe
 webdriver.url = http://127.0.0.1:4444/wd/hub
 
 #optional. Kill ie browser process after test (ONLY FOR WINDOWS)
-webdriver.browser.ie.killOnDispose = true
+webdriver.browser.ie.killOnDispose = false
 
 #optional. Share webdriver between tests
 webdriver.shared = false
