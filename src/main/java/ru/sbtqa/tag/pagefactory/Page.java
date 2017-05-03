@@ -822,18 +822,18 @@ public abstract class Page {
     }
 
     /**
-     * Find specified TypifiedElement by title annotation among current page
+     * Find specified element with given type and title annotation among current page fields
      * fields
      *
-     * @param <T> TODO
+     * @param <T> type of the element
      * @param title a {@link java.lang.String} object.
-     * @return a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
+     * @return a Class<T> object under the field of given name
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if failed to
+     * find corresponding element or element type is set incorrectly
      */
-    @SuppressWarnings(value = "unchecked")
-    public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
+    public <T extends WebElement> T getElementByTitle(String title, Class<T> type) throws PageException {
         for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
-            if (Core.isRequiredElement(field, title) && Core.isChildOf(TypifiedElement.class, field)) {
+            if (Core.isRequiredElement(field, title) && field.getType().equals(type)) {
                 return Core.getElementByField(this, field);
             }
         }
