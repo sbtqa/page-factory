@@ -3,6 +3,7 @@ package ru.sbtqa.tag.pagefactory.stepdefs;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,13 +55,13 @@ public class SetupStepDefs {
                     if (System.getProperty("os.name").toLowerCase().contains("win")) {
                         Runtime.getRuntime().exec("taskkill /IM " + task.trim() + " /F");
                     } else {
-                        boolean useSudo = Boolean.valueOf(Props.get("runtime.linux.use_sudo", "false"));
+                        boolean useSudo = Boolean.valueOf(Props.get("runtime.linux.sudo", "false"));
                         String sudoPrefix = useSudo ? "" : "sudo";
                         Runtime.getRuntime().exec(sudoPrefix + " killall " + task.trim());
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOG.debug("Failed to kill one of task to kill", e);
         }
 
