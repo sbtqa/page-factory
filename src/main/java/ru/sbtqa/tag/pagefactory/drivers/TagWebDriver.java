@@ -54,6 +54,7 @@ public class TagWebDriver {
     private static final boolean IS_IE = WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
+    private static final boolean WEBDRIVER_SHARED = Boolean.parseBoolean(Props.get("webdriver.shared", "false"));
 
     private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
 
@@ -142,6 +143,10 @@ public class TagWebDriver {
     }
 
     public static void dispose() {
+        if(webDriver == null) {
+            return;
+        }
+        
         try {
             LOG.info("Checking any alert opened");
             WebDriverWait alertAwaiter = new WebDriverWait(webDriver, 2);
@@ -160,8 +165,8 @@ public class TagWebDriver {
                     webDriver.switchTo().window(winHandle);
                     ((JavascriptExecutor) webDriver).executeScript(
                             "var objWin = window.self;"
-                                    + "objWin.open('','_self','');"
-                                    + "objWin.close();");
+                            + "objWin.open('','_self','');"
+                            + "objWin.close();");
                 }
             }
         } catch (Exception e) {
@@ -208,5 +213,12 @@ public class TagWebDriver {
      */
     public static String getBrowserName() {
         return WEBDRIVER_BROWSER_NAME;
+    }
+
+    /**
+     * @return the WEBDRIVER_SHARED
+     */
+    public static boolean isWebDriverShared() {
+        return WEBDRIVER_SHARED;
     }
 }
