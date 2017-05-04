@@ -64,7 +64,7 @@
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>cucumber-runner</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -102,11 +102,6 @@
       <artifactId>java-client</artifactId>
       <version>4.1.2</version>
       <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>ru.sbtqa.tag</groupId>
-      <artifactId>cucumber-runner</artifactId>
-      <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
