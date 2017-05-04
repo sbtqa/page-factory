@@ -26,14 +26,13 @@ public class PageFactory {
     private static PageWrapper PageWrapper;
     
     private static VideoRecorder videoRecorder;
-    private static boolean videoRecorderStatusChecked = false;
-    private static boolean videoRecorderEnabled = false;
     
     private static boolean aspectsDisabled = false;
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
+    private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
 
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
@@ -158,13 +157,8 @@ public class PageFactory {
      *
      * @return true if video.enabled property defined as true
      */
-    public static boolean videoRecorderIsEnabled() {
-        if (!videoRecorderStatusChecked) {
-            String video = Props.get("video.enabled", "false");
-            videoRecorderStatusChecked = true;
-            videoRecorderEnabled = !(null == video || video.equalsIgnoreCase("false") || video.isEmpty());
-        }
-        return videoRecorderEnabled;
+    public static boolean isVideoRecorderEnabled() {
+        return Boolean.valueOf(VIDEO_ENABLED);
     }
 
     public static Environment getEnvironment() {

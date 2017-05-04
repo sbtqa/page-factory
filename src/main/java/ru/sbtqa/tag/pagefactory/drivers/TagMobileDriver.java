@@ -25,7 +25,6 @@ public class TagMobileDriver {
     private static final String APPIUM_DEVICE_PLATFORM = Props.get("appium.device.platform");
     private static final String APPIUM_APP_PACKAGE = Props.get("appium.app.package");
     private static final String APPIUM_APP_ACTIVITY = Props.get("appium.app.activity");
-    private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
     private static final boolean APPIUM_FILL_ADB = "true".equalsIgnoreCase(Props.get("appium.fill.adb"));
     private static final boolean APPIUM_CLICK_ADB = "true".equalsIgnoreCase(Props.get("appium.click.adb"));
     private static String deviceUdId;
@@ -36,7 +35,7 @@ public class TagMobileDriver {
 	}
 	
 	if (null == mobileDriver) {
-	    if (Boolean.valueOf(VIDEO_ENABLED)) {
+	    if (PageFactory.isVideoRecorderEnabled()) {
 		VideoRecorder.getInstance().startRecording();
 	    }
 
