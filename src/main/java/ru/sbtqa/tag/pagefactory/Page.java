@@ -1,5 +1,15 @@
 package ru.sbtqa.tag.pagefactory;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
@@ -43,17 +53,6 @@ import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Base page object class. Contains basic actions with elements, search methods
  */
@@ -75,11 +74,11 @@ public abstract class Page {
     public void fillField(String elementTitle, String text) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         webElement.click();
-        
+
         if (PageFactory.getEnvironment() == Environment.WEB) {
             webElement.clear();
         }
-        
+
         if (PageFactory.getEnvironment() == Environment.MOBILE && TagMobileDriver.getAppiumClickAdb()) {
             // set ADBKeyBoard as default
             AdbConsole.execute("ime set com.android.adbkeyboard/.AdbIME");
@@ -88,7 +87,7 @@ public abstract class Page {
         } else {
             webElement.sendKeys(text);
         }
-        
+
         Core.addToReport(elementTitle, text);
     }
 
@@ -138,8 +137,8 @@ public abstract class Page {
      * initialized, or required element couldn't be found
      */
     @ActionTitles({
-        @ActionTitle("ru.sbtqa.tag.pagefactory.click.link")
-        ,
+            @ActionTitle("ru.sbtqa.tag.pagefactory.click.link")
+            ,
             @ActionTitle("ru.sbtqa.tag.pagefactory.click.button")})
     public void clickElementByTitle(String elementTitle) throws PageException {
         WebElement webElement;
@@ -552,8 +551,8 @@ public abstract class Page {
      * @param text a {@link java.lang.String} object.
      */
     @ActionTitles({
-        @ActionTitle("ru.sbtqa.tag.pagefactory.check.element.with.text.present")
-        ,
+            @ActionTitle("ru.sbtqa.tag.pagefactory.check.element.with.text.present")
+            ,
             @ActionTitle("ru.sbtqa.tag.pagefactory.check.text.visible")})
     public void checkElementWithTextIsPresent(String text) {
         if (!DriverExtension.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
@@ -574,8 +573,7 @@ public abstract class Page {
      * @return web element of the required type
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
-     * if element was not found, but with the wrong type
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with the wrong type
      */
     public <T extends WebElement> T findElementInBlockByTitle(String blockPath, String title, Class<T> type)
             throws PageException {
@@ -599,8 +597,7 @@ public abstract class Page {
      * @return WebElement
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
-     * if element was not found, but with the wrong type
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with the wrong type
      */
     public WebElement findElementInBlockByTitle(String blockPath, String title) throws PageException {
         return findElementInBlockByTitle(blockPath, title, WebElement.class);
@@ -788,8 +785,7 @@ public abstract class Page {
      *
      * @param element element, redirect for which is being searched
      * @return class of the page object, element redirects to
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
-     * if failed to find redirect
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if failed to find redirect
      */
     public Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
         try {
@@ -1085,7 +1081,7 @@ public abstract class Page {
                     } catch (ClassCastException cce) {
                         throw new ElementDescriptionException(
                                 String.format("Element '%s' was found in block '%s', but it's type is incorrect."
-                                        + "Requested '%s', but got '%s'",
+                                                + "Requested '%s', but got '%s'",
                                         elementTitle, block.getName(), type.getName(), f.getType()), cce);
                     }
                 }

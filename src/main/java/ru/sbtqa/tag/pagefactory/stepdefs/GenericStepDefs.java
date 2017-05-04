@@ -2,6 +2,8 @@ package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -23,9 +25,6 @@ import ru.yandex.qatools.htmlelements.element.Radio;
 import ru.yandex.qatools.htmlelements.element.Table;
 import ru.yandex.qatools.htmlelements.element.TextBlock;
 import ru.yandex.qatools.htmlelements.element.TextInput;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Basic step definitions, that should be available on every project Notations
