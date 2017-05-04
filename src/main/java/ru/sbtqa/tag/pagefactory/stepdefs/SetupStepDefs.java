@@ -113,7 +113,7 @@ public class SetupStepDefs {
 
     @After
     public void tearDown() {
-        if (PageFactory.videoRecorderIsEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
+        if (PageFactory.isVideoRecorderEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
             String videoPath = VideoRecorder.getInstance().stopRecording();
             if (videoPath != null) {
                 ParamsHelper.addVideoParameter(VideoRecorder.getInstance().getVideoPath());

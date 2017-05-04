@@ -23,19 +23,16 @@ public class PageFactory {
     private static final Map<Class<? extends Page>, Map<Field, String>> PAGES_REPOSITORY = new HashMap<>();
 
     private static Actions actions;
-    private static PageWrapper PageWrapper;
-    
-    private static VideoRecorder videoRecorder;
-    
+    private static PageWrapper PageWrapper;    
+    private static VideoRecorder videoRecorder;    
     private static boolean aspectsDisabled = false;
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
-    private static final String TIMEOUT = Props.get("page.load.timeout");
-    private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
-
+    private static final String TIMEOUT = Props.get("page.load.timeout");    
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
+    private static final boolean VIDEO_ENABLED = Boolean.parseBoolean(Props.get("video.enabled", "false"));
 
     public static WebDriver getWebDriver() {
         return getDriver();
@@ -158,7 +155,7 @@ public class PageFactory {
      * @return true if video.enabled property defined as true
      */
     public static boolean isVideoRecorderEnabled() {
-        return Boolean.valueOf(VIDEO_ENABLED);
+        return VIDEO_ENABLED;
     }
 
     public static Environment getEnvironment() {
