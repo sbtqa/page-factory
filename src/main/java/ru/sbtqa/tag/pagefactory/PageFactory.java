@@ -24,13 +24,17 @@ public class PageFactory {
 
     private static Actions actions;
     private static PageWrapper PageWrapper;
+    
     private static VideoRecorder videoRecorder;
+    private static boolean videoRecorderStatusChecked = false;
+    private static boolean videoRecorderEnabled = false;
+    
     private static boolean aspectsDisabled = false;
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
-    
+
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
 
@@ -41,7 +45,7 @@ public class PageFactory {
     public static AppiumDriver getMobileDriver() {
         return (AppiumDriver) getDriver();
     }
-    
+
     public static WebDriver getDriver() {
         switch (getEnvironment()) {
             case WEB:
@@ -149,6 +153,20 @@ public class PageFactory {
         videoRecorder = null;
     }
 
+    /**
+     * Checks if video recording enabled
+     *
+     * @return true if video.enabled property defined as true
+     */
+    public static boolean videoRecorderIsEnabled() {
+        if (!videoRecorderStatusChecked) {
+            String video = Props.get("video.enabled", "false");
+            videoRecorderStatusChecked = true;
+            videoRecorderEnabled = !(null == video || video.equalsIgnoreCase("false") || video.isEmpty());
+        }
+        return videoRecorderEnabled;
+    }
+
     public static Environment getEnvironment() {
         switch (ENVIRONMENT) {
             case ENVIRONMENT_WEB:
@@ -156,7 +174,7 @@ public class PageFactory {
             case ENVIRONMENT_MOBILE:
                 return Environment.MOBILE;
             default:
-                if(ENVIRONMENT.equals("")) {
+                if (ENVIRONMENT.equals("")) {
                     throw new FactoryRuntimeException("Please add 'driver.environment = web' or 'driver.environment = mobile' to application.properties");
                 } else {
                     throw new FactoryRuntimeException("Environment '" + ENVIRONMENT + "' is not supported");
