@@ -137,8 +137,7 @@ public abstract class Page {
      * initialized, or required element couldn't be found
      */
     @ActionTitles({
-            @ActionTitle("ru.sbtqa.tag.pagefactory.click.link")
-            ,
+            @ActionTitle("ru.sbtqa.tag.pagefactory.click.link"),
             @ActionTitle("ru.sbtqa.tag.pagefactory.click.button")})
     public void clickElementByTitle(String elementTitle) throws PageException {
         WebElement webElement;
@@ -551,8 +550,7 @@ public abstract class Page {
      * @param text a {@link java.lang.String} object.
      */
     @ActionTitles({
-            @ActionTitle("ru.sbtqa.tag.pagefactory.check.element.with.text.present")
-            ,
+            @ActionTitle("ru.sbtqa.tag.pagefactory.check.element.with.text.present"),
             @ActionTitle("ru.sbtqa.tag.pagefactory.check.text.visible")})
     public void checkElementWithTextIsPresent(String text) {
         if (!DriverExtension.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
