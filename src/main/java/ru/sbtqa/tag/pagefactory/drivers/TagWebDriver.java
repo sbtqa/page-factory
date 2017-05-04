@@ -56,15 +56,13 @@ public class TagWebDriver {
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
     private static final boolean WEBDRIVER_SHARED = Boolean.parseBoolean(Props.get("webdriver.shared", "false"));
 
-    private static final String VIDEO_ENABLED = Props.get("video.enabled", "false");
-
     public static WebDriver getDriver() {
         if (Environment.WEB != PageFactory.getEnvironment()) {
             throw new FactoryRuntimeException("Failed to get web driver while environment is not web");
         }
 
         if (null == webDriver) {
-            if (Boolean.valueOf(VIDEO_ENABLED)) {
+            if (PageFactory.isVideoRecorderEnabled()) {
                 VideoRecorder.getInstance().startRecording();
             }
 
