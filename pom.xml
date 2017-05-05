@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.sbtqa.tag</groupId>
   <artifactId>page-factory</artifactId>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.5-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>page-factory</name>
   <description>page-factory description</description>
