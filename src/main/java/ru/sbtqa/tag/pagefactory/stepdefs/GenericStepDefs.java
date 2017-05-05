@@ -211,8 +211,8 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.openPage")
     public void openPage(String title) throws PageInitializationException {
-        if (PageFactory.getEnvironment() != Environment.MOBILE && 
-	      !PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
+        if (PageFactory.getEnvironment() != Environment.MOBILE
+                && !PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
             for (String windowHandle : PageFactory.getWebDriver().getWindowHandles()) {
                 PageFactory.getWebDriver().switchTo().window(windowHandle);
             }
@@ -380,6 +380,16 @@ public class GenericStepDefs {
     }
 
     /**
+     * Go to specified url
+     *
+     * @param url url to go to
+     */
+    @And("ru.sbtqa.tag.pagefactory.goToUrl")
+    public void goToUrl(String url) {
+        PageFactory.getWebDriver().get(url);
+    }
+
+    /**
      * Initialize a page with corresponding URL
      *
      * @param url value of the
@@ -399,10 +409,10 @@ public class GenericStepDefs {
     public void reInitPage() {
         PageFactory.getWebDriver().navigate().refresh();
     }
-    
+
     /**
      * Swipe until text is visible
-     * 
+     *
      * @param direction direction to swipe
      * @param text text on page to swipe to
      * @throws SwipeException if the text is not found or swipe depth is reached
@@ -411,6 +421,4 @@ public class GenericStepDefs {
     public void swipeToText(String direction, String text) throws SwipeException {
         MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
     }
-    
-    
 }
