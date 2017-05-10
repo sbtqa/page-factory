@@ -30,9 +30,9 @@ public class PageFactory {
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
-    
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
+    private static final boolean VIDEO_ENABLED = Boolean.parseBoolean(Props.get("video.enabled", "false"));
 
     public static WebDriver getWebDriver() {
         return getDriver();
@@ -41,7 +41,7 @@ public class PageFactory {
     public static AppiumDriver getMobileDriver() {
         return (AppiumDriver) getDriver();
     }
-    
+
     public static WebDriver getDriver() {
         switch (getEnvironment()) {
             case WEB:
@@ -149,6 +149,15 @@ public class PageFactory {
         videoRecorder = null;
     }
 
+    /**
+     * Checks if video recording enabled
+     *
+     * @return true if video.enabled property defined as true
+     */
+    public static boolean isVideoRecorderEnabled() {
+        return VIDEO_ENABLED;
+    }
+
     public static Environment getEnvironment() {
         switch (ENVIRONMENT) {
             case ENVIRONMENT_WEB:
@@ -156,7 +165,7 @@ public class PageFactory {
             case ENVIRONMENT_MOBILE:
                 return Environment.MOBILE;
             default:
-                if(ENVIRONMENT.equals("")) {
+                if (ENVIRONMENT.equals("")) {
                     throw new FactoryRuntimeException("Please add 'driver.environment = web' or 'driver.environment = mobile' to application.properties");
                 } else {
                     throw new FactoryRuntimeException("Environment '" + ENVIRONMENT + "' is not supported");
