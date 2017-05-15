@@ -1066,7 +1066,7 @@ public abstract class Page {
         private static <T extends WebElement> T findElementInBlock(HtmlElement block, String elementTitle, Class<T> type)
                 throws ElementDescriptionException {
             for (Field f : FieldUtils.getAllFields(block.getClass())) {
-                if (Core.isRequiredElement(f, elementTitle) && f.getType().equals(type)) {
+                if (Core.isRequiredElement(f, elementTitle) && type.isAssignableFrom(f.getType())) {
                     f.setAccessible(true);
                     try {
                         return type.cast(f.get(block));
