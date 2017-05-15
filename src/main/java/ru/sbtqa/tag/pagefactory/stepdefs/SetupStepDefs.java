@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allure.TagAllureReporter;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
-import ru.sbtqa.tag.pagefactory.Page;
+import ru.sbtqa.tag.pagefactory.WebElementsPage;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ElementTitle;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.OnFailureScheduler;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.qautils.reflect.ClassUtilsExt;
@@ -77,11 +77,11 @@ public class SetupStepDefs {
 
         for (Class<?> page : allClasses) {
             List<Class> supers = ClassUtilsExt.getSuperclassesWithInheritance(page);
-            if (!supers.contains(Page.class) && !supers.contains(HtmlElement.class)) {
+            if (!supers.contains(WebElementsPage.class) && !supers.contains(HtmlElement.class)) {
                 if (page.getName().contains("$")) {
-                    continue; //We allow private additional classes but skip it if its not extends Page
+                    continue; //We allow private additional classes but skip it if its not extends WebElementsPage
                 } else {
-                    throw new FactoryRuntimeException("Class " + page.getName() + " is not extended from Page class. Check you webdriver.pages.package property.");
+                    throw new FactoryRuntimeException("Class " + page.getName() + " is not extended from WebElementsPage class. Check you webdriver.pages.package property.");
                 }
             }
             List<Field> fields = FieldUtilsExt.getDeclaredFieldsWithInheritance(page);
@@ -99,7 +99,7 @@ public class SetupStepDefs {
                 }
             }
 
-            PageFactory.getPageRepository().put((Class<? extends Page>) page, fieldsMap);
+            PageFactory.getPageRepository().put((Class<? extends WebElementsPage>) page, fieldsMap);
         }
     }
 

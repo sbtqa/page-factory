@@ -12,8 +12,8 @@ import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
-import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.PageEntry;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 
 public class PageWrapper {
@@ -21,7 +21,7 @@ public class PageWrapper {
     private static final Logger LOG = LoggerFactory.getLogger(PageWrapper.class);
 
     private String currentPageTitle;
-    private Page currentPage;
+    private WebElementsPage currentPage;
 
     private final String pagesPackage;
 
@@ -42,7 +42,7 @@ public class PageWrapper {
      * @throws PageInitializationException if failed to execute corresponding
      * page constructor
      */
-    public Page getPage(String title) throws PageInitializationException {
+    public WebElementsPage getPage(String title) throws PageInitializationException {
         if (null == currentPage || !currentPageTitle.equals(title)) {
             if (null != currentPage) {
                 currentPage = getPage(currentPage.getClass().getPackage().getName(), title);
@@ -51,7 +51,7 @@ public class PageWrapper {
                 currentPage = getPage(pagesPackage, title);
             }
             if (null == currentPage) {
-                throw new AutotestError("Page object with title '" + title + "' is not registered");
+                throw new AutotestError("WebElementsPage object with title '" + title + "' is not registered");
             }
         }
         return currentPage;
@@ -62,23 +62,23 @@ public class PageWrapper {
      *
      * @param page TODO
      * @return TODO
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException
      * TODO
      */
-    public Page getPage(Class<? extends Page> page) throws PageInitializationException {
+    public WebElementsPage getPage(Class<? extends WebElementsPage> page) throws PageInitializationException {
         return bootstrapPage(page);
     }
 
     /**
      * <p>
-     * Get Page by PageEntry title </p>
+     * Get WebElementsPage by PageEntry title </p>
      *
      * @param packageName a {@link java.lang.String} object.
      * @param title a {@link java.lang.String} object.
-     * @return a Page object.
+     * @return a WebElementsPage object.
      * @throws PageInitializationException {@inheritDoc}
      */
-    public Page getPage(String packageName, String title) throws PageInitializationException {
+    public WebElementsPage getPage(String packageName, String title) throws PageInitializationException {
         return bootstrapPage(getPageClass(packageName, title));
     }
 
@@ -86,11 +86,11 @@ public class PageWrapper {
      * <p>
      * Getter for the field <code>currentPage</code>.</p>
      *
-     * @return a Page object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
+     * @return a WebElementsPage object.
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException
      * TODO
      */
-    public Page getCurrentPage() throws PageInitializationException {
+    public WebElementsPage getCurrentPage() throws PageInitializationException {
         if (null == currentPage) {
             throw new PageInitializationException("Current page not initialized!");
         } else {
@@ -99,13 +99,13 @@ public class PageWrapper {
     }
 
     /**
-     * Redirect to Page by Page Entry url value
+     * Redirect to WebElementsPage by WebElementsPage Entry url value
      *
      * @param title a {@link java.lang.String} object.
-     * @return a Page object.
+     * @return a WebElementsPage object.
      * @throws PageInitializationException TODO
      */
-    public Page changeUrlByTitle(String title) throws PageInitializationException {
+    public WebElementsPage changeUrlByTitle(String title) throws PageInitializationException {
         if (null != currentPage) {
             currentPage = changeUrlByTitle(currentPage.getClass().getPackage().getName(), title);
         }
@@ -113,21 +113,21 @@ public class PageWrapper {
             currentPage = changeUrlByTitle(pagesPackage, title);
         }
         if (null == currentPage) {
-            throw new AutotestError("Page Object with title " + title + " is not registered");
+            throw new AutotestError("WebElementsPage Object with title " + title + " is not registered");
         }
         return currentPage;
     }
 
     /**
-     * Redirect to Page by Page Entry url value
+     * Redirect to WebElementsPage by WebElementsPage Entry url value
      *
      * @param packageName a {@link java.lang.String} object.
      * @param title a {@link java.lang.String} object.
-     * @return a Page object.
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
+     * @return a WebElementsPage object.
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException
      * TODO
      */
-    public Page changeUrlByTitle(String packageName, String title) throws PageInitializationException {
+    public WebElementsPage changeUrlByTitle(String packageName, String title) throws PageInitializationException {
 
         Class<?> pageClass = getPageClass(packageName, title);
         if (pageClass == null) {
@@ -152,7 +152,7 @@ public class PageWrapper {
             return bootstrapPage(pageClass);
         }
 
-        throw new AutotestError("Page " + title + " doesn't have fast URL in PageEntry");
+        throw new AutotestError("WebElementsPage " + title + " doesn't have fast URL in PageEntry");
     }
 
     /**
@@ -202,14 +202,14 @@ public class PageWrapper {
      * @throws PageInitializationException if failed to execute corresponding
      * page constructor
      */
-    private Page bootstrapPage(Class<?> page) throws PageInitializationException {
+    private WebElementsPage bootstrapPage(Class<?> page) throws PageInitializationException {
         if (page != null) {
             try {
                 @SuppressWarnings("unchecked")
-                Constructor<Page> constructor = ((Constructor<Page>) page.getConstructor());
+                Constructor<WebElementsPage> constructor = ((Constructor<WebElementsPage>) page.getConstructor());
                 constructor.setAccessible(true);
                 currentPage = constructor.newInstance();
-                currentPageTitle = currentPage.getTitle();
+                currentPageTitle = currentPage.getPageTitle();
                 return currentPage;
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new PageInitializationException("Failed to initialize page '" + page + "'", e);

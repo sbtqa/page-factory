@@ -1,23 +1,22 @@
-package ru.sbtqa.tag.pagefactory.annotations;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import ru.sbtqa.tag.pagefactory.Page;
 
 /**
- * Points to page where browser will go after control clicked
+ * WebElement`s title. Optional annotation.
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface RedirectsTo {
+public @interface ElementTitle {
 
     /**
      * Title text
      *
-     * @return a {@link Class} object.
+     * @return a {@link java.lang.String} object.
      */
-    public Class <? extends Page> page();
+    public String value();
     }

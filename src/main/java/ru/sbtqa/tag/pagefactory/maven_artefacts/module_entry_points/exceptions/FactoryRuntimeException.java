@@ -1,12 +1,12 @@
-package ru.sbtqa.tag.pagefactory.exceptions;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions;
 
-public class PageException extends Exception {
+public class FactoryRuntimeException extends RuntimeException {
 
     /**
      * 
      * @param e  TODO
      */
-    public PageException(Throwable e) {
+    public FactoryRuntimeException(Throwable e) {
         super(e);
     }
     
@@ -15,7 +15,7 @@ public class PageException extends Exception {
      * @param message a {@link java.lang.String} object.
      * @param e a {@link java.lang.Throwable} object.
      */
-    public PageException(String message, Throwable e) {
+    public FactoryRuntimeException(String message, Throwable e) {
         super(message, e);
     }
 
@@ -23,7 +23,7 @@ public class PageException extends Exception {
      *
      * @param message a {@link java.lang.String} object.
      */
-    public PageException(String message) {
+    public FactoryRuntimeException(String message) {
         super(message);
     }
 

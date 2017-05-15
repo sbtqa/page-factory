@@ -10,7 +10,7 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.pagefactory.Page;
+import ru.sbtqa.tag.pagefactory.WebElementsPage;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
@@ -29,7 +29,7 @@ public class ClickAspect {
     public void doAroundClick(ProceedingJoinPoint joinPoint) throws Throwable {
         WebElement targetWebElement;
 
-        Class<? extends Page> elementRedirect;
+        Class<? extends WebElementsPage> elementRedirect;
         if (joinPoint.getTarget() instanceof TypifiedElement) {
             targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
             TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();

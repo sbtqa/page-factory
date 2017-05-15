@@ -1,12 +1,14 @@
-package ru.sbtqa.tag.pagefactory.exceptions;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions;
 
-public class PageInitializationException extends PageException {
+import ru.sbtqa.tag.qautils.errors.AutotestError;
+
+public class WaitException extends AutotestError {
 
     /**
      *
      * @param e a {@link java.lang.Throwable} object.
      */
-    public PageInitializationException(Throwable e) {
+    public WaitException(Throwable e) {
         super(e);
     }
 
@@ -15,7 +17,7 @@ public class PageInitializationException extends PageException {
      * @param message a {@link java.lang.String} object.
      * @param e a {@link java.lang.Throwable} object.
      */
-    public PageInitializationException(String message, Throwable e) {
+    public WaitException(String message, Throwable e) {
         super(message, e);
     }
 
@@ -23,7 +25,7 @@ public class PageInitializationException extends PageException {
      *
      * @param message a {@link java.lang.String} object.
      */
-    public PageInitializationException(String message) {
+    public WaitException(String message) {
         super(message);
     }
 

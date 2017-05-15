@@ -1,17 +1,19 @@
-package ru.sbtqa.tag.pagefactory.annotations;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations;
 
 import java.lang.annotation.ElementType;
+//import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ActionTitles {
+public @interface ActionTitle {
 
     /**
+     * Title text
      *
-     * @return TODO
+     * @return a {@link java.lang.String} object.
      */
-    ActionTitle[] value();
+    public String value();
 }

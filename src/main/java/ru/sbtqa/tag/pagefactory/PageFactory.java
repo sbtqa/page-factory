@@ -11,16 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
-import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.AbstractPageFactory;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
-public class PageFactory {
+public class PageFactory extends AbstractPageFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageFactory.class);
 
-    private static final Map<Class<? extends Page>, Map<Field, String>> PAGES_REPOSITORY = new HashMap<>();
+    private static final Map<Class<? extends WebElementsPage>, Map<Field, String>> PAGES_REPOSITORY = new HashMap<>();
 
     private static Actions actions;
     private static PageWrapper PageWrapper;
@@ -122,7 +123,7 @@ public class PageFactory {
     /**
      * @return the pageRepository
      */
-    public static Map<Class<? extends Page>, Map<Field, String>> getPageRepository() {
+    public static Map<Class<? extends WebElementsPage>, Map<Field, String>> getPageRepository() {
         return PAGES_REPOSITORY;
     }
 

@@ -1,12 +1,12 @@
-package ru.sbtqa.tag.pagefactory.exceptions;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions;
 
-public class ElementNotFoundException extends PageException {
+public class PageInitializationException extends PageException {
 
     /**
-     * 
+     *
      * @param e a {@link java.lang.Throwable} object.
      */
-    public ElementNotFoundException(Throwable e) {
+    public PageInitializationException(Throwable e) {
         super(e);
     }
 
@@ -15,7 +15,7 @@ public class ElementNotFoundException extends PageException {
      * @param message a {@link java.lang.String} object.
      * @param e a {@link java.lang.Throwable} object.
      */
-    public ElementNotFoundException(String message, Throwable e) {
+    public PageInitializationException(String message, Throwable e) {
         super(message, e);
     }
 
@@ -23,7 +23,7 @@ public class ElementNotFoundException extends PageException {
      *
      * @param message a {@link java.lang.String} object.
      */
-    public ElementNotFoundException(String message) {
+    public PageInitializationException(String message) {
         super(message);
     }
 
