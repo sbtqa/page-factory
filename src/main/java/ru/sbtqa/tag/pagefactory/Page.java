@@ -735,7 +735,7 @@ public abstract class Page {
                     } else {
                         MethodUtils.invokeMethod(block, method.getName(), parameters);
                     }
-                    break;
+                    return;
                 } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     throw new FactoryRuntimeException(String.format("Failed to execute method '%s' in the following block: '%s'",
                             actionTitle, blockPath), e);
