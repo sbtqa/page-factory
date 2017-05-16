@@ -116,7 +116,7 @@ public class SetupStepDefs {
         if (PageFactory.isVideoRecorderEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
             String videoPath = VideoRecorder.getInstance().stopRecording();
             if (videoPath != null) {
-                ParamsHelper.addVideoParameter(VideoRecorder.getInstance().getVideoPath());
+                ParamsHelper.addParam("Video url", VideoRecorder.getInstance().getVideoPath());
                 VideoRecorder.getInstance().resetVideoRecorder();
             }
         }
