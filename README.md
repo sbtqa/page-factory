@@ -1,1 +1,14 @@
-# page-factory [![Build Status](https://travis-ci.org/sbtqa/page-factory.svg?branch=master)](https://travis-ci.org/sbtqa/page-factory)
+#It may be not compiled only for testing
+
+Быстро по-русски опишу здесь.
+
+В этом драфте я предлагаю свое видение модулизации page-factory, что в свою очередь будет способствовать развитию плагинизации.
+
+### Структура проекта
+
+В ru.sbtqa.tag.pagefactory есть пакет maven_artefacts. Любой пакет, находящийся в нем, в дальнейшем будет отдельной мавен либой.
+
+**module_entry_points** - в этом артефакте набор классов - точек входа в page-factory. С помощью них в плагинах будем взаимодейтсвовать с page-factory.
+**module_support** - необходимость его еще под вопросом, там я думал держать набор общих хелперов и  
+
+

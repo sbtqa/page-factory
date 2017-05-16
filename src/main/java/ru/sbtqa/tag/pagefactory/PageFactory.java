@@ -17,6 +17,9 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
+/**
+ * Общая информация о контексте теста
+ */
 public class PageFactory extends AbstractPageFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageFactory.class);

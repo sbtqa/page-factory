@@ -12,16 +12,28 @@ import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.IPage;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.PageEntry;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 
+
+/**
+ * Кто это
+ *
+ * 1. Инфа о текущем контексте страницы
+ *
+ * 2. Механизм управления текущим контектсом страницы
+ *
+ * 3. Механизм рекурсивного поиска и загрузки страниц
+ *
+ */
 public class PageWrapper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageWrapper.class);
 
     private String currentPageTitle;
-    private WebElementsPage currentPage;
+    private IPage currentPage;
 
     private final String pagesPackage;
 
