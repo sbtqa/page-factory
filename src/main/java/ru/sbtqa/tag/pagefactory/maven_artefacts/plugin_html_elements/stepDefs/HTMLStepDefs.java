@@ -4,9 +4,9 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.AbstractPageFactory;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageWrapper;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.yandex.qatools.htmlelements.element.*;
 
@@ -17,10 +17,10 @@ import static ru.sbtqa.tag.pagefactory.maven_artefacts.plugin_html_elements.Page
 /**
  * Basic step definitions, that should be available on every project Notations
  * used in this class: Block - a class that extends {@link HtmlElement} and has
- * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ElementTitle} annotation Action -
- * a method with {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ActionTitle}
+ * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle} annotation Action -
+ * a method with {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle}
  * annotation in page object List - list of {@link WebElement}'s with
- * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ElementTitle} annotation on page
+ * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle} annotation on page
  * object
  * <p>
  * To pass a Cucumber {@link DataTable} as a parameter to method,
@@ -57,7 +57,7 @@ public class HTMLStepDefs {
     public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
             NoSuchMethodException, NoSuchElementException {
         
-        executeMethodByTitleInBlock(AbstractPageFactory.getCurrentPage(), block, action);
+        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action);
     }
 
     /**
@@ -74,7 +74,7 @@ public class HTMLStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionInBlockTableParam")
     public void userActionInBlockTableParam(String block, String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
-        executeMethodByTitleInBlock(AbstractPageFactory.getCurrentPage(), block, action, dataTable);
+        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action, dataTable);
     }
     
     
@@ -93,7 +93,7 @@ public class HTMLStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionInBlockOneParam")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
-        executeMethodByTitleInBlock(AbstractPageFactory.getCurrentPage(), block, action, param);
+        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action, param);
     }
 
     /**
@@ -111,7 +111,7 @@ public class HTMLStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionInBlockTwoParams")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
-        executeMethodByTitleInBlock(AbstractPageFactory.getCurrentPage(), block, action, param1, param2);
+        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action, param1, param2);
     }
 
     /**
@@ -168,7 +168,7 @@ public class HTMLStepDefs {
             default:
                 clazz = WebElement.class;
         }
-        findElementInBlockByTitle(AbstractPageFactory.getCurrentPage(), block, elementTitle, clazz);
+        findElementInBlockByTitle(PageWrapper.getCurrentPage(), block, elementTitle, clazz);
     }
 
     /**
@@ -184,7 +184,7 @@ public class HTMLStepDefs {
     @And("ru.sbtqa.tag.pagefactory.findElementInList")
     public void findElementInList(String listTitle, String value) throws PageException {
         boolean found = false;
-        for (WebElement webElement : findListOfElements(AbstractPageFactory.getCurrentPage(), listTitle)) {
+        for (WebElement webElement : findListOfElements(PageWrapper.getCurrentPage(), listTitle)) {
             if (webElement.getText().equals(value)) {
                 found = true;
                 break;

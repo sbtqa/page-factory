@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api;
 
 import com.google.common.reflect.ClassPath;
 import java.io.IOException;
@@ -12,9 +12,10 @@ import java.util.Set;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.IPage;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.PageEntry;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.WebElementsPage;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.PageEntry;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 
 
@@ -32,8 +33,8 @@ public class PageWrapper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageWrapper.class);
 
-    private String currentPageTitle;
-    private IPage currentPage;
+    private static String currentPageTitle;
+    private static Page currentPage;
 
     private final String pagesPackage;
 
@@ -74,7 +75,7 @@ public class PageWrapper {
      *
      * @param page TODO
      * @return TODO
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException
      * TODO
      */
     public WebElementsPage getPage(Class<? extends WebElementsPage> page) throws PageInitializationException {
@@ -99,10 +100,10 @@ public class PageWrapper {
      * Getter for the field <code>currentPage</code>.</p>
      *
      * @return a WebElementsPage object.
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException
      * TODO
      */
-    public WebElementsPage getCurrentPage() throws PageInitializationException {
+    public static WebElementsPage getCurrentPage() throws PageInitializationException {
         if (null == currentPage) {
             throw new PageInitializationException("Current page not initialized!");
         } else {
@@ -117,7 +118,7 @@ public class PageWrapper {
      * @return a WebElementsPage object.
      * @throws PageInitializationException TODO
      */
-    public WebElementsPage changeUrlByTitle(String title) throws PageInitializationException {
+    public static WebElementsPage changeUrlByTitle(String title) throws PageInitializationException {
         if (null != currentPage) {
             currentPage = changeUrlByTitle(currentPage.getClass().getPackage().getName(), title);
         }
@@ -136,10 +137,10 @@ public class PageWrapper {
      * @param packageName a {@link java.lang.String} object.
      * @param title a {@link java.lang.String} object.
      * @return a WebElementsPage object.
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException
      * TODO
      */
-    public WebElementsPage changeUrlByTitle(String packageName, String title) throws PageInitializationException {
+    public static WebElementsPage changeUrlByTitle(String packageName, String title) throws PageInitializationException {
 
         Class<?> pageClass = getPageClass(packageName, title);
         if (pageClass == null) {
@@ -173,7 +174,7 @@ public class PageWrapper {
      * @param title TODO
      * @return
      */
-    private Class<?> getPageClass(final String packageName, String title) {
+    private static Class<?> getPageClass(final String packageName, String title) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final Set<Class<?>> allClasses = new HashSet<>();
         try {
@@ -214,7 +215,7 @@ public class PageWrapper {
      * @throws PageInitializationException if failed to execute corresponding
      * page constructor
      */
-    private WebElementsPage bootstrapPage(Class<?> page) throws PageInitializationException {
+    private static WebElementsPage bootstrapPage(Class<?> page) throws PageInitializationException {
         if (page != null) {
             try {
                 @SuppressWarnings("unchecked")
@@ -233,7 +234,7 @@ public class PageWrapper {
     /**
      * @return the currentPageTitle
      */
-    public String getCurrentPageTitle() {
+    public static String getCurrentPageTitle() {
         return currentPageTitle;
     }
 }

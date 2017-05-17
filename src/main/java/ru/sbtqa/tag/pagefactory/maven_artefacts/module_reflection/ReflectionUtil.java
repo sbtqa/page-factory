@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.maven_artefacts.module_support;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_reflection;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -9,14 +9,14 @@ import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.pagefactory.WebElementsPage;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ActionTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ActionTitles;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.RedirectsTo;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementDescriptionException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementNotFoundException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.FactoryRuntimeException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.RedirectsTo;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;

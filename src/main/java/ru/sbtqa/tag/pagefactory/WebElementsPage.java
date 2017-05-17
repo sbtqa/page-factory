@@ -14,18 +14,18 @@ import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.IPage;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ActionTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ActionTitles;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.PageEntry;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ValidationRule;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.PageEntry;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ValidationRule;
 import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementDescriptionException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementNotFoundException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.FactoryRuntimeException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageInitializationException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.WaitException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException;
 import ru.sbtqa.tag.pagefactory.extensions.DriverExtension;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.pagefactory.support.AdbConsole;
@@ -44,13 +44,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static ru.sbtqa.tag.pagefactory.maven_artefacts.module_support.ReflectionUtil.*;
+import static ru.sbtqa.tag.pagefactory.maven_artefacts.module_reflection.ReflectionUtil.*;
 
 /**
  * Contains basic actions in particular with web elements
  * If we want to extend this functional -> inherit from this class
  */
-public abstract class WebElementsPage extends IPage {
+public abstract class WebElementsPage extends Page {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebElementsPage.class);
 
@@ -61,7 +61,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param elementTitle element to fill
      * @param text text to enter
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if page was not
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if page was not
      * initialized, or required element couldn't be found
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.fill.field")
@@ -127,7 +127,7 @@ public abstract class WebElementsPage extends IPage {
      * parameter to allure report
      *
      * @param elementTitle title of the element to click
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if page was not
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if page was not
      * initialized, or required element couldn't be found
      */
     @ActionTitles({
@@ -166,7 +166,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param keyName name of the key. See available key names in {@link Keys}
      * @param elementTitle title of WebElement that accepts key commands
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementNotFoundException if
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException if
      * couldn't find element with required title
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.press.key")
@@ -197,7 +197,7 @@ public abstract class WebElementsPage extends IPage {
      * and click if it's not Add corresponding parameter to allure report
      *
      * @param elementTitle WebElement that is supposed to represent checkbox
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if page was not
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if page was not
      * initialized, or required element couldn't be found
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.select.checkBox")
@@ -235,7 +235,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param elementTitle WebElement that is supposed to be selectable
      * @param option option to select
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if required
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if required
      * element couldn't be found, or current page isn't initialized
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.select")
@@ -254,7 +254,7 @@ public abstract class WebElementsPage extends IPage {
      * @param elementTitle the title of SELECT element to interact
      * @param option the value to match against
      * @param strategy the strategy to match value
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if required
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if required
      * element couldn't be found, or current page isn't initialized
      */
     public void select(String elementTitle, String option, MatchStrategy strategy) throws PageException {
@@ -367,7 +367,7 @@ public abstract class WebElementsPage extends IPage {
      * be space-trimmed as well
      *
      * @param text text that will be searched inside of the window
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.WaitException if
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException if
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.modal.window.with.text.appears")
     public void assertModalWindowAppears(String text) throws WaitException {
@@ -389,7 +389,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param text string value that will be searched inside of the element
      * @param elementTitle title of the element to search
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementNotFoundException if
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException if
      * couldn't find element by given title, or current page isn't initialized
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.check.value")
@@ -477,7 +477,7 @@ public abstract class WebElementsPage extends IPage {
      * {@link #checkFieldIsNotEmpty(WebElement)} for details
      *
      * @param elementTitle title of the element to check
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if current page
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if current page
      * was not initialized, or element wasn't found on the page
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.check.field.not.empty")
@@ -510,7 +510,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param text element value for comparison
      * @param elementTitle title of the element to search
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if current page
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if current page
      * wasn't initialized, or element with required title was not found
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.check.values.not.equal")
@@ -604,7 +604,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param element element, redirect for which is being searched
      * @return class of the page object, element redirects to
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementDescriptionException
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
      * if failed to find redirect
      */
     public Class<? extends WebElementsPage> getElementRedirect(WebElement element) throws ElementDescriptionException {
@@ -625,7 +625,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param title title of the element to search
      * @return WebElement found by corresponding title
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if failed to
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if failed to
      * find corresponding element or element type is set incorrectly
      */
     public WebElement getElementByTitle(String title) throws PageException {
@@ -645,7 +645,7 @@ public abstract class WebElementsPage extends IPage {
      * @param <T> TODO
      * @param title a {@link java.lang.String} object.
      * @return a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException TODO
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException TODO
      */
     @SuppressWarnings(value = "unchecked")
     public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
@@ -688,7 +688,7 @@ public abstract class WebElementsPage extends IPage {
      *
      * @param title title of the validation rule
      * @param params parameters passed to called method
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException if couldn't
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException if couldn't
      * find corresponding validation rule
      */
     public void fireValidationRule(String title, Object... params) throws PageException {

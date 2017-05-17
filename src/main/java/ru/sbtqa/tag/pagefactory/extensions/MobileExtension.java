@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.SwipeException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.SwipeException;
 import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 

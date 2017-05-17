@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions;
 
 public class ElementDescriptionException extends PageException {
 

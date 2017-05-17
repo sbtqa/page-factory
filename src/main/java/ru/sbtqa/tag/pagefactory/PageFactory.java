@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.FactoryRuntimeException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.AbstractPageFactory;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageWrapper;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
@@ -27,7 +27,7 @@ public class PageFactory extends AbstractPageFactory {
     private static final Map<Class<? extends WebElementsPage>, Map<Field, String>> PAGES_REPOSITORY = new HashMap<>();
 
     private static Actions actions;
-    private static PageWrapper PageWrapper;
+    private static ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageWrapper PageWrapper;
     private static VideoRecorder videoRecorder;
     private static boolean aspectsDisabled = false;
 

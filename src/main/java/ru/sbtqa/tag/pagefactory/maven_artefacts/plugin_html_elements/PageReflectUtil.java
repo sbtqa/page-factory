@@ -4,13 +4,13 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.IPage;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
 import ru.sbtqa.tag.pagefactory.WebElementsPage;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementDescriptionException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementNotFoundException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.FactoryRuntimeException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
@@ -38,7 +38,7 @@ public class PageReflectUtil {
      * @return found element or null (exception should be thrown by a caller
      * that could no find any elements)
      */
-    private static <T extends WebElement> T findElementInBlock(IPage page, HtmlElement block, String elementTitle, Class<T> type)
+    private static <T extends WebElement> T findElementInBlock(Page page, HtmlElement block, String elementTitle, Class<T> type)
             throws ElementDescriptionException {
         for (Field f : FieldUtils.getAllFields(block.getClass())) {
             if (isRequiredElement(f, elementTitle) && f.getType().equals(type)) {
@@ -91,7 +91,7 @@ public class PageReflectUtil {
      * @return list of found blocks. could be empty
      * @throws IllegalAccessException if called with invalid context
      */
-    private static List<HtmlElement> findBlocks(IPage page, String blockPath, Object context, boolean returnFirstFound)
+    private static List<HtmlElement> findBlocks(Page page, String blockPath, Object context, boolean returnFirstFound)
             throws IllegalAccessException {
         String[] blockChain;
         if (blockPath.contains("->")) {
@@ -137,12 +137,12 @@ public class PageReflectUtil {
      * @param title value of ElementTitle annotation of required element
      * @param type type of the searched element
      * @return web element of the required type
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementNotFoundException if
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementDescriptionException
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
      * if element was not found, but with the wrong type
      */
-    public static  <T extends WebElement> T findElementInBlockByTitle(IPage page, String blockPath, String title, Class<T> type)
+    public static  <T extends WebElement> T findElementInBlockByTitle(Page page, String blockPath, String title, Class<T> type)
             throws PageException {
         for (HtmlElement block : findBlocks(blockPath)) {
             T found = WebElementsPage.Core.findElementInBlock(block, title, type);
@@ -162,12 +162,12 @@ public class PageReflectUtil {
      * @param blockPath block or block chain where element will be searched
      * @param title value of ElementTitle annotation of required element
      * @return WebElement
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementNotFoundException if
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions.ElementDescriptionException
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
      * if element was not found, but with the wrong type
      */
-    public static WebElement findElementInBlockByTitle(IPage page, String blockPath, String title) throws PageException {
+    public static WebElement findElementInBlockByTitle(Page page, String blockPath, String title) throws PageException {
         return findElementInBlockByTitle(blockPath, title, WebElement.class);
     }
     
@@ -182,7 +182,7 @@ public class PageReflectUtil {
      * @return list of elements of particular type
      * @throws PageException if nothing found or current page is not initialized
      */
-    public static  <T extends WebElement> List<T> findListOfElements(IPage page, String listTitle, Class<T> type)
+    public static  <T extends WebElement> List<T> findListOfElements(Page page, String listTitle, Class<T> type)
             throws PageException {
         return WebElementsPage.Core.findListOfElements(listTitle, type, this);
     }
@@ -199,7 +199,7 @@ public class PageReflectUtil {
      * @return list of elements of particular type
      * @throws PageException if nothing found or current page is not initialized
      */
-    public static  <T extends WebElement> List<T> findListOfElementsInBlock(IPage page, String blockPath, String listTitle, Class<T> type)
+    public static  <T extends WebElement> List<T> findListOfElementsInBlock(Page page, String blockPath, String listTitle, Class<T> type)
             throws PageException {
         Object block = findBlock(blockPath);
         return WebElementsPage.Core.findListOfElements(listTitle, type, block);
@@ -215,7 +215,7 @@ public class PageReflectUtil {
      * @return list of WebElement's
      * @throws PageException if nothing found or current page is not initialized
      */
-    public static List<WebElement> findListOfElementsInBlock(IPage page, String blockPath, String listTitle) throws PageException {
+    public static List<WebElement> findListOfElementsInBlock(Page page, String blockPath, String listTitle) throws PageException {
         return findListOfElementsInBlock(blockPath, listTitle, WebElement.class);
     }
     
@@ -228,7 +228,7 @@ public class PageReflectUtil {
      * @return first found block object
      * @throws java.util.NoSuchElementException if couldn't find any block
      */
-    public static HtmlElement findBlock(IPage page, String blockPath) throws NoSuchElementException {
+    public static HtmlElement findBlock(Page page, String blockPath) throws NoSuchElementException {
         try {
             List<HtmlElement> blocks = WebElementsPage.Core.findBlocks(blockPath, this, true);
             if (blocks.isEmpty()) {
@@ -248,7 +248,7 @@ public class PageReflectUtil {
      * @param blockPath full path or just a name of the block to search
      * @return list of objects that were found by specified path
      */
-    public static List<HtmlElement> findBlocks(IPage page, String blockPath) throws NoSuchElementException {
+    public static List<HtmlElement> findBlocks(Page page, String blockPath) throws NoSuchElementException {
         try {
             return WebElementsPage.Core.findBlocks(blockPath, this, false);
         } catch (IllegalAccessException ex) {
@@ -265,7 +265,7 @@ public class PageReflectUtil {
      * @throws java.lang.NoSuchMethodException if required method couldn't be
      * found
      */
-    public static void executeMethodByTitleInBlock(IPage page, String block, String actionTitle) throws NoSuchMethodException {
+    public static void executeMethodByTitleInBlock(Page page, String block, String actionTitle) throws NoSuchMethodException {
         executeMethodByTitleInBlock(block, actionTitle, new Object[0]);
     }
     
@@ -281,7 +281,7 @@ public class PageReflectUtil {
      * @throws java.lang.NoSuchMethodException if required method couldn't be
      * found
      */
-    public static void executeMethodByTitleInBlock(IPage page, String blockPath, String actionTitle, Object... parameters) throws NoSuchMethodException {
+    public static void executeMethodByTitleInBlock(Page page, String blockPath, String actionTitle, Object... parameters) throws NoSuchMethodException {
         HtmlElement block = findBlock(blockPath);
         Method[] methods = block.getClass().getMethods();
         for (Method method : methods) {

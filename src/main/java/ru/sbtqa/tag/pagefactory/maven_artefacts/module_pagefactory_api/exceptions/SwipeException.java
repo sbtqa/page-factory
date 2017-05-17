@@ -1,12 +1,12 @@
-package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions;
 
-public class UnsupportedBrowserException extends Exception {
+public class SwipeException extends PageException {
 
     /**
-     *
+     * 
      * @param e a {@link java.lang.Throwable} object.
      */
-    public UnsupportedBrowserException(Throwable e) {
+    public SwipeException(Throwable e) {
         super(e);
     }
 
@@ -15,7 +15,7 @@ public class UnsupportedBrowserException extends Exception {
      * @param message a {@link java.lang.String} object.
      * @param e a {@link java.lang.Throwable} object.
      */
-    public UnsupportedBrowserException(String message, Throwable e) {
+    public SwipeException(String message, Throwable e) {
         super(message, e);
     }
 
@@ -23,7 +23,7 @@ public class UnsupportedBrowserException extends Exception {
      *
      * @param message a {@link java.lang.String} object.
      */
-    public UnsupportedBrowserException(String message) {
+    public SwipeException(String message) {
         super(message);
     }
 

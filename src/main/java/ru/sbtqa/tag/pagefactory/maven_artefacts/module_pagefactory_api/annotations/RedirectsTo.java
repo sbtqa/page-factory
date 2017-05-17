@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

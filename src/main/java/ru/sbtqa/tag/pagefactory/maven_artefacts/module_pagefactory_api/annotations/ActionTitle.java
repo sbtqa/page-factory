@@ -1,17 +1,14 @@
-package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.annotations;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations;
 
 import java.lang.annotation.ElementType;
+//import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * WebElement`s title. Optional annotation.
- *
- */
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface ElementTitle {
+public @interface ActionTitle {
 
     /**
      * Title text
@@ -19,4 +16,4 @@ public @interface ElementTitle {
      * @return a {@link java.lang.String} object.
      */
     public String value();
-    }
+}

@@ -1,14 +1,12 @@
-package ru.sbtqa.tag.pagefactory.maven_artefacts.module_entry_points.exceptions;
+package ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions;
 
-import ru.sbtqa.tag.qautils.errors.AutotestError;
-
-public class WaitException extends AutotestError {
+public class UnsupportedBrowserException extends Exception {
 
     /**
      *
      * @param e a {@link java.lang.Throwable} object.
      */
-    public WaitException(Throwable e) {
+    public UnsupportedBrowserException(Throwable e) {
         super(e);
     }
 
@@ -17,7 +15,7 @@ public class WaitException extends AutotestError {
      * @param message a {@link java.lang.String} object.
      * @param e a {@link java.lang.Throwable} object.
      */
-    public WaitException(String message, Throwable e) {
+    public UnsupportedBrowserException(String message, Throwable e) {
         super(message, e);
     }
 
@@ -25,7 +23,7 @@ public class WaitException extends AutotestError {
      *
      * @param message a {@link java.lang.String} object.
      */
-    public WaitException(String message) {
+    public UnsupportedBrowserException(String message) {
         super(message);
     }
 
