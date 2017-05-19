@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.WebElement;
 import org.reflections.Reflections;
@@ -51,15 +52,13 @@ public class SetupStepDefs {
         }
 
         try {
-            String[] tasks = Props.get("tasks.to.kill").split(",");
-            if (tasks.length > 0) {
-                for (String task : tasks) {
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            String tasksToKill = Props.get("tasks.to.kill");
+            if (!"".equals(tasksToKill)) {
+                for (String task : tasksToKill.split(",")) {
+                    if (SystemUtils.IS_OS_WINDOWS) {
                         Runtime.getRuntime().exec("taskkill /IM " + task.trim() + " /F");
                     } else {
-                        boolean useSudo = Boolean.valueOf(Props.get("runtime.linux.sudo", "false"));
-                        String sudoPrefix = useSudo ? "" : "sudo";
-                        Runtime.getRuntime().exec(sudoPrefix + " killall " + task.trim());
+                        Runtime.getRuntime().exec("killall " + task.trim());
                     }
                 }
             }
