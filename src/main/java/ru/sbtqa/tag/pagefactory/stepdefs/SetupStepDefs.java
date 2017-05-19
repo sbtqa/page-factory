@@ -51,15 +51,13 @@ public class SetupStepDefs {
         }
 
         try {
-            String[] tasks = Props.get("tasks.to.kill").split(",");
-            if (tasks.length > 0) {
-                for (String task : tasks) {
+            String tasksToKill = Props.get("tasks.to.kill");
+            if (!"".equals(tasksToKill)) {
+                for (String task : tasksToKill.split(",")) {
                     if (System.getProperty("os.name").toLowerCase().contains("win")) {
                         Runtime.getRuntime().exec("taskkill /IM " + task.trim() + " /F");
                     } else {
-                        boolean useSudo = Boolean.valueOf(Props.get("runtime.linux.sudo", "false"));
-                        String sudoPrefix = useSudo ? "" : "sudo";
-                        Runtime.getRuntime().exec(sudoPrefix + " killall " + task.trim());
+                        Runtime.getRuntime().exec("killall " + task.trim());
                     }
                 }
             }
