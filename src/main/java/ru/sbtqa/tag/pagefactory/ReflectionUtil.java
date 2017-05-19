@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.maven_artefacts.module_reflection;
+package ru.sbtqa.tag.pagefactory;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
-import ru.sbtqa.tag.pagefactory.WebElementsPage;
-import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
@@ -30,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static ru.sbtqa.tag.pagefactory.maven_artefacts.plugin_html_elements.PageReflectUtil.isChildOf;
+
 /**
  * Common reflection utils as static methods from Page.Core
  *
@@ -39,6 +39,45 @@ import java.util.List;
 public class ReflectionUtil {
     
     public static final Logger LOG = LoggerFactory.getLogger(ReflectionUtil.class);
+
+    /**
+     * Check whether given method has {@link ActionTitle} or
+     * {@link ActionTitles} annotation with required title
+     *
+     * @param method method to check
+     * @param title required title
+     * @return true|false
+     */
+    // TODO: 19.05.2017 Здесь нужно избавиться от привязки к TagCucumber.getFeaure & i18
+    // Action titile должны заполняться до прогона теста.
+    public static Boolean isRequiredAction(Method method, final String title) {
+        ActionTitle actionTitle = method.getAnnotation(ActionTitle.class);
+        ActionTitles actionTitles = method.getAnnotation(ActionTitles.class);
+        List<ActionTitle> actionList = new ArrayList<>();
+
+        if (actionTitles != null) {
+            actionList.addAll(Arrays.asList(actionTitles.value()));
+        }
+        if (actionTitle != null) {
+            actionList.add(actionTitle);
+        }
+
+        for (ActionTitle action : actionList) {
+            String actionValue = action.value();
+            try {
+                I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.getFeature().getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
+                actionValue = i18n.get(action.value());
+            } catch (I18NRuntimeException e) {
+                LOG.debug("There is no bundle for translation class. Leave it as is", e);
+            }
+
+            if (actionValue.equals(title)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     
     
     /**
@@ -63,96 +102,7 @@ public class ReflectionUtil {
         return methods;
     }
     
-    /**
-     * Check whether given method has {@link ActionTitle} or
-     * {@link ActionTitles} annotation with required title
-     *
-     * @param method method to check
-     * @param title required title
-     * @return true|false
-     */
-    public static Boolean isRequiredAction(Method method, final String title) {
-        ActionTitle actionTitle = method.getAnnotation(ActionTitle.class);
-        ActionTitles actionTitles = method.getAnnotation(ActionTitles.class);
-        List<ActionTitle> actionList = new ArrayList<>();
-        
-        if (actionTitles != null) {
-            actionList.addAll(Arrays.asList(actionTitles.value()));
-        }
-        if (actionTitle != null) {
-            actionList.add(actionTitle);
-        }
-        
-        for (ActionTitle action : actionList) {
-            String actionValue = action.value();
-            try {
-                I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.getFeature().getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
-                actionValue = i18n.get(action.value());
-            } catch (I18NRuntimeException e) {
-                LOG.debug("There is no bundle for translation class. Leave it as is", e);
-            }
-            
-            if (actionValue.equals(title)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Check whether given field is a child of specified class
-     *
-     * @param parent class that is supposed to be parent
-     * @param field field to check
-     * @return true|false
-     */
-    public static boolean isChildOf(Class<?> parent, Field field) {
-        Class<?> fieldType = field.getType();
-        while (fieldType != null && fieldType != Object.class) {
-            if (fieldType == parent) {
-                return true;
-            }
-            fieldType = fieldType.getSuperclass();
-        }
-        
-        return false;
-    }
-    
-    
-    /**
-     * Find list of elements of the specified type with required title in
-     * the given context. Context is either a page object itself, or a block
-     * on the page. !BEWARE! field.get() will actually query browser to
-     * evaluate the list, so this method might reduce performance!
-     *
-     * @param listTitle value of ElementTitle annotation of required element
-     * @param type type of elements inside of the list
-     * @param context object where search should be performed
-     * @param <T> type of elements in returned list
-     * @return list of WebElement's or its derivatives
-     * @throws PageException if didn't find any list or current page wasn't
-     * initialized
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends WebElement> List<T> findListOfElements(String listTitle, Class<T> type, Object context)
-            throws PageException {
-        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(context.getClass())) {
-            if (isRequiredElement(field, listTitle) && List.class.isAssignableFrom(field.getType())
-                    && field.getGenericType() instanceof ParameterizedType
-                    && ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].equals(type)) {
-                field.setAccessible(true);
-                try {
-                    return (List<T>) field.get(context);
-                } catch (IllegalAccessException e) {
-                    throw new FactoryRuntimeException(
-                            String.format("Internal error during attempt to find list '%s'", listTitle), e);
-                }
-            }
-        }
-        throw new ElementNotFoundException(String.format("Couldn't find elements list '%s' on page '%s'", listTitle, PageFactory
-                .getInstance().getCurrentPageTitle()));
-    }
+
     
     /**
      * Check whether {@link ElementTitle} annotation of the field has a
@@ -211,6 +161,7 @@ public class ReflectionUtil {
                     LOG.debug("Failed to get page destination to redirect for element", ex);
                 }
             }
+            // ПЛОХО завязано
             if (isChildOf(HtmlElement.class, field)) {
                 field.setAccessible(true);
                 Class<? extends WebElementsPage> redirects = null;
@@ -264,13 +215,14 @@ public class ReflectionUtil {
      */
     public static void addToReport(WebElement webElement, String text) {
         try {
-            String elementTitle = PageFactory.getInstance().getCurrentPage().getElementTitle(webElement);
+            //TODO
+            String elementTitle = ((WebElementsPage) PageFactory.getPageContext().getCurrentPage()).getElementTitle(webElement);
             addToReport(elementTitle, text);
         } catch (PageException e) {
             LOG.warn("Failed to add element " + webElement + " to report", e);
         }
     }
-    
+
     /**
      * Add parameter to allure report.
      *
@@ -280,7 +232,7 @@ public class ReflectionUtil {
     public static void addToReport(String paramName, String paramValue) {
         ParamsHelper.addParam(paramName, paramValue);
         LOG.debug("Add '" + paramName + "->" + paramValue + "' to report for page '"
-                + PageFactory.getInstance().getCurrentPageTitle() + "'");
+                + PageFactory.getPageContext().getCurrentPageTitle() + "'");
     }
 }
  

@@ -4,7 +4,7 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageWrapper;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
@@ -57,7 +57,7 @@ public class HTMLStepDefs {
     public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
             NoSuchMethodException, NoSuchElementException {
         
-        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action);
+        executeMethodByTitleInBlock(PageContext.getCurrentPage(), block, action);
     }
 
     /**
@@ -74,7 +74,7 @@ public class HTMLStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionInBlockTableParam")
     public void userActionInBlockTableParam(String block, String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
-        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action, dataTable);
+        executeMethodByTitleInBlock(PageContext.getCurrentPage(), block, action, dataTable);
     }
     
     
@@ -93,7 +93,7 @@ public class HTMLStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionInBlockOneParam")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
-        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action, param);
+        executeMethodByTitleInBlock(PageContext.getCurrentPage(), block, action, param);
     }
 
     /**
@@ -111,7 +111,7 @@ public class HTMLStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionInBlockTwoParams")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
-        executeMethodByTitleInBlock(PageWrapper.getCurrentPage(), block, action, param1, param2);
+        executeMethodByTitleInBlock(PageContext.getCurrentPage(), block, action, param1, param2);
     }
 
     /**
@@ -168,7 +168,7 @@ public class HTMLStepDefs {
             default:
                 clazz = WebElement.class;
         }
-        findElementInBlockByTitle(PageWrapper.getCurrentPage(), block, elementTitle, clazz);
+        findElementInBlockByTitle(PageContext.getCurrentPage(), block, elementTitle, clazz);
     }
 
     /**
@@ -184,7 +184,7 @@ public class HTMLStepDefs {
     @And("ru.sbtqa.tag.pagefactory.findElementInList")
     public void findElementInList(String listTitle, String value) throws PageException {
         boolean found = false;
-        for (WebElement webElement : findListOfElements(PageWrapper.getCurrentPage(), listTitle)) {
+        for (WebElement webElement : findListOfElements(PageContext.getCurrentPage(), listTitle)) {
             if (webElement.getText().equals(value)) {
                 found = true;
                 break;

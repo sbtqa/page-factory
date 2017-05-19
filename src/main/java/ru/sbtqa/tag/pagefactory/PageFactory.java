@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagMobileDriver;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageWrapper;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
@@ -20,21 +20,22 @@ import ru.sbtqa.tag.videorecorder.VideoRecorder;
 /**
  * Общая информация о контексте теста
  */
-public class PageFactory extends AbstractPageFactory {
+public class PageFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageFactory.class);
 
     private static final Map<Class<? extends WebElementsPage>, Map<Field, String>> PAGES_REPOSITORY = new HashMap<>();
 
     private static Actions actions;
-    private static ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageWrapper PageWrapper;
+    private static PageManager pageManager;
     private static VideoRecorder videoRecorder;
+    private static PageContext pageContext;
     private static boolean aspectsDisabled = false;
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
     private static final String TIMEOUT = Props.get("page.load.timeout");
-    
+
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
 
@@ -45,7 +46,11 @@ public class PageFactory extends AbstractPageFactory {
     public static AppiumDriver getMobileDriver() {
         return (AppiumDriver) getDriver();
     }
-    
+
+    public static PageContext getPageContext() {
+        return pageContext;
+    }
+
     public static WebDriver getDriver() {
         switch (getEnvironment()) {
             case WEB:
@@ -83,11 +88,11 @@ public class PageFactory extends AbstractPageFactory {
      *
      * @return PageFactory
      */
-    public static PageWrapper getInstance() {
-        if (null == PageWrapper) {
-            PageWrapper = new PageWrapper(PAGES_PACKAGE);
+    public static PageManager getInstance() {
+        if (null == pageManager) {
+            pageManager = new PageManager(PAGES_PACKAGE);
         }
-        return PageWrapper;
+        return pageManager;
     }
 
     /**

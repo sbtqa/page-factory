@@ -4,21 +4,34 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import ru.sbtqa.tag.cucumber.TagCucumber;
+import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
 import ru.sbtqa.tag.pagefactory.WebElementsPage;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
+import ru.sbtqa.tag.qautils.i18n.I18N;
+import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
+import ru.yandex.qatools.htmlelements.element.TypifiedElement;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static ru.sbtqa.tag.pagefactory.ReflectionUtil.getElementByField;
+import static ru.sbtqa.tag.pagefactory.ReflectionUtil.isRequiredElement;
 
 /**
  * Static methods for finding block and execution methods by ActionTitles
@@ -38,7 +51,7 @@ public class PageReflectUtil {
      * @return found element or null (exception should be thrown by a caller
      * that could no find any elements)
      */
-    private static <T extends WebElement> T findElementInBlock(Page page, HtmlElement block, String elementTitle, Class<T> type)
+    private static <T extends WebElement> T findElementInBlock(HtmlElement block, String elementTitle, Class<T> type)
             throws ElementDescriptionException {
         for (Field f : FieldUtils.getAllFields(block.getClass())) {
             if (isRequiredElement(f, elementTitle) && f.getType().equals(type)) {
@@ -75,8 +88,26 @@ public class PageReflectUtil {
         return (null != field.getAnnotation(ElementTitle.class))
                 && isChildOf(HtmlElement.class, field);
     }
-    
-    
+
+    /**
+     * Check whether given field is a child of specified class
+     *
+     * @param parent class that is supposed to be parent
+     * @param field field to check
+     * @return true|false
+     */
+    public static boolean isChildOf(Class<?> parent, Field field) {
+        Class<?> fieldType = field.getType();
+        while (fieldType != null && fieldType != Object.class) {
+            if (fieldType == parent) {
+                return true;
+            }
+            fieldType = fieldType.getSuperclass();
+        }
+
+        return false;
+    }
+
     /**
      * Finds blocks by required path/name in the given context. Block is a
      * class that extends HtmlElement. If blockPath contains delimiters, it
@@ -91,7 +122,7 @@ public class PageReflectUtil {
      * @return list of found blocks. could be empty
      * @throws IllegalAccessException if called with invalid context
      */
-    private static List<HtmlElement> findBlocks(Page page, String blockPath, Object context, boolean returnFirstFound)
+    private static List<HtmlElement> findBlocks(String blockPath, Object context, boolean returnFirstFound)
             throws IllegalAccessException {
         String[] blockChain;
         if (blockPath.contains("->")) {
@@ -144,8 +175,8 @@ public class PageReflectUtil {
      */
     public static  <T extends WebElement> T findElementInBlockByTitle(Page page, String blockPath, String title, Class<T> type)
             throws PageException {
-        for (HtmlElement block : findBlocks(blockPath)) {
-            T found = WebElementsPage.Core.findElementInBlock(block, title, type);
+        for (HtmlElement block : findBlocks(page, blockPath)) {
+            T found = findElementInBlock(block, title, type);
             if (null != found) {
                 return found;
             }
@@ -168,7 +199,7 @@ public class PageReflectUtil {
      * if element was not found, but with the wrong type
      */
     public static WebElement findElementInBlockByTitle(Page page, String blockPath, String title) throws PageException {
-        return findElementInBlockByTitle(blockPath, title, WebElement.class);
+        return findElementInBlockByTitle(page, blockPath, title, WebElement.class);
     }
     
     /**
@@ -184,8 +215,56 @@ public class PageReflectUtil {
      */
     public static  <T extends WebElement> List<T> findListOfElements(Page page, String listTitle, Class<T> type)
             throws PageException {
-        return WebElementsPage.Core.findListOfElements(listTitle, type, this);
+        return findListOfElements(listTitle, type, page);
     }
+
+    /**
+     * Find list of elements of the specified type with required title in
+     * the given context. Context is either a page object itself, or a block
+     * on the page. !BEWARE! field.get() will actually query browser to
+     * evaluate the list, so this method might reduce performance!
+     *
+     * @param listTitle value of ElementTitle annotation of required element
+     * @param type type of elements inside of the list
+     * @param context object where search should be performed
+     * @param <T> type of elements in returned list
+     * @return list of WebElement's or its derivatives
+     * @throws PageException if didn't find any list or current page wasn't
+     * initialized
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends WebElement> List<T> findListOfElements(String listTitle, Class<T> type, Object context)
+            throws PageException {
+        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(context.getClass())) {
+            if (isRequiredElement(field, listTitle) && List.class.isAssignableFrom(field.getType())
+                    && field.getGenericType() instanceof ParameterizedType
+                    && ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].equals(type)) {
+                field.setAccessible(true);
+                try {
+                    return (List<T>) field.get(context);
+                } catch (IllegalAccessException e) {
+                    throw new FactoryRuntimeException(
+                            String.format("Internal error during attempt to find list '%s'", listTitle), e);
+                }
+            }
+        }
+        throw new ElementNotFoundException(String.format("Couldn't find elements list '%s' on page '%s'", listTitle, PageFactory
+                .getPageContext().getCurrentPageTitle()));
+    }
+
+    /**
+     * Finds elements list in context of current page See
+     * ${@link Core#findListOfElements(String, Class, Object)} for detailed
+     * description
+     *
+     * @param listTitle value of ElementTitle annotation of required element
+     * @return list of WebElement's
+     * @throws PageException if nothing found or current page is not initialized
+     */
+    public static List<WebElement> findListOfElements(Page page, String listTitle) throws PageException {
+        return findListOfElements(page, listTitle, WebElement.class);
+    }
+
     
     /**
      * Find elements list in context of required block See
@@ -201,8 +280,8 @@ public class PageReflectUtil {
      */
     public static  <T extends WebElement> List<T> findListOfElementsInBlock(Page page, String blockPath, String listTitle, Class<T> type)
             throws PageException {
-        Object block = findBlock(blockPath);
-        return WebElementsPage.Core.findListOfElements(listTitle, type, block);
+        Object block = findBlock(page, blockPath);
+        return findListOfElements(listTitle, type, block);
     }
     
     /**
@@ -216,7 +295,7 @@ public class PageReflectUtil {
      * @throws PageException if nothing found or current page is not initialized
      */
     public static List<WebElement> findListOfElementsInBlock(Page page, String blockPath, String listTitle) throws PageException {
-        return findListOfElementsInBlock(blockPath, listTitle, WebElement.class);
+        return findListOfElementsInBlock(page, blockPath, listTitle, WebElement.class);
     }
     
     /**
@@ -230,10 +309,10 @@ public class PageReflectUtil {
      */
     public static HtmlElement findBlock(Page page, String blockPath) throws NoSuchElementException {
         try {
-            List<HtmlElement> blocks = WebElementsPage.Core.findBlocks(blockPath, this, true);
+            List<HtmlElement> blocks = findBlocks(blockPath, page, true);
             if (blocks.isEmpty()) {
                 throw new java.util.NoSuchElementException(String.format("Couldn't find block '%s' on a page '%s'",
-                        blockPath, this.getPageTitle()));
+                        blockPath, PageContext.getCurrentPageTitle()));
             }
             return blocks.get(0);
         } catch (IllegalAccessException ex) {
@@ -250,7 +329,7 @@ public class PageReflectUtil {
      */
     public static List<HtmlElement> findBlocks(Page page, String blockPath) throws NoSuchElementException {
         try {
-            return WebElementsPage.Core.findBlocks(blockPath, this, false);
+            return findBlocks(blockPath, page, false);
         } catch (IllegalAccessException ex) {
             throw new FactoryRuntimeException(String.format("Internal error during attempt to find a block '%s'", blockPath), ex);
         }
@@ -266,7 +345,7 @@ public class PageReflectUtil {
      * found
      */
     public static void executeMethodByTitleInBlock(Page page, String block, String actionTitle) throws NoSuchMethodException {
-        executeMethodByTitleInBlock(block, actionTitle, new Object[0]);
+        executeMethodByTitleInBlock(page, block, actionTitle, new Object[0]);
     }
     
     /**
@@ -282,10 +361,10 @@ public class PageReflectUtil {
      * found
      */
     public static void executeMethodByTitleInBlock(Page page, String blockPath, String actionTitle, Object... parameters) throws NoSuchMethodException {
-        HtmlElement block = findBlock(blockPath);
+        HtmlElement block = findBlock(page, blockPath);
         Method[] methods = block.getClass().getMethods();
         for (Method method : methods) {
-            if (WebElementsPage.Core.isRequiredAction(method, actionTitle)) {
+            if (isRequiredAction(method, actionTitle)) {
                 try {
                     method.setAccessible(true);
                     if (parameters == null || parameters.length == 0) {
@@ -303,5 +382,68 @@ public class PageReflectUtil {
         
         throw new NoSuchMethodException(String.format("There is no '%s' method in block '%s'", actionTitle, blockPath));
     }
-    
+
+    /**
+     * Check whether given method has {@link ActionTitle} or
+     * {@link ActionTitles} annotation with required title
+     *
+     * @param method method to check
+     * @param title required title
+     * @return true|false
+     */
+//    ДУБЛЯЖ
+    // TODO: 19.05.2017 Здесь нужно избавиться от привязки к TagCucumber.getFeaure & i18
+    // Action titile должны заполняться до прогона теста.
+    public static Boolean isRequiredAction(Method method, final String title) {
+        ActionTitle actionTitle = method.getAnnotation(ActionTitle.class);
+        ActionTitles actionTitles = method.getAnnotation(ActionTitles.class);
+        List<ActionTitle> actionList = new ArrayList<>();
+
+        if (actionTitles != null) {
+            actionList.addAll(Arrays.asList(actionTitles.value()));
+        }
+        if (actionTitle != null) {
+            actionList.add(actionTitle);
+        }
+
+        for (ActionTitle action : actionList) {
+            String actionValue = action.value();
+            try {
+                I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.getFeature().getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
+                actionValue = i18n.get(action.value());
+            } catch (I18NRuntimeException e) {
+//                LOG.debug("There is no bundle for translation class. Leave it as is", e);
+            }
+
+            if (actionValue.equals(title)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+
+    // TODO  Это было в PAGE
+    /**
+     * Find specified TypifiedElement by title annotation among current page
+     * fields
+     *
+     * @param <T> TODO
+     * @param title a {@link java.lang.String} object.
+     * @return a {@link org.openqa.selenium.WebElement} object.
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException TODO
+     */
+    @SuppressWarnings(value = "unchecked")
+    public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
+        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
+            if (isRequiredElement(field, title) && isChildOf(TypifiedElement.class, field)) {
+                return getElementByField(this, field);
+            }
+        }
+        throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, PageContext.getCurrentPageTitle()));
+    }
+
+
 }

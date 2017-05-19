@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.Stash;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.PageEntry;
@@ -44,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static ru.sbtqa.tag.pagefactory.maven_artefacts.module_reflection.ReflectionUtil.*;
+import static ru.sbtqa.tag.pagefactory.ReflectionUtil.*;
 
 /**
  * Contains basic actions in particular with web elements
@@ -554,18 +555,7 @@ public abstract class WebElementsPage extends Page {
         }
     }
 
-    /**
-     * Finds elements list in context of current page See
-     * ${@link Core#findListOfElements(String, Class, Object)} for detailed
-     * description
-     *
-     * @param listTitle value of ElementTitle annotation of required element
-     * @return list of WebElement's
-     * @throws PageException if nothing found or current page is not initialized
-     */
-    public List<WebElement> findListOfElements(String listTitle) throws PageException {
-        return findListOfElements(listTitle, WebElement.class, this);
-    }
+
 
 
     /**
@@ -609,12 +599,12 @@ public abstract class WebElementsPage extends Page {
      */
     public Class<? extends WebElementsPage> getElementRedirect(WebElement element) throws ElementDescriptionException {
         try {
-            WebElementsPage currentPage = PageFactory.getInstance().getCurrentPage();
+            Page currentPage = PageContext.getCurrentPage();
             if (null == currentPage) {
                 LOG.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
                 return null;
             }
-            return Core.findRedirect(currentPage, element);
+            return findRedirect(currentPage, element);
         } catch (IllegalArgumentException | PageInitializationException ex) {
             throw new ElementDescriptionException("Failed to get element redirect", ex);
         }
@@ -630,30 +620,11 @@ public abstract class WebElementsPage extends Page {
      */
     public WebElement getElementByTitle(String title) throws PageException {
         for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
-            if (Core.isRequiredElement(field, title)) {
-                return Core.getElementByField(this, field);
+            if (isRequiredElement(field, title)) {
+                return getElementByField(this, field);
             }
         }
 
-        throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, this.getPageTitle()));
-    }
-
-    /**
-     * Find specified TypifiedElement by title annotation among current page
-     * fields
-     *
-     * @param <T> TODO
-     * @param title a {@link java.lang.String} object.
-     * @return a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException TODO
-     */
-    @SuppressWarnings(value = "unchecked")
-    public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
-        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
-            if (Core.isRequiredElement(field, title) && Core.isChildOf(TypifiedElement.class, field)) {
-                return Core.getElementByField(this, field);
-            }
-        }
         throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, this.getPageTitle()));
     }
 

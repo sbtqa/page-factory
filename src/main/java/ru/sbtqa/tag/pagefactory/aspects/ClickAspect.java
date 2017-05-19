@@ -33,7 +33,7 @@ public class ClickAspect {
         if (joinPoint.getTarget() instanceof TypifiedElement) {
             targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
             TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
-            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(typifiedElement);
+            elementRedirect = getElementRedirect(typifiedElement);
         } else if (joinPoint.getTarget() instanceof WebElement) {
             targetWebElement = (WebElement) joinPoint.getTarget();
             elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(targetWebElement);
