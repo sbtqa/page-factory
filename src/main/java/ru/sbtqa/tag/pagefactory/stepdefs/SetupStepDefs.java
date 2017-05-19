@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.WebElement;
 import org.reflections.Reflections;
@@ -54,7 +55,7 @@ public class SetupStepDefs {
             String tasksToKill = Props.get("tasks.to.kill");
             if (!"".equals(tasksToKill)) {
                 for (String task : tasksToKill.split(",")) {
-                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                    if (SystemUtils.IS_OS_WINDOWS) {
                         Runtime.getRuntime().exec("taskkill /IM " + task.trim() + " /F");
                     } else {
                         Runtime.getRuntime().exec("killall " + task.trim());
