@@ -7,23 +7,9 @@ import ru.yandex.qatools.allure.cucumberjvm.callback.OnFailureCallback;
 
 public class OnFailureScheduler implements OnFailureCallback {
 
-    private void takeScreenshot() {
-        String screenshotStrategy = Props.get("screenshot.strategy", "raw");
-
-        switch (screenshotStrategy) {
-            case "driver":
-                ScreenShooter.takeWithDriver();
-                break;
-            case "raw":
-            default:
-                ScreenShooter.takeRaw();
-                break;
-        }
-    }
-
     @Override
-    public Object call() {   
-        takeScreenshot();
+    public Object call() {
+        ScreenShooter.take();
         return null;
     }
 }
