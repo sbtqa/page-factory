@@ -66,6 +66,11 @@ public class SetupStepDefs {
             LOG.debug("Failed to kill one of task to kill", e);
         }
 
+        String aspectDisabled = Props.get("page.aspect.disabled");
+        if (!"".equals(aspectDisabled)) {
+            PageFactory.setAspectsDisabled(Boolean.parseBoolean(aspectDisabled));
+        }
+
         PageFactory.getDriver();
         PageFactory.getInstance();
 
