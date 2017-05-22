@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.jdi.uitests.core.settings.JDISettings.initFromProperties;
+import static ru.sbtqa.tag.pagefactory.ReflectionUtil.executeMethodByTitle;
 
 /**
  * Basic step definitions, that should be available on every project Notations
@@ -72,7 +74,7 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionNoParams")
     public void userActionNoParams(String action) throws PageInitializationException, NoSuchMethodException {
-        PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action);
+        executeMethodByTitle(PageContext.getCurrentPage(), action);
     }
 
     /**
@@ -85,7 +87,7 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionOneParam")
     public void userActionOneParam(String action, String param) throws PageInitializationException, NoSuchMethodException {
-        PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param);
+        executeMethodByTitle(PageContext.getCurrentPage(), action, param);
     }
 
     /**
@@ -99,7 +101,7 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionTwoParams")
     public void userActionTwoParams(String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
-        PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param1, param2);
+        executeMethodByTitle(PageContext.getCurrentPage(), action, param1, param2);
     }
 
     /**
@@ -114,7 +116,7 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionThreeParams")
     public void userActionThreeParams(String action, String param1, String param2, String param3) throws PageInitializationException, NoSuchMethodException {
-        PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param1, param2, param3);
+        executeMethodByTitle(PageContext.getCurrentPage(), action, param1, param2, param3);
     }
 
     /**
@@ -128,7 +130,7 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionTableParam")
     public void userActionTableParam(String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
-        PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, dataTable);
+        executeMethodByTitle(PageContext.getCurrentPage(), action, dataTable);
     }
 
     /**
@@ -143,7 +145,7 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userDoActionWithObject")
     public void userDoActionWithObject(String action, String param, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
-        PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param, dataTable);
+        executeMethodByTitle(PageContext.getCurrentPage(), action, param, dataTable);
     }
 
     /**
@@ -157,7 +159,7 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.userActionListParam")
     public void userActionListParam(String action, List<String> list) throws PageInitializationException, NoSuchMethodException {
-        PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, list);
+        executeMethodByTitle(PageContext.getCurrentPage(), action, list);
     }
 
     /**

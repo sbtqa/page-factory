@@ -12,7 +12,7 @@ public class Page {
      *
      * @return the title
      */
-    protected String getPageTitle() {
+    public String getPageTitle() {
         return this.getClass().getAnnotation(PageEntry.class).title();
     }
 }

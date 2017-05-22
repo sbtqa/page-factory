@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory;
 
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
@@ -22,6 +24,7 @@ import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -48,7 +51,7 @@ public class ReflectionUtil {
      * @param title required title
      * @return true|false
      */
-    // TODO: 19.05.2017 Здесь нужно избавиться от привязки к TagCucumber.getFeaure & i18
+    // TODO:PL 19.05.2017 Здесь нужно избавиться от привязки к TagCucumber.getFeaure & i18
     // Action titile должны заполняться до прогона теста.
     public static Boolean isRequiredAction(Method method, final String title) {
         ActionTitle actionTitle = method.getAnnotation(ActionTitle.class);
@@ -203,6 +206,31 @@ public class ReflectionUtil {
             throw new ElementDescriptionException("Requested type is incompatible with field '" + field.getName()
                     + "' of '" + parentObject.getClass().getCanonicalName() + "'", cce);
         }
+    }
+
+    /**
+     * Find method with corresponding title on current page, and execute it
+     *
+     * @param title title of the method to call
+     * @param param parameters that will be passed to method
+     * @throws java.lang.NoSuchMethodException if required method couldn't be
+     * found
+     */
+    public static void executeMethodByTitle(Page page, String title, Object... param) throws NoSuchMethodException {
+        List<Method> methods = getDeclaredMethods(page.getClass());
+        for (Method method : methods) {
+            if (isRequiredAction(method, title)) {
+                try {
+                    method.setAccessible(true);
+                    MethodUtils.invokeMethod(page, method.getName(), param);
+                    return;
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    throw new FactoryRuntimeException("Failed to invoke method", e);
+                }
+            }
+        }
+
+        throw new NoSuchMethodException("There is no '" + title + "' method on '" + page.getPageTitle() + "' page object");
     }
     
     /**

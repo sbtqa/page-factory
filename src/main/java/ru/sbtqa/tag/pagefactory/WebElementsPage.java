@@ -629,31 +629,6 @@ public abstract class WebElementsPage extends Page {
     }
 
     /**
-     * Find method with corresponding title on current page, and execute it
-     *
-     * @param title title of the method to call
-     * @param param parameters that will be passed to method
-     * @throws java.lang.NoSuchMethodException if required method couldn't be
-     * found
-     */
-    public void executeMethodByTitle(String title, Object... param) throws NoSuchMethodException {
-        List<Method> methods = getDeclaredMethods(this.getClass());
-        for (Method method : methods) {
-            if (isRequiredAction(method, title)) {
-                try {
-                    method.setAccessible(true);
-                    MethodUtils.invokeMethod(this, method.getName(), param);
-                    return;
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    throw new FactoryRuntimeException("Failed to invoke method", e);
-                }
-            }
-        }
-
-        throw new NoSuchMethodException("There is no '" + title + "' method on '" + this.getPageTitle() + "' page object");
-    }
-
-    /**
      * Find a method with {@link ValidationRule} annotation on current page, and
      * call it
      *
