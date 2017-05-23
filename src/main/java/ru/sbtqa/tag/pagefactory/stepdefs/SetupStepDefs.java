@@ -68,47 +68,7 @@ public class SetupStepDefs {
         }
 
         PageFactory.getDriver();
-        PageFactory.getInstance();
-
-        Reflections reflections;
-        reflections = new Reflections(PageFactory.getPagesPackage());
-
-        Collection<String> allClassesString = reflections.getStore().get("SubTypesScanner").values();
-        Set<Class<?>> allClasses = new HashSet();
-        for (String clazz : allClassesString) {
-            try {
-                allClasses.add(Class.forName(clazz));
-            } catch (ClassNotFoundException e) {
-                LOG.warn("Cannot add all classes to set from package storage", e);
-            }
-        }
-
-        for (Class<?> page : allClasses) {
-            List<Class> supers = ClassUtilsExt.getSuperclassesWithInheritance(page);
-            if (!supers.contains(Page.class) && !supers.contains(HtmlElement.class)) {
-                if (page.getName().contains("$")) {
-                    continue; //We allow private additional classes but skip it if its not extends Page
-                } else {
-                    throw new FactoryRuntimeException("Class " + page.getName() + " is not extended from Page class. Check you webdriver.pages.package property.");
-                }
-            }
-            List<Field> fields = FieldUtilsExt.getDeclaredFieldsWithInheritance(page);
-            Map<Field, String> fieldsMap = new HashMap<>();
-            for (Field field : fields) {
-                Class<?> fieldType = field.getType();
-                if (fieldType.equals(WebElement.class)) {
-
-                    ElementTitle titleAnnotation = field.getAnnotation(ElementTitle.class);
-                    if (titleAnnotation != null) {
-                        fieldsMap.put(field, titleAnnotation.value());
-                    } else {
-                        fieldsMap.put(field, field.getName());
-                    }
-                }
-            }
-
-            PageFactory.getPageRepository().put((Class<? extends Page>) page, fieldsMap);
-        }
+        PageFactory.getInstance();    
     }
 
     @After
