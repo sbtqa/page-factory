@@ -86,8 +86,7 @@ public abstract class Page {
         } else {
             webElement.sendKeys(text);
         }
-
-        Core.addToReport(elementTitle, text);
+        ParamsHelper.addParam("\"%s\" is filled with text \"%s\"", new String[]{elementTitle, text});
     }
 
     /**
@@ -106,8 +105,7 @@ public abstract class Page {
             }
             webElement.sendKeys(text);
         }
-
-        Core.addToReport(webElement, text);
+        ParamsHelper.addParam("\"%s\" is filled with text \"%s\"", new String[]{getElementTitle(webElement), text});
     }
 
     /**
@@ -124,7 +122,7 @@ public abstract class Page {
         } else {
             webElement.click();
         }
-        Core.addToReport(webElement, " is clicked");
+        ParamsHelper.addParam("\"%s\" is clicked", new String[]{getElementTitle(webElement)});
     }
 
     /**
@@ -161,7 +159,7 @@ public abstract class Page {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = PageFactory.getActions();
         actions.sendKeys(key).perform();
-        Core.addToReport(keyName, " is pressed");
+        ParamsHelper.addParam("\"%s\" is pressed", new String[]{keyName});
     }
 
     /**
@@ -181,7 +179,7 @@ public abstract class Page {
         actions.click();
         actions.sendKeys(key);
         actions.build().perform();
-        Core.addToReport(keyName, " is pressed on element " + elementTitle + "'");
+        ParamsHelper.addParam("\"%s\" is pressed by key \"%s\"", new String[]{elementTitle, keyName});
     }
 
     /**
@@ -192,7 +190,7 @@ public abstract class Page {
      */
     public void pressKey(WebElement webElement, Keys keyName) {
         webElement.sendKeys(keyName);
-        Core.addToReport(webElement, " is pressed by key '" + keyName + "'");
+        ParamsHelper.addParam("\"%s\" is pressed by key \"%s\"", new String[]{getElementTitle(webElement), keyName.toString()});
     }
 
     /**
@@ -212,7 +210,7 @@ public abstract class Page {
         } else {
             setCheckBoxState(targetElement, true);
         }
-        Core.addToReport(elementTitle, " is checked");
+        ParamsHelper.addParam("'%s is checked'", new String[]{elementTitle});
     }
 
     /**
@@ -228,8 +226,8 @@ public abstract class Page {
             if (webElement.isSelected() != state) {
                 webElement.click();
             }
+            ParamsHelper.addParam("\"%s\" turned to \"%s\" state", new String[]{getElementTitle(webElement), state.toString()});
         }
-        Core.addToReport(webElement, " is turned to '" + state + "' state");
     }
 
     /**
@@ -311,8 +309,7 @@ public abstract class Page {
         if (!isSelectionMade) {
             throw new AutotestError("There is no element '" + option + "' in " + getElementTitle(webElement));
         }
-
-        Core.addToReport(webElement, option);
+        ParamsHelper.addParam("In the select \"%s\" is selected option \"%s\"", new String[]{getElementTitle(webElement), option});
     }
 
     /**
@@ -735,7 +732,7 @@ public abstract class Page {
                     } else {
                         MethodUtils.invokeMethod(block, method.getName(), parameters);
                     }
-                    break;
+                    return;
                 } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     throw new FactoryRuntimeException(String.format("Failed to execute method '%s' in the following block: '%s'",
                             actionTitle, blockPath), e);
@@ -812,7 +809,7 @@ public abstract class Page {
             }
         }
 
-        throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
+        throw new ElementNotFoundException(String.format("Element \"%s\" is not present on current page \"%s\"'", title, this.getTitle()));
     }
 
     /**
@@ -832,7 +829,7 @@ public abstract class Page {
                 return Core.getElementByField(this, field);
             }
         }
-        throw new ElementNotFoundException(String.format("Element '%s' is not present on current page '%s''", title, this.getTitle()));
+        throw new ElementNotFoundException(String.format("Element \"%s\" is not present on current page \"%s\"'", title, this.getTitle()));
     }
 
     /**
@@ -1066,7 +1063,7 @@ public abstract class Page {
         private static <T extends WebElement> T findElementInBlock(HtmlElement block, String elementTitle, Class<T> type)
                 throws ElementDescriptionException {
             for (Field f : FieldUtils.getAllFields(block.getClass())) {
-                if (Core.isRequiredElement(f, elementTitle) && f.getType().equals(type)) {
+                if (Core.isRequiredElement(f, elementTitle) && type.isAssignableFrom(f.getType())) {
                     f.setAccessible(true);
                     try {
                         return type.cast(f.get(block));
@@ -1199,35 +1196,6 @@ public abstract class Page {
                 throw new ElementDescriptionException("Requested type is incompatible with field '" + field.getName()
                         + "' of '" + parentObject.getClass().getCanonicalName() + "'", cce);
             }
-        }
-
-        /**
-         * Get title annotation of specified WebElement, and add it as a
-         * parameter to allure report results, with corresponding value. If
-         * there is no title annotation, log warning and exit
-         *
-         * @param webElement WebElement to add
-         * @param text value for the specified element
-         */
-        private static void addToReport(WebElement webElement, String text) {
-            try {
-                String elementTitle = PageFactory.getInstance().getCurrentPage().getElementTitle(webElement);
-                addToReport(elementTitle, text);
-            } catch (PageException e) {
-                LOG.warn("Failed to add element " + webElement + " to report", e);
-            }
-        }
-
-        /**
-         * Add parameter to allure report.
-         *
-         * @param paramName parameter name
-         * @param paramValue parameter value to set
-         */
-        private static void addToReport(String paramName, String paramValue) {
-            ParamsHelper.addParam(paramName, paramValue);
-            LOG.debug("Add '" + paramName + "->" + paramValue + "' to report for page '"
-                    + PageFactory.getInstance().getCurrentPageTitle() + "'");
         }
     }
 }
