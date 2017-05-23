@@ -12,8 +12,6 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.allurehelper.ParamsHelper;
-import ru.sbtqa.tag.allurehelper.Type;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.qautils.properties.Props;
 
@@ -56,18 +54,12 @@ public class ScreenShooter {
     public static byte[] take() {
         String screenshotStrategy = Props.get("screenshot.strategy", "raw");
 
-        byte[] screenshot;
-
         switch (screenshotStrategy) {
             case "driver":
-                screenshot = ScreenShooter.takeWithDriver();
-                ParamsHelper.addAttachment(screenshot, "Screenshot by Driver", Type.PNG);
-                return screenshot;
+                return ScreenShooter.takeWithDriver();
             case "raw":
             default:
-                screenshot = ScreenShooter.takeRaw();
-                ParamsHelper.addAttachment(screenshot, "Full Screen Screenshot", Type.PNG);
-                return screenshot;
+                return ScreenShooter.takeRaw();
         }
     }
 }
