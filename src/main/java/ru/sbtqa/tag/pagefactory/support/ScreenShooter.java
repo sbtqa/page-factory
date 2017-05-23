@@ -12,9 +12,10 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.sbtqa.tag.allurehelper.ParamsHelper;
+import ru.sbtqa.tag.allurehelper.Type;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.qautils.properties.Props;
-import ru.yandex.qatools.allure.annotations.Attachment;
 
 public class ScreenShooter {
 
@@ -25,7 +26,6 @@ public class ScreenShooter {
      *
      * @return screenshot in byte array
      */
-    @Attachment(type = "image/png", value = "Screenshot by Driver")
     public static byte[] takeWithDriver() {
         return ((TakesScreenshot) PageFactory.getDriver()).getScreenshotAs(OutputType.BYTES);
     }
@@ -35,7 +35,6 @@ public class ScreenShooter {
      *
      * @return screenshot in byte array
      */
-    @Attachment(type = "image/png", value = "Full Screen Screenshot")
     public static byte[] takeRaw() {
         try {
             Rectangle screenBounds = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
@@ -54,16 +53,21 @@ public class ScreenShooter {
      *
      * @return screenshot in byte array
      */
-    @Attachment(type = "image/png", value = "Screenshot")
     public static byte[] take() {
         String screenshotStrategy = Props.get("screenshot.strategy", "raw");
 
+        byte[] screenshot;
+
         switch (screenshotStrategy) {
             case "driver":
-                return ScreenShooter.takeWithDriver();
+                screenshot = ScreenShooter.takeWithDriver();
+                ParamsHelper.addAttachment(screenshot, "Screenshot by Driver", Type.PNG);
+                return screenshot;
             case "raw":
             default:
-                return ScreenShooter.takeRaw();
+                screenshot = ScreenShooter.takeRaw();
+                ParamsHelper.addAttachment(screenshot, "Full Screen Screenshot", Type.PNG);
+                return screenshot;
         }
     }
 }
