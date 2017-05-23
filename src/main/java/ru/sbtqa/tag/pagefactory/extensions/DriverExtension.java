@@ -221,7 +221,7 @@ public class DriverExtension {
     public static boolean checkElementWithTextIsPresent(String text, int timeout) {
         try {
             new WebDriverWait(PageFactory.getDriver(), timeout)
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(), '" + text + "')]")));
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(., '" + text + "')]")));
             return true;
         } catch (TimeoutException e) {
             LOG.debug("Element with text {} is not located on page", text, e);
