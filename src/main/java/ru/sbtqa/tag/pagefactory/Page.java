@@ -567,7 +567,8 @@ public abstract class Page {
      * @return web element of the required type
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with the wrong type
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
+     * if element was not found, but with the wrong type
      */
     public <T extends WebElement> T findElementInBlockByTitle(String blockPath, String title, Class<T> type)
             throws PageException {
@@ -591,7 +592,8 @@ public abstract class Page {
      * @return WebElement
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with the wrong type
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
+     * if element was not found, but with the wrong type
      */
     public WebElement findElementInBlockByTitle(String blockPath, String title) throws PageException {
         return findElementInBlockByTitle(blockPath, title, WebElement.class);
@@ -625,7 +627,7 @@ public abstract class Page {
     public List<WebElement> findListOfElements(String listTitle) throws PageException {
         return Core.findListOfElements(listTitle, WebElement.class, this);
     }
-    
+
     /**
      * Find elements list in context of required block See
      * ${@link Core#findListOfElements(String, Class, Object)} for detailed
@@ -779,7 +781,8 @@ public abstract class Page {
      *
      * @param element element, redirect for which is being searched
      * @return class of the page object, element redirects to
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if failed to find redirect
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
+     * if failed to find redirect
      */
     public Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
         try {
@@ -813,8 +816,8 @@ public abstract class Page {
     }
 
     /**
-     * Find specified element with given type and title annotation among current page fields
-     * fields
+     * Find specified element with given type and title annotation among current
+     * page fields fields
      *
      * @param <T> type of the element
      * @param title a {@link java.lang.String} object.
