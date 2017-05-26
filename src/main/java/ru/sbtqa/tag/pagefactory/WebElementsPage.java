@@ -563,6 +563,7 @@ public abstract class WebElementsPage extends Page {
      *
      * @return the title
      */
+    // TODO: 5/26/17 реализация есть у супера
     public String getPageTitle() {
         return this.getClass().getAnnotation(PageEntry.class).title();
     }

@@ -41,32 +41,34 @@ public class WebExtension {
 	}
 	return elementValue;
     }
-
+    
     /**
      * Wait for page prepared with javascript
      *
      * @param stopRecursion TODO
+     *
      * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException TODO
      */
     public static void waitForPageToLoad(boolean... stopRecursion) throws WaitException {
-	long timeoutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
-	while (timeoutTime > System.currentTimeMillis()) {
-	    try {
-		if ("complete".equals((String) ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("return document.readyState"))) {
-		    return;
-		}
-		sleep(1);
-	    } catch (Exception | AssertionError e) {
-		LOG.debug("WebElementsPage does not become to ready state", e);
-		PageFactory.getWebDriver().navigate().refresh();
-		LOG.debug("WebElementsPage refreshed");
-		if ((stopRecursion.length == 0) || (stopRecursion.length > 0 && !stopRecursion[0])) {
-		    waitForPageToLoad(true);
-		}
-	    }
-	}
-
-	throw new WaitException("Timed out after " + PageFactory.getTimeOutInSeconds() + " seconds waiting for preparedness of page");
+        
+        long timeoutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
+        while (timeoutTime > System.currentTimeMillis()) {
+            try {
+                if ("complete".equals((String) ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("return document.readyState"))) {
+                    return;
+                }
+                sleep(1);
+            } catch (Exception | AssertionError e) {
+                LOG.debug("WebElementsPage does not become to ready state", e);
+                PageFactory.getWebDriver().navigate().refresh();
+                LOG.debug("WebElementsPage refreshed");
+                if ((stopRecursion.length == 0) || (stopRecursion.length > 0 && !stopRecursion[0])) {
+                    waitForPageToLoad(true);
+                }
+            }
+        }
+        
+        throw new WaitException("Timed out after " + PageFactory.getTimeOutInSeconds() + " seconds waiting for preparedness of page");
     }
 
     /**
