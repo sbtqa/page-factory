@@ -1,15 +1,16 @@
 package ru.sbtqa.tag.pagefactory.aspects;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.openqa.selenium.NoSuchElementException;
-import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 @Aspect
 /**
@@ -39,7 +40,7 @@ public class ExceptionAspect {
         } catch (Exception | AssertionError e) {
             //Add exceptions filter divided by || that are functional
             if ((e instanceof NoSuchElementException || e instanceof NullPointerException)
-                    && null != PageFactory.getInstance().getCurrentPage()) {
+                    && null != PageContext.getCurrentPage()) {
                 throw new AutotestError(getErrorText(e.getMessage()), e);
             } else {
                 throw e;
@@ -50,14 +51,14 @@ public class ExceptionAspect {
     private String getErrorText(String throwMessage) throws PageInitializationException, IllegalArgumentException, IllegalAccessException {
         String errorText = "";
 
-        Field[] fields = PageFactory.getInstance().getCurrentPage().getClass().getDeclaredFields();
+        Field[] fields = PageContext.getCurrentPage().getClass().getDeclaredFields();
 
         for (Field field : fields) {
             field.setAccessible(true);
 
             Object currentObject = null;
-            if (PageFactory.getInstance().getCurrentPage() != null) {
-                currentObject = field.get(PageFactory.getInstance().getCurrentPage());
+            if (PageContext.getCurrentPage() != null) {
+                currentObject = field.get(PageContext.getCurrentPage());
             }
 
             if (null != currentObject && throwMessage.contains(field.getName())) {

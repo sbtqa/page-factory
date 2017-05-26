@@ -19,6 +19,8 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
 
+import static ru.sbtqa.tag.pagefactory.ReflectionUtil.getElementRedirect;
+
 @Aspect
 public class ClickAspect {
 
@@ -39,7 +41,7 @@ public class ClickAspect {
             elementRedirect = getElementRedirect(typifiedElement);
         } else if (joinPoint.getTarget() instanceof WebElement) {
             targetWebElement = (WebElement) joinPoint.getTarget();
-            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(targetWebElement);
+            elementRedirect = getElementRedirect(targetWebElement);
         } else {
             return;
         }

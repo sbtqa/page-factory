@@ -9,14 +9,12 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
 import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.RedirectsTo;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.*;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
@@ -261,6 +259,30 @@ public class ReflectionUtil {
         ParamsHelper.addParam(paramName, paramValue);
         LOG.debug("Add '" + paramName + "->" + paramValue + "' to report for page '"
                 + PageFactory.getPageContext().getCurrentPageTitle() + "'");
+    }
+    
+//    ХЗ пока куда это
+    
+    /**
+     * Return class for redirect if annotation contains and null if not present
+     *
+     * @param element element, redirect for which is being searched
+     * @return class of the page object, element redirects to
+     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
+     * if failed to find redirect
+     */
+    // TODO there is control current page logic
+    public static Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
+        try {
+            Page currentPage = PageContext.getCurrentPage();
+            if (null == currentPage) {
+                LOG.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
+                return null;
+            }
+            return findRedirect(currentPage, element);
+        } catch (IllegalArgumentException | PageInitializationException ex) {
+            throw new ElementDescriptionException("Failed to get element redirect", ex);
+        }
     }
 }
  

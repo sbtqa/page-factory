@@ -589,27 +589,7 @@ public abstract class WebElementsPage extends Page {
         return element.toString();
     }
 
-    /**
-     * Return class for redirect if annotation contains and null if not present
-     *
-     * @param element element, redirect for which is being searched
-     * @return class of the page object, element redirects to
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
-     * if failed to find redirect
-     */
-    // TODO there is control current page logic
-    public Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
-        try {
-            Page currentPage = PageContext.getCurrentPage();
-            if (null == currentPage) {
-                LOG.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
-                return null;
-            }
-            return findRedirect(currentPage, element);
-        } catch (IllegalArgumentException | PageInitializationException ex) {
-            throw new ElementDescriptionException("Failed to get element redirect", ex);
-        }
-    }
+    
 
     /**
      * Find specified WebElement by title annotation among current page fields
