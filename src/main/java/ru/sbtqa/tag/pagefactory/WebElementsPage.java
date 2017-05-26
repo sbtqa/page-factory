@@ -597,7 +597,8 @@ public abstract class WebElementsPage extends Page {
      * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
      * if failed to find redirect
      */
-    public Class<? extends WebElementsPage> getElementRedirect(WebElement element) throws ElementDescriptionException {
+    // TODO there is control current page logic
+    public Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
         try {
             Page currentPage = PageContext.getCurrentPage();
             if (null == currentPage) {

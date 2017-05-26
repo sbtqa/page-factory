@@ -10,10 +10,11 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.pagefactory.WebElementsPage;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.WebElementsPage;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.yandex.qatools.htmlelements.element.TypifiedElement;
@@ -27,9 +28,11 @@ public class ClickAspect {
 
     @Around("clickMethod()")
     public void doAroundClick(ProceedingJoinPoint joinPoint) throws Throwable {
+        
+        // Redirect
         WebElement targetWebElement;
 
-        Class<? extends WebElementsPage> elementRedirect;
+        Class<? extends Page> elementRedirect;
         if (joinPoint.getTarget() instanceof TypifiedElement) {
             targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
             TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
