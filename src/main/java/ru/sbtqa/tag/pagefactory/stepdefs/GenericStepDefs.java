@@ -5,10 +5,10 @@ import cucumber.api.java.en.And;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+import ru.sbtqa.tag.pagefactory.PageContext;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.SwipeException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
@@ -24,10 +24,10 @@ import static ru.sbtqa.tag.pagefactory.ReflectionUtil.executeMethodByTitle;
 /**
  * Basic step definitions, that should be available on every project Notations
  * used in this class: Block - a class that extends {@link HtmlElement} and has
- * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle} annotation Action -
- * a method with {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle}
+ * {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation Action -
+ * a method with {@link ru.sbtqa.tag.pagefactory.annotations.ActionTitle}
  * annotation in page object List - list of {@link WebElement}'s with
- * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle} annotation on page
+ * {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation on page
  * object
  * <p>
  * To pass a Cucumber {@link cucumber.api.DataTable} as a parameter to method,
@@ -48,7 +48,7 @@ public class GenericStepDefs {
 
     /**
      * Initialize a page with corresponding title (defined via
-     * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.PageEntry} annotation)
+     * {@link ru.sbtqa.tag.pagefactory.annotations.PageEntry} annotation)
      * User|he keywords are optional
      *
      * @param title of the page to initialize
@@ -228,7 +228,7 @@ public class GenericStepDefs {
      * Initialize a page with corresponding URL
      *
      * @param url value of the
-     * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.PageEntry#url} to search for
+     * {@link ru.sbtqa.tag.pagefactory.annotations.PageEntry#url} to search for
      * @throws PageInitializationException if page with corresponding URL is
      * absent or couldn't be initialized
      */

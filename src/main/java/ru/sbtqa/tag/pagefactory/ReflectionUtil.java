@@ -8,13 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.RedirectsTo;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.*;
+import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
+import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
+import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
+import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
+import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
@@ -268,7 +269,7 @@ public class ReflectionUtil {
      *
      * @param element element, redirect for which is being searched
      * @return class of the page object, element redirects to
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
      * if failed to find redirect
      */
     // TODO there is control current page logic

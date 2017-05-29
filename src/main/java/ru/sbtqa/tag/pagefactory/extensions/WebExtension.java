@@ -7,8 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException;
 import static ru.sbtqa.tag.pagefactory.extensions.DriverExtension.waitUntilElementAppearsInDom;
+
+import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
 import ru.sbtqa.tag.qautils.managers.DateManager;
 
 public class WebExtension {
@@ -47,7 +48,7 @@ public class WebExtension {
      *
      * @param stopRecursion TODO
      *
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
     public static void waitForPageToLoad(boolean... stopRecursion) throws WaitException {
         
@@ -75,7 +76,7 @@ public class WebExtension {
      *
      * @param webElement a {@link org.openqa.selenium.WebElement} object.
      * @param timeout in milliseconds
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
     public static void waitForTextInInputExists(WebElement webElement, long timeout) throws WaitException {
 	long timeoutTime = DateManager.getCurrentTimestamp() + timeout;
@@ -93,7 +94,7 @@ public class WebExtension {
      *
      * @param text text to search in page source
      * @param shouldTextBePresent boolean, self explanatory
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
     public static void waitForTextPresenceInPageSource(String text, boolean shouldTextBePresent) throws WaitException {
 	long timeoutTime = System.currentTimeMillis() + PageFactory.getTimeOut();
@@ -112,7 +113,7 @@ public class WebExtension {
      * @param existingHandles TODO
      * @param timeout TODO
      * @return TODO
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
     public static String findNewWindowHandle(Set<String> existingHandles, int timeout) throws WaitException {
 	long timeoutTime = System.currentTimeMillis() + timeout;
@@ -138,7 +139,7 @@ public class WebExtension {
      *
      * @param existingHandles TODO
      * @return TODO
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
     public static String findNewWindowHandle(Set<String> existingHandles) throws WaitException {
 	return findNewWindowHandle(existingHandles, PageFactory.getTimeOut());

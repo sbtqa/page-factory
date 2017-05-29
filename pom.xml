@@ -68,6 +68,12 @@
       <type>jar</type>
     </dependency>
     <dependency>
+      <groupId>ru.sbtqa.tag.pagefactory</groupId>
+      <artifactId>page-factory-api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>datajack</artifactId>
       <version>1.2.0</version>

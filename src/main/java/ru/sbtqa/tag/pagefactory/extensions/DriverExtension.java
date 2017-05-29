@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException;
+import ru.sbtqa.tag.pagefactory.exceptions.WaitException;
 import ru.sbtqa.tag.qautils.managers.DateManager;
 
 public class DriverExtension {
@@ -143,7 +143,7 @@ public class DriverExtension {
      *
      * @param webElement a {@link org.openqa.selenium.WebElement} object.
      * @param timeout a long.
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException TODO
      */
     public static void waitForElementGetEnabled(WebElement webElement, long timeout) throws WaitException {
         long timeoutTime = DateManager.getCurrentTimestamp() + timeout;
@@ -164,7 +164,7 @@ public class DriverExtension {
     /**
      * Accept any alert regardless of its message
      *
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException if alert didn't appear during timeout
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException if alert didn't appear during timeout
      */
     public static void acceptAlert() throws WaitException {
         interactWithAlert("", true);
@@ -173,7 +173,7 @@ public class DriverExtension {
     /**
      * Dismiss any alert regardless of its message
      *
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.WaitException if alert didn't appear during timeout
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.WaitException if alert didn't appear during timeout
      */
     public static void dismissAlert() throws WaitException {
         interactWithAlert("", false);

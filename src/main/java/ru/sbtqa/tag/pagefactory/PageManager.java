@@ -4,10 +4,8 @@ import com.google.common.reflect.ClassPath;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.PageEntry;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.annotations.PageEntry;
+import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 
 import java.io.IOException;
@@ -34,7 +32,7 @@ public class PageManager {
      *
      * @param page TODO
      * @return TODO
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
      * TODO
      */
     public Page getPage(Class<? extends Page> page) throws PageInitializationException {
@@ -72,7 +70,7 @@ public class PageManager {
      * @param packageName a {@link java.lang.String} object.
      * @param title a {@link java.lang.String} object.
      * @return a WebElementsPage object.
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException
      * TODO
      */
     public static Page changeUrlByTitle(String packageName, String title) throws PageInitializationException {

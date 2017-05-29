@@ -4,9 +4,9 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageInitializationException;
+import ru.sbtqa.tag.pagefactory.PageContext;
+import ru.sbtqa.tag.pagefactory.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.yandex.qatools.htmlelements.element.*;
 
@@ -17,10 +17,10 @@ import static ru.sbtqa.tag.pagefactory.maven_artefacts.plugin_html_elements.Page
 /**
  * Basic step definitions, that should be available on every project Notations
  * used in this class: Block - a class that extends {@link HtmlElement} and has
- * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle} annotation Action -
- * a method with {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle}
+ * {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation Action -
+ * a method with {@link ru.sbtqa.tag.pagefactory.annotations.ActionTitle}
  * annotation in page object List - list of {@link WebElement}'s with
- * {@link ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle} annotation on page
+ * {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation on page
  * object
  * <p>
  * To pass a Cucumber {@link DataTable} as a parameter to method,

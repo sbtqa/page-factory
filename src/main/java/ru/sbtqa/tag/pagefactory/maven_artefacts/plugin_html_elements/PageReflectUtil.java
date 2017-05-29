@@ -5,17 +5,16 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import ru.sbtqa.tag.cucumber.TagCucumber;
+import ru.sbtqa.tag.pagefactory.Page;
+import ru.sbtqa.tag.pagefactory.PageContext;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
-import ru.sbtqa.tag.pagefactory.WebElementsPage;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.PageContext;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ActionTitles;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.FactoryRuntimeException;
-import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException;
+import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
+import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
+import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
+import ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException;
+import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
+import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
@@ -168,9 +167,9 @@ public class PageReflectUtil {
      * @param title value of ElementTitle annotation of required element
      * @param type type of the searched element
      * @return web element of the required type
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException if
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
      * if element was not found, but with the wrong type
      */
     public static  <T extends WebElement> T findElementInBlockByTitle(Page page, String blockPath, String title, Class<T> type)
@@ -186,16 +185,16 @@ public class PageReflectUtil {
     
     /**
      * Acts exactly like
-     * {@link #findElementInBlockByTitle(String, String, Class)}, but return a
+     * {@link PageReflectUtil#findElementInBlockByTitle(Page, String, String, Class)}, but return a
      * WebElement instance. It still could be casted to HtmlElement and
      * TypifiedElement any class that extend them.
      *
      * @param blockPath block or block chain where element will be searched
      * @param title value of ElementTitle annotation of required element
      * @return WebElement
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementNotFoundException if
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.ElementDescriptionException
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
      * if element was not found, but with the wrong type
      */
     public static WebElement findElementInBlockByTitle(Page page, String blockPath, String title) throws PageException {
@@ -204,7 +203,7 @@ public class PageReflectUtil {
     
     /**
      * Finds elements list in context of current page See
-     * ${@link WebElementsPage.Core#findListOfElements(String, Class, Object)} for detailed
+     * ${@link PageReflectUtil#findListOfElements(String, Class, Object)}  for detailed
      * description
      *
      * @param listTitle value of ElementTitle annotation of required element
@@ -254,7 +253,7 @@ public class PageReflectUtil {
 
     /**
      * Finds elements list in context of current page See
-     * ${@link Core#findListOfElements(String, Class, Object)} for detailed
+     * ${@link PageReflectUtil#findListOfElements(String, Class, Object)} for detailed
      * description
      *
      * @param listTitle value of ElementTitle annotation of required element
@@ -268,7 +267,7 @@ public class PageReflectUtil {
     
     /**
      * Find elements list in context of required block See
-     * ${@link WebElementsPage.Core#findListOfElements(String, Class, Object)} for detailed
+     * ${@link PageReflectUtil#findListOfElements(String, Class, Object)} for detailed
      * description
      *
      * @param blockPath full path or just a name of the block to search
@@ -286,7 +285,7 @@ public class PageReflectUtil {
     
     /**
      * Finds elements list in context of required block See
-     * ${@link WebElementsPage.Core#findListOfElements(String, Class, Object)} for detailed
+     * ${@link PageReflectUtil#findListOfElements(String, Class, Object)} for detailed
      * description
      *
      * @param blockPath full path or just a name of the block to search
@@ -299,7 +298,7 @@ public class PageReflectUtil {
     }
     
     /**
-     * See {@link WebElementsPage.Core#findBlocks(String, Object, boolean)} for description.
+     * See {@link PageReflectUtil#findBlocks(String, Object, boolean)} for description.
      * This wrapper finds only one block. Search is being performed on a current
      * page
      *
@@ -321,7 +320,7 @@ public class PageReflectUtil {
     }
     
     /**
-     * See {@link WebElementsPage.Core#findBlocks(String, Object, boolean)} for description.
+     * See {@link PageReflectUtil#findBlocks(String, Object, boolean)} for description.
      * Search is being performed on a current page
      *
      * @param blockPath full path or just a name of the block to search
@@ -433,7 +432,7 @@ public class PageReflectUtil {
      * @param <T> TODO
      * @param title a {@link java.lang.String} object.
      * @return a {@link org.openqa.selenium.WebElement} object.
-     * @throws ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.exceptions.PageException TODO
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException TODO
      */
     @SuppressWarnings(value = "unchecked")
     public <T extends TypifiedElement> T getTypifiedElementByTitle(String title) throws PageException {
