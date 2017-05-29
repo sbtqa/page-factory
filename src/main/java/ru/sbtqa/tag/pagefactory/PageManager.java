@@ -43,7 +43,7 @@ public class PageManager {
 
     /**
      * Initialize page with specified title and save its instance to
-     * {@link PageLoader#currentPage} for further use
+     * {@link PageContext#currentPage} for further use
      *
      * @param title page title
      * @return page instance
@@ -54,10 +54,10 @@ public class PageManager {
 
         if (null == PageContext.getCurrentPage() || !PageContext.getCurrentPageTitle().equals(title)) {
             if (null != PageContext.getCurrentPage()) {
-                PageContext.setCurrentPage(getPage(PageContext.getCurrentPage().getClass().getPackage().getName(), title));
+                getPage(PageContext.getCurrentPage().getClass().getPackage().getName(), title);
             }
             if (null == PageContext.getCurrentPage()) {
-                PageContext.setCurrentPage(getPage(pagesPackage, title));
+                getPage(pagesPackage, title);
             }
             if (null == PageContext.getCurrentPage()) {
                 throw new AutotestError("WebElementsPage object with title '" + title + "' is not registered");
@@ -177,7 +177,7 @@ public class PageManager {
 
     /**
      * Run constructor of specified page class and put its instance into static
-     * {@link #currentPage} variable
+     * {@link PageContext#currentPage} variable
      *
      * @param page page class
      * @return initialized page

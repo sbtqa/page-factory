@@ -23,6 +23,10 @@ public class PageContext {
         return currentPage;
     }
     
+    /**
+     * Set current page and currentTitle
+     * @param currentPage
+     */
     public static void setCurrentPage(Page currentPage) {
         PageContext.currentPage = currentPage;
         PageContext.setCurrentPageTitle(currentPage.getPageTitle());
