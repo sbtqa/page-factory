@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import ru.sbtqa.tag.pagefactory.WebElementsPage;
+import ru.sbtqa.tag.pagefactory.maven_artefacts.module_pagefactory_api.Page;
 
 /**
  * Points to page where browser will go after control clicked
@@ -19,5 +20,5 @@ public @interface RedirectsTo {
      *
      * @return a {@link Class} object.
      */
-    public Class <? extends WebElementsPage> page();
+    public Class <? extends Page> page();
     }

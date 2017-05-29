@@ -15,19 +15,16 @@ public class PageContext {
         return currentPageTitle;
     }
 
-    public static void setCurrentPageTitle(String currentPageTitle) {
+    private static void setCurrentPageTitle(String currentPageTitle) {
         PageContext.currentPageTitle = currentPageTitle;
     }
-
+    
     public static Page getCurrentPage() throws PageInitializationException {
-        if (null == currentPage) {
-            throw new PageInitializationException("Current page not initialized!");
-        } else {
-            return currentPage;
-        }
+        return currentPage;
     }
-
+    
     public static void setCurrentPage(Page currentPage) {
         PageContext.currentPage = currentPage;
+        PageContext.setCurrentPageTitle(currentPage.getPageTitle());
     }
 }

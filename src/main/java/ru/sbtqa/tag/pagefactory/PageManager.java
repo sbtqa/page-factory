@@ -145,6 +145,7 @@ public class PageManager {
     private static Class<?> getPageClass(final String packageName, String title) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final Set<Class<?>> allClasses = new HashSet<>();
+        // TODO: 5/29/17 Здесь можно хорошо ускориться добавив кэш
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(loader).getAllClasses()) {
                 if (info.getName().startsWith(packageName + ".")) {
@@ -191,7 +192,6 @@ public class PageManager {
                 constructor.setAccessible(true);
                 Page currentPage = constructor.newInstance();
                 PageContext.setCurrentPage(currentPage);
-                PageContext.setCurrentPageTitle(PageContext.getCurrentPageTitle());
                 return currentPage;
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 throw new PageInitializationException("Failed to initialize page '" + page + "'", e);

@@ -144,7 +144,7 @@ public class ReflectionUtil {
      * @param parent parent object
      * @return class of the page, this element redirects to
      */
-    public static Class<? extends WebElementsPage> findRedirect(Object parent, Object element) {
+    public static Class<? extends Page> findRedirect(Object parent, Object element) {
         List<Field> fields = FieldUtilsExt.getDeclaredFieldsWithInheritance(parent.getClass());
         
         for (Field field : fields) {
@@ -165,7 +165,7 @@ public class ReflectionUtil {
             // ПЛОХО завязано
             if (isChildOf(HtmlElement.class, field)) {
                 field.setAccessible(true);
-                Class<? extends WebElementsPage> redirects = null;
+                Class<? extends Page> redirects = null;
                 try {
                     redirects = findRedirect(field.get(parent), element);
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
