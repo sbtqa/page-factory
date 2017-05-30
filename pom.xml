@@ -96,12 +96,12 @@
       <version>1.0.6</version>
       <type>jar</type>
     </dependency>
-    <dependency>
-      <groupId>ru.sbtqa.htmlelements</groupId>
-      <artifactId>htmlelements-java</artifactId>
-      <version>1.17-JAVA7</version>
-      <type>jar</type>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>ru.sbtqa.htmlelements</groupId>-->
+      <!--<artifactId>htmlelements-java</artifactId>-->
+      <!--<version>1.17-JAVA7</version>-->
+      <!--<type>jar</type>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-support</artifactId>

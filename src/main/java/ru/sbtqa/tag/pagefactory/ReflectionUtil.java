@@ -1,8 +1,6 @@
 package ru.sbtqa.tag.pagefactory;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,26 +9,19 @@ import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
 import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
-import ru.sbtqa.tag.pagefactory.annotations.RedirectsTo;
 import ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
-import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
-import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
-import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static ru.sbtqa.tag.pagefactory.maven_artefacts.plugin_html_elements.PageReflectUtil.isChildOf;
 
 /**
  * Common reflection utils as static methods from Page.Core
@@ -134,51 +125,53 @@ public class ReflectionUtil {
         return "";
     }
     
-    /**
-     * Search for the given given element among the parent object fields,
-     * check whether it has a {@link
-     * RedirectsTo} annotation, and return a redirection page class, if so.
-     * Search goes in recursion if it meets HtmlElement field, as given
-     * element could be inside of the block
-     *
-     * @param element element that is being checked for redirection
-     * @param parent parent object
-     * @return class of the page, this element redirects to
-     */
-    public static Class<? extends Page> findRedirect(Object parent, Object element) {
-        List<Field> fields = FieldUtilsExt.getDeclaredFieldsWithInheritance(parent.getClass());
-        
-        for (Field field : fields) {
-            RedirectsTo redirect = field.getAnnotation(RedirectsTo.class);
-            if (redirect != null) {
-                try {
-                    field.setAccessible(true);
-                    Object targetField = field.get(parent);
-                    if (targetField != null) {
-                        if (targetField == element) {
-                            return redirect.page();
-                        }
-                    }
-                } catch (NoSuchElementException | StaleElementReferenceException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-                    LOG.debug("Failed to get page destination to redirect for element", ex);
-                }
-            }
-            // ПЛОХО завязано
-            if (isChildOf(HtmlElement.class, field)) {
-                field.setAccessible(true);
-                Class<? extends Page> redirects = null;
-                try {
-                    redirects = findRedirect(field.get(parent), element);
-                } catch (IllegalArgumentException | IllegalAccessException ex) {
-                    LOG.debug("Failed to get page destination to redirect for html element", ex);
-                }
-                if (redirects != null) {
-                    return redirects;
-                }
-            }
-        }
-        return null;
-    }
+    
+    //TODO REMOVE REDIRECT
+//    /**
+//     * Search for the given given element among the parent object fields,
+//     * check whether it has a {@link
+//     * RedirectsTo} annotation, and return a redirection page class, if so.
+//     * Search goes in recursion if it meets HtmlElement field, as given
+//     * element could be inside of the block
+//     *
+//     * @param element element that is being checked for redirection
+//     * @param parent parent object
+//     * @return class of the page, this element redirects to
+//     */
+//    public static Class<? extends Page> findRedirect(Object parent, Object element) {
+//        List<Field> fields = FieldUtilsExt.getDeclaredFieldsWithInheritance(parent.getClass());
+//
+//        for (Field field : fields) {
+//            RedirectsTo redirect = field.getAnnotation(RedirectsTo.class);
+//            if (redirect != null) {
+//                try {
+//                    field.setAccessible(true);
+//                    Object targetField = field.get(parent);
+//                    if (targetField != null) {
+//                        if (targetField == element) {
+//                            return redirect.page();
+//                        }
+//                    }
+//                } catch (NoSuchElementException | StaleElementReferenceException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+//                    LOG.debug("Failed to get page destination to redirect for element", ex);
+//                }
+//            }
+//            // ПЛОХО завязано
+//            if (isChildOf(HtmlElement.class, field)) {
+//                field.setAccessible(true);
+//                Class<? extends Page> redirects = null;
+//                try {
+//                    redirects = findRedirect(field.get(parent), element);
+//                } catch (IllegalArgumentException | IllegalAccessException ex) {
+//                    LOG.debug("Failed to get page destination to redirect for html element", ex);
+//                }
+//                if (redirects != null) {
+//                    return redirects;
+//                }
+//            }
+//        }
+//        return null;
+//    }
     
     /**
      * Get object from a field of specified parent
@@ -264,27 +257,28 @@ public class ReflectionUtil {
     
 //    ХЗ пока куда это
     
-    /**
-     * Return class for redirect if annotation contains and null if not present
-     *
-     * @param element element, redirect for which is being searched
-     * @return class of the page object, element redirects to
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
-     * if failed to find redirect
-     */
-    // TODO there is control current page logic
-    public static Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
-        try {
-            Page currentPage = PageContext.getCurrentPage();
-            if (null == currentPage) {
-                LOG.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
-                return null;
-            }
-            return findRedirect(currentPage, element);
-        } catch (IllegalArgumentException | PageInitializationException ex) {
-            throw new ElementDescriptionException("Failed to get element redirect", ex);
-        }
-    }
+    //TODO REMOVE REDIRECT
+//    /**
+//     * Return class for redirect if annotation contains and null if not present
+//     *
+//     * @param element element, redirect for which is being searched
+//     * @return class of the page object, element redirects to
+//     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
+//     * if failed to find redirect
+//     */
+//    // TODO there is control current page logic
+//    public static Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
+//        try {
+//            Page currentPage = PageContext.getCurrentPage();
+//            if (null == currentPage) {
+//                LOG.warn("Current page not initialized yet. You must initialize it by hands at first time only.");
+//                return null;
+//            }
+//            return findRedirect(currentPage, element);
+//        } catch (IllegalArgumentException | PageInitializationException ex) {
+//            throw new ElementDescriptionException("Failed to get element redirect", ex);
+//        }
+//    }
 }
  
 

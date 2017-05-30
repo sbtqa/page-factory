@@ -13,12 +13,10 @@ import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
-import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.epam.jdi.uitests.core.settings.JDISettings.initFromProperties;
 import static ru.sbtqa.tag.pagefactory.ReflectionUtil.executeMethodByTitle;
 
 /**

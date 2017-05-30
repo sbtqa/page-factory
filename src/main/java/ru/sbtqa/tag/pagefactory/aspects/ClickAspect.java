@@ -10,16 +10,11 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import ru.sbtqa.tag.pagefactory.WebElementsPage;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.pagefactory.extensions.WebExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
-import ru.yandex.qatools.htmlelements.element.TypifiedElement;
-
-import static ru.sbtqa.tag.pagefactory.ReflectionUtil.getElementRedirect;
 
 @Aspect
 public class ClickAspect {
@@ -33,18 +28,20 @@ public class ClickAspect {
         
         // Redirect
         WebElement targetWebElement;
-
-        Class<? extends Page> elementRedirect;
-        if (joinPoint.getTarget() instanceof TypifiedElement) {
-            targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
-            TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
-            elementRedirect = getElementRedirect(typifiedElement);
-        } else if (joinPoint.getTarget() instanceof WebElement) {
-            targetWebElement = (WebElement) joinPoint.getTarget();
-            elementRedirect = getElementRedirect(targetWebElement);
-        } else {
-            return;
-        }
+        targetWebElement = (WebElement) joinPoint.getTarget();
+    
+        // TODO: 5/30/17 REMOVE REDIRECT
+//        Class<? extends Page> elementRedirect;
+//        if (joinPoint.getTarget() instanceof TypifiedElement) {
+//            targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
+//            TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
+//            elementRedirect = getElementRedirect(typifiedElement);
+//        } else if (joinPoint.getTarget() instanceof WebElement) {
+//            targetWebElement = (WebElement) joinPoint.getTarget();
+//            elementRedirect = getElementRedirect(targetWebElement);
+//        } else {
+//            return;
+//        }
 
         String elementHighlightStyle = null;
         boolean isVideoHighlightEnabled = Boolean.valueOf(Props.get("video.highlight.enabled"));
@@ -84,9 +81,9 @@ public class ClickAspect {
             joinPoint.proceed();
         }
 
-        if (null != elementRedirect) {
-            PageFactory.getInstance().getPage(elementRedirect);
-        }
+//        if (null != elementRedirect) {
+//            PageFactory.getInstance().getPage(elementRedirect);
+//        }
 
         if (isVideoHighlightEnabled) {
             WebExtension.highlightElementOff(targetWebElement, elementHighlightStyle);

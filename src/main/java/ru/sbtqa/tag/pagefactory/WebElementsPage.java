@@ -1,14 +1,7 @@
 package ru.sbtqa.tag.pagefactory;
 
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.InvalidElementStateException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
@@ -27,8 +20,6 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
-import ru.yandex.qatools.htmlelements.element.CheckBox;
-import ru.yandex.qatools.htmlelements.element.TypifiedElement;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -184,26 +175,27 @@ public abstract class WebElementsPage extends Page {
         webElement.sendKeys(keyName);
         addToReport(webElement, " is pressed by key '" + keyName + "'");
     }
-
-    /**
-     * Find web element with corresponding title, if it is a check box, select
-     * it If it's a WebElement instance, check whether it is already selected,
-     * and click if it's not Add corresponding parameter to allure report
-     *
-     * @param elementTitle WebElement that is supposed to represent checkbox
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not
-     * initialized, or required element couldn't be found
-     */
-    @ActionTitle("ru.sbtqa.tag.pagefactory.select.checkBox")
-    public void setCheckBox(String elementTitle) throws PageException {
-        WebElement targetElement = getElementByTitle(elementTitle);
-        if (targetElement.getClass().isAssignableFrom(CheckBox.class)) {
-            ((CheckBox) targetElement).select();
-        } else {
-            setCheckBoxState(targetElement, true);
-        }
-        addToReport(elementTitle, " is checked");
-    }
+    
+    // TODO: 5/30/17 HTML PLUG
+//    /**
+//     * Find web element with corresponding title, if it is a check box, select
+//     * it If it's a WebElement instance, check whether it is already selected,
+//     * and click if it's not Add corresponding parameter to allure report
+//     *
+//     * @param elementTitle WebElement that is supposed to represent checkbox
+//     * @throws ru.sbtqa.tag.pagefactory.exceptions.PageException if page was not
+//     * initialized, or required element couldn't be found
+//     */
+//    @ActionTitle("ru.sbtqa.tag.pagefactory.select.checkBox")
+//    public void setCheckBox(String elementTitle) throws PageException {
+//        WebElement targetElement = getElementByTitle(elementTitle);
+//        if (targetElement.getClass().isAssignableFrom(CheckBox.class)) {
+//            ((CheckBox) targetElement).select();
+//        } else {
+//            setCheckBoxState(targetElement, true);
+//        }
+//        addToReport(elementTitle, " is checked");
+//    }
 
     /**
      * Check whether specified element is selected, if it isn't, click it
