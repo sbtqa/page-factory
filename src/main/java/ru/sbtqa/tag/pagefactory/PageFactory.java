@@ -33,6 +33,7 @@ public class PageFactory {
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
     private static final boolean VIDEO_ENABLED = Boolean.parseBoolean(Props.get("video.enabled", "false"));
+    private static boolean IS_SHARING_PROCESSING = false;
 
     public static WebDriver getWebDriver() {
         return getDriver();
@@ -171,5 +172,19 @@ public class PageFactory {
                     throw new FactoryRuntimeException("Environment '" + ENVIRONMENT + "' is not supported");
                 }
         }
+    }
+
+    /**
+     * @return the IS_SHARING_PROCESSING
+     */
+    public static boolean isSharingProcessing() {
+        return IS_SHARING_PROCESSING;
+    }
+
+    /**
+     * @param isSharingProcessing the IS_SHARING_PROCESSING to set
+     */
+    public static void setIsSharingProcessing(boolean isSharingProcessing) {
+        IS_SHARING_PROCESSING = isSharingProcessing;
     }
 }
