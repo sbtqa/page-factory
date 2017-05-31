@@ -13,7 +13,6 @@ import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
-import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
 public class TagMobileDriver {
 
@@ -35,10 +34,6 @@ public class TagMobileDriver {
 	}
 	
 	if (null == mobileDriver) {
-	    if (PageFactory.isVideoRecorderEnabled()) {
-		VideoRecorder.getInstance().startRecording();
-	    }
-
 	    createDriver();
 	}
 	return mobileDriver;

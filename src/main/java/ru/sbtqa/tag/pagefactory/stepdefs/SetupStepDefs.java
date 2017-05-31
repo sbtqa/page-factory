@@ -108,20 +108,21 @@ public class SetupStepDefs {
 
             PageFactory.getPageRepository().put((Class<? extends Page>) page, fieldsMap);
         }
+
+        if (PageFactory.isVideoRecorderEnabled()) {
+            VideoRecorder.getInstance().startRecording();
+        }
     }
 
     @After
     public void tearDown() {
         if (PageFactory.isVideoRecorderEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
-            String videoPath = VideoRecorder.getInstance().stopRecording();
-            if (videoPath != null) {
-                ParamsHelper.addParam("Video url", VideoRecorder.getInstance().getVideoPath());
-                VideoRecorder.getInstance().resetVideoRecorder();
-            }
+            ParamsHelper.addParam("Video url", VideoRecorder.getInstance().stopRecording());
+            VideoRecorder.getInstance().resetVideoRecorder();
         }
 
         if (PageFactory.getEnvironment() == Environment.WEB && TagWebDriver.isWebDriverShared()) {
-            return;
+            LOG.info("Webdriver sharing is processing...");
         } else {
             PageFactory.dispose();
         }
