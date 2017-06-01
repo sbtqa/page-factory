@@ -8,6 +8,9 @@ page.package = ru.sbtqa.tag.mobilefactory.entries
 #default wait timeout in milliseconds
 page.load.timeout = 60000
 
+#optional. Using aspect in tests. False by default.
+page.aspect.disabled = false
+
 #optional. false by default
 video.enabled = false
 video.path.dest = /tmp/video
