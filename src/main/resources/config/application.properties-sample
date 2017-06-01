@@ -20,9 +20,6 @@ screenshot.strategy = raw
 #optional. tasks to kill before test (ONLY FOR WINDOWS)
 tasks.to.kill = iexplorer,chrome
 
-#optional. runtime options for cmd\bash commands. If you use this option, make sure your user in sudoers
-runtime.linux.sudo = true
-
 #IN CASE OF MOBILE
 #parameters for mobile driver create
 appium.url = http://127.0.0.1:4723/wd/hub

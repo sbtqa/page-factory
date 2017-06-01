@@ -123,7 +123,7 @@ public class SetupStepDefs {
 
         if (PageFactory.getEnvironment() == Environment.WEB && TagWebDriver.isWebDriverShared()) {
             LOG.info("Webdriver sharing is processing...");
-            PageFactory.setIsSharingProcessing(true);
+            PageFactory.setSharingProcessing(true);
         } else {
             PageFactory.dispose();
         }

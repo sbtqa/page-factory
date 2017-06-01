@@ -184,7 +184,7 @@ public class PageFactory {
     /**
      * @param isSharingProcessing the IS_SHARING_PROCESSING to set
      */
-    public static void setIsSharingProcessing(boolean isSharingProcessing) {
+    public static void setSharingProcessing(boolean isSharingProcessing) {
         IS_SHARING_PROCESSING = isSharingProcessing;
     }
 }
