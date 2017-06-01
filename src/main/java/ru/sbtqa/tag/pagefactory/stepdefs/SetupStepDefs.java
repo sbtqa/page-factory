@@ -53,7 +53,7 @@ public class SetupStepDefs {
 
         try {
             String tasksToKill = Props.get("tasks.to.kill");
-            if (!"".equals(tasksToKill)) {
+            if (!PageFactory.isSharingProcessing() && !"".equals(tasksToKill)) {
                 for (String task : tasksToKill.split(",")) {
                     if (SystemUtils.IS_OS_WINDOWS) {
                         Runtime.getRuntime().exec("taskkill /IM " + task.trim() + " /F");
@@ -113,20 +113,22 @@ public class SetupStepDefs {
 
             PageFactory.getPageRepository().put((Class<? extends Page>) page, fieldsMap);
         }
+
+        if (PageFactory.isVideoRecorderEnabled()) {
+            VideoRecorder.getInstance().startRecording();
+        }
     }
 
     @After
     public void tearDown() {
         if (PageFactory.isVideoRecorderEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
-            String videoPath = VideoRecorder.getInstance().stopRecording();
-            if (videoPath != null) {
-                ParamsHelper.addParam("Video url", VideoRecorder.getInstance().getVideoPath());
-                VideoRecorder.getInstance().resetVideoRecorder();
-            }
+            ParamsHelper.addParam("Video url", VideoRecorder.getInstance().stopRecording());
+            VideoRecorder.getInstance().resetVideoRecorder();
         }
 
         if (PageFactory.getEnvironment() == Environment.WEB && TagWebDriver.isWebDriverShared()) {
-            return;
+            LOG.info("Webdriver sharing is processing...");
+            PageFactory.setSharingProcessing(true);
         } else {
             PageFactory.dispose();
         }

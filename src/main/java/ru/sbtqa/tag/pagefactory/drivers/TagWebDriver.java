@@ -34,7 +34,6 @@ import ru.sbtqa.tag.pagefactory.exceptions.UnsupportedBrowserException;
 import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
-import ru.sbtqa.tag.videorecorder.VideoRecorder;
 
 public class TagWebDriver {
 
@@ -62,10 +61,6 @@ public class TagWebDriver {
         }
 
         if (null == webDriver) {
-            if (PageFactory.isVideoRecorderEnabled()) {
-                VideoRecorder.getInstance().startRecording();
-            }
-
             for (int i = 1; i <= WEBDRIVER_CREATE_ATTEMPTS; i++) {
                 LOG.info("Attempt #" + i + " to start web driver");
                 try {
