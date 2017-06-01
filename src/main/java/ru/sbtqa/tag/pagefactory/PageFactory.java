@@ -175,16 +175,16 @@ public class PageFactory {
     }
 
     /**
-     * @return the IS_SHARING_PROCESSING
+     * @return the isSharingProcessing
      */
     public static boolean isSharingProcessing() {
         return isSharingProcessing;
     }
 
     /**
-     * @param isSharingProcessing the IS_SHARING_PROCESSING to set
+     * @param aIsSharingProcessing the isSharingProcessing to set
      */
-    public static void setSharingProcessing(boolean isSharingProcessing) {
-        isSharingProcessing = isSharingProcessing;
+    public static void setSharingProcessing(boolean aIsSharingProcessing) {
+        isSharingProcessing = aIsSharingProcessing;
     }
 }
