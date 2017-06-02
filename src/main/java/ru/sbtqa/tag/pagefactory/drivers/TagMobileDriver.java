@@ -27,47 +27,54 @@ public class TagMobileDriver {
     private static final boolean APPIUM_FILL_ADB = "true".equalsIgnoreCase(Props.get("appium.fill.adb"));
     private static final boolean APPIUM_CLICK_ADB = "true".equalsIgnoreCase(Props.get("appium.click.adb"));
     private static String deviceUdId;
-    
+
     public static AppiumDriver<AndroidElement> getDriver() {
-	if (Environment.MOBILE != PageFactory.getEnvironment()) {
-	    throw new FactoryRuntimeException("Failed to get mobile driver while environment is not mobile");
-	}
-	
-	if (null == mobileDriver) {
-	    createDriver();
-	}
-	return mobileDriver;
+        if (Environment.MOBILE != PageFactory.getEnvironment()) {
+            throw new FactoryRuntimeException("Failed to get mobile driver while environment is not mobile");
+        }
+
+        if (null == mobileDriver) {
+            createDriver();
+        }
+        return mobileDriver;
     }
 
     private static void createDriver() {
-	DesiredCapabilities capabilities = new DesiredCapabilities();
-	capabilities.setCapability("deviceName", APPIUM_DEVICE_NAME);
-	capabilities.setCapability("platformVersion", APPIUM_DEVICE_PLATFORM);
-	capabilities.setCapability("appPackage", APPIUM_APP_PACKAGE);
-	capabilities.setCapability("appActivity", APPIUM_APP_ACTIVITY);
-	capabilities.setCapability("autoGrantPermissions", "true");
-	capabilities.setCapability("unicodeKeyboard", "true");
-	capabilities.setCapability("resetKeyboard", "true");
-	LOG.info("Capabilities are {}", capabilities);
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("deviceName", APPIUM_DEVICE_NAME);
+        capabilities.setCapability("platformVersion", APPIUM_DEVICE_PLATFORM);
+        capabilities.setCapability("appPackage", APPIUM_APP_PACKAGE);
+        capabilities.setCapability("appActivity", APPIUM_APP_ACTIVITY);
+        capabilities.setCapability("autoGrantPermissions", "true");
+        capabilities.setCapability("unicodeKeyboard", "true");
+        capabilities.setCapability("resetKeyboard", "true");
+        LOG.info("Capabilities are {}", capabilities);
 
-	URL url;
-	try {
-	    url = new URL(APPIUM_URL);
-	} catch (MalformedURLException e) {
-	    throw new FactoryRuntimeException("Could not parse appium url. Check 'appium.url' property", e);
-	}
+        URL url;
+        try {
+            url = new URL(APPIUM_URL);
+        } catch (MalformedURLException e) {
+            throw new FactoryRuntimeException("Could not parse appium url. Check 'appium.url' property", e);
+        }
 
-	setAspectsDisabled(true);
-	LOG.debug("Aspect disabled");
-	mobileDriver = new AndroidDriver<>(url, capabilities);
-	LOG.info("Mobile driver created {}", mobileDriver);
+        setAspectsDisabled(true);
+        LOG.debug("Aspect disabled");
+        mobileDriver = new AndroidDriver<>(url, capabilities);
+        LOG.info("Mobile driver created {}", mobileDriver);
         deviceUdId = (String) mobileDriver.getSessionDetails().get("deviceUDID");
     }
 
     public static void dispose() {
-	if (mobileDriver != null) {
-	    mobileDriver.quit();
-	}
+        if (mobileDriver == null) {
+            return;
+        }
+
+        try {
+            mobileDriver.quit();
+        } finally {
+            setMobileDriver(null);
+        }
+
     }
 
     /**
@@ -89,5 +96,12 @@ public class TagMobileDriver {
      */
     public static String getDeviceUDID() {
         return deviceUdId;
+    }
+
+    /**
+     * @param aMobileDriver the mobileDriver to set
+     */
+    public static void setMobileDriver(AppiumDriver<AndroidElement> aMobileDriver) {
+        mobileDriver = aMobileDriver;
     }
 }
