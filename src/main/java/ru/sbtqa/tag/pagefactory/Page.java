@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.junit.Assert;
@@ -852,7 +853,7 @@ public abstract class Page {
                     MethodUtils.invokeMethod(this, method.getName(), param);
                     return;
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    throw new FactoryRuntimeException("Failed to invoke method", e);
+                    throw new FactoryRuntimeException("Error while executing action '" + title + "' on " + method.getDeclaringClass().getSimpleName() + " . See the caused exception below", ExceptionUtils.getRootCause(e));
                 }
             }
         }
