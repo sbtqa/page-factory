@@ -17,7 +17,7 @@ Page-Factory кроссплатформенный фреймворк котор�
 Начать пользоваться page-factory очень просто, можно начать с подготовленных [примеров](https://github.com/sbtqa/page-factory-example) или воспользоваться [документацией](https://github.com/sbtqa/docs/wiki/Page-Factory)
 
 ### Контакты
-Нашли ошибку или появились вопросы? [Проверьте](https://github.com/sbtqa/page-factory/issues) нет ли уже созданных issue, если нет то создайте [новое](https://github.com/sbtqa/page-factory/issues/new)! Так же свои вопросы можно задать в нашем чате в [gitter](https://gitter.im/sbtqa-tag/page-factory?source=orgpage)
+Нашли ошибку или появились вопросы? [Проверьте](https://github.com/sbtqa/page-factory/issues) нет ли уже созданных issue, если нет то создайте [новое](https://github.com/sbtqa/page-factory/issues/new)! Также свои вопросы можно задать в нашем чате в [gitter](https://gitter.im/sbtqa-tag/page-factory?source=orgpage)
 
 ### Лицензия 
 Page-Factory выпущен под лицензией Apache 2.0. [Подробности](https://github.com/sbtqa/page-factory/blob/master/LICENSE).
