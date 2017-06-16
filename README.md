@@ -1,5 +1,5 @@
 # Page-Factory
-[![Build Status](https://travis-ci.org/sbtqa/page-factory.svg?branch=master)](https://travis-ci.org/sbtqa/page-factory) [![GitHub release](https://img.shields.io/github/release/sbtqa/page-factory.svg?style=flat-square)](https://github.com/sbtqa/page-factory/releases) [![Maven Central](https://img.shields.io/maven-central/v/ru.sbtqa.tag/page-factory.svg)](https://mvnrepository.com/artifact/ru.sbtqa.tag/page-factory)
+[![Build Status](https://travis-ci.org/sbtqa/page-factory.svg?branch=master)](https://travis-ci.org/sbtqa/page-factory) [![GitHub release](https://img.shields.io/github/release/sbtqa/page-factory.svg?style=flat-square)](https://github.com/sbtqa/page-factory/releases) [![Maven Central](https://img.shields.io/maven-central/v/ru.sbtqa.tag/page-factory.svg)](https://mvnrepository.com/artifact/ru.sbtqa.tag/page-factory) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/sbtqa-tag/page-factory?source=orgpage)
 
 Page-Factory это opensource java framework для автоматизированного тестирования, который позволяет разрабатывать автотесты в [BDD (Behaviour Driven Development)](https://en.wikipedia.org/wiki/Behavior-driven_development) стиле с акцентом на использование паттерна PageFactory. 
 
