@@ -41,7 +41,7 @@ public class DesiredCapabilitiesParser {
 
             String capability = rawCapabilityKey.substring(capsPrefix.length());
 
-            if (capability.startsWith("options") && "Chrome".equals(TagWebDriver.getBrowserName())) {
+            if (capability.startsWith("options") && "chrome".equals(TagWebDriver.getBrowserName())) {
                 // For Chrome options must be parsed and specified as a data structure.
                 // For non-chrome browsers options could be passed as string
                 String optionsCapability = capability.substring("options.".length());
