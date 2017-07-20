@@ -142,7 +142,7 @@ public abstract class Page {
         try {
             webElement = getElementByTitle(elementTitle);
             DriverExtension.waitForElementGetEnabled(webElement, PageFactory.getTimeOut());
-        } catch (NoSuchElementException | WaitException e) {
+        } catch (NoSuchElementException | WaitException | ElementNotFoundException e) {
             LOG.warn("Failed to find element by title {}", elementTitle, e);
             webElement = DriverExtension.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
