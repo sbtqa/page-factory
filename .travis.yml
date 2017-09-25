@@ -16,8 +16,9 @@ before_install:
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
 install:
   - mvn clean --settings .travis/settings.xml install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip -B -V
-script:
-  - sonar-scanner
+#TODO To not forget to revert it back later, when travis sonar integration will be fixed. 
+#script: 
+#  - sonar-scanner 
 deploy:
   - provider: script
     script: ".travis/deploy.sh"
