@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.sbtqa.tag</groupId>
   <artifactId>page-factory</artifactId>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.5.10-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>page-factory</name>
   <description>page-factory description</description>
@@ -83,6 +83,12 @@
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>video-recorder</artifactId>
       <version>1.0.6</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag</groupId>
+      <artifactId>goms</artifactId>
+      <version>1.0.10-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -207,7 +213,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+<!--      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
         <version>1.5</version>
@@ -220,7 +226,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
     </plugins>
   </build>
 </project>
