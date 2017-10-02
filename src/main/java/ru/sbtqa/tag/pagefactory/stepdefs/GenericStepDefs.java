@@ -8,8 +8,6 @@ import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
-import ru.sbtqa.tag.goms.annotations.Goms;
-import ru.sbtqa.tag.goms.objects.Symbol;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
@@ -212,7 +210,6 @@ public class GenericStepDefs {
      * @throws PageInitializationException if page initialization failed
      */
     @And("ru.sbtqa.tag.pagefactory.openPage")
-    @Goms(symbol = Symbol.O)
     public void openPage(String title) throws PageInitializationException {
         if (PageFactory.getEnvironment() != Environment.MOBILE
                 && !PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
@@ -426,14 +423,13 @@ public class GenericStepDefs {
     }
 
     /**
-     * 
+     * Element is focused
      *
      * @param element
      * @throws SwipeException if the text is not found or swipe depth is reached
      */
     @And("ru.sbtqa.tag.pagefactory.elementIsFocused")
-    @Goms(symbol = Symbol.F)
     public void elementIsFocused(String element) throws SwipeException {
-        // service element for goms
+        
     }
 }

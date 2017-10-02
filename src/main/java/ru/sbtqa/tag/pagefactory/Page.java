@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.datajack.Stash;
-import ru.sbtqa.tag.goms.annotations.Goms;
-import ru.sbtqa.tag.goms.objects.Symbol;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
 import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
@@ -73,7 +71,6 @@ public abstract class Page {
      * initialized, or required element couldn't be found
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.fill.field")
-    @Goms(symbol = Symbol.KK)
     public void fillField(String elementTitle, String text) throws PageException {
         WebElement webElement = getElementByTitle(elementTitle);
         webElement.click();
@@ -140,7 +137,6 @@ public abstract class Page {
     @ActionTitles({
         @ActionTitle("ru.sbtqa.tag.pagefactory.click.link"),
         @ActionTitle("ru.sbtqa.tag.pagefactory.click.button")})
-    @Goms(symbol = Symbol.BB)
     public void clickElementByTitle(String elementTitle) throws PageException {
         WebElement webElement;
         try {
@@ -160,7 +156,6 @@ public abstract class Page {
      * @param keyName name of the key. See available key names in {@link Keys}
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.press.key")
-    @Goms(symbol = Symbol.K)
     public void pressKey(String keyName) {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = PageFactory.getActions();
@@ -178,7 +173,6 @@ public abstract class Page {
      * couldn't find element with required title
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.press.key")
-    @Goms(symbol = Symbol.K)
     public void pressKey(String keyName, String elementTitle) throws PageException {
         Keys key = Keys.valueOf(keyName.toUpperCase());
         Actions actions = PageFactory.getActions();
@@ -195,7 +189,6 @@ public abstract class Page {
      * @param webElement WebElement to send keys in
      * @param keyName name of the key. See available key names in {@link Keys}
      */
-    @Goms(symbol = Symbol.K)
     public void pressKey(WebElement webElement, Keys keyName) {
         webElement.sendKeys(keyName);
         ParamsHelper.addParam("\"%s\" is pressed by key \"%s\"", new String[]{getElementTitle(webElement), keyName.toString()});
