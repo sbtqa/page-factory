@@ -428,8 +428,8 @@ public class GenericStepDefs {
      * @param element
      * @throws SwipeException if the text is not found or swipe depth is reached
      */
-    @And("ru.sbtqa.tag.pagefactory.elementIsFocused")
-    public void elementIsFocused(String element) throws SwipeException {
+    @And("ru.sbtqa.tag.pagefactory.isElementFocused")
+    public void isElementFocused(String element) throws SwipeException {
         
     }
 }
