@@ -8,6 +8,9 @@ import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
@@ -51,6 +54,8 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
  */
 public class GenericStepDefs {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GenericStepDefs.class);
+    
     /**
      * Execute action with no parameters inside block element User|he keywords
      * are optional
@@ -420,5 +425,16 @@ public class GenericStepDefs {
     @And("ru.sbtqa.tag.pagefactory.swipeToText")
     public void swipeToText(String direction, String text) throws SwipeException {
         MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
+    }
+
+    /**
+     * Element is focused
+     *
+     * @param element
+     * @throws SwipeException if the text is not found or swipe depth is reached
+     */
+    @And("ru.sbtqa.tag.pagefactory.isElementFocused")
+    public void isElementFocused(String element) throws SwipeException {
+        LOG.warn("Note that isElementFocused method is still an empty!");
     }
 }
