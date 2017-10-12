@@ -69,7 +69,13 @@ public class DesiredCapabilitiesParser {
 
                         for (String row : dictRows) {
                             String[] keyVal = row.split("=>");
-                            dictionary.put(keyVal[0], keyVal[1].trim());
+                            if ("true".equals(keyVal[1].toLowerCase().trim())
+                                    || "false".equals(keyVal[1].toLowerCase().trim())) {
+                                
+                                dictionary.put(keyVal[0], Boolean.parseBoolean(keyVal[1].toLowerCase().trim()));
+                            } else {
+                                dictionary.put(keyVal[0], keyVal[1].trim());
+                            }
                         }
 
                         if (!dictionary.isEmpty()) {
