@@ -825,7 +825,7 @@ public abstract class Page {
      * find corresponding element or element type is set incorrectly
      */
     public WebElement getElementByTitle(String title) throws PageException {
-        if (!usedBlock.isEnabled()) {
+        if (usedBlock != null) {
             for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
                 if (Core.isRequiredElement(field, title)) {
                     return Core.getElementByField(this, field);
