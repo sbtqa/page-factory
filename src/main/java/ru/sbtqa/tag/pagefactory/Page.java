@@ -61,6 +61,7 @@ public abstract class Page {
 
     private static final Logger LOG = LoggerFactory.getLogger(Page.class);
 
+    private static boolean isNotUsedBlock = true;
     private static HtmlElement usedBlock = null;
 
     /**
@@ -150,7 +151,6 @@ public abstract class Page {
             webElement = DriverExtension.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
         clickWebElement(webElement);
-        usedBlock = null;
     }
 
     /**
@@ -747,6 +747,7 @@ public abstract class Page {
             }
         }
 
+        isNotUsedBlock = false;
         usedBlock = block;
         List<Method> methodList = Core.getDeclaredMethods(this.getClass());
         for (Method method : methodList) {
@@ -826,7 +827,7 @@ public abstract class Page {
      * find corresponding element or element type is set incorrectly
      */
     public WebElement getElementByTitle(String title) throws PageException {
-        if (usedBlock == null) {
+        if (isNotUsedBlock) {
             for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
                 if (Core.isRequiredElement(field, title)) {
                     return Core.getElementByField(this, field);
@@ -837,6 +838,7 @@ public abstract class Page {
             for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(usedBlock)){
                 if (Core.isRequiredElementInBlock(field, title)) {
                     WebElement element = Core.getElementByField(usedBlock, field);
+                    isNotUsedBlock = true;
                     usedBlock = null;
                     return element;
                 }
