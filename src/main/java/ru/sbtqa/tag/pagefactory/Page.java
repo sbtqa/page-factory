@@ -150,6 +150,7 @@ public abstract class Page {
             webElement = DriverExtension.waitUntilElementAppearsInDom(By.partialLinkText(elementTitle));
         }
         clickWebElement(webElement);
+        usedBlock = null;
     }
 
     /**
@@ -825,7 +826,7 @@ public abstract class Page {
      * find corresponding element or element type is set incorrectly
      */
     public WebElement getElementByTitle(String title) throws PageException {
-        if (usedBlock != null) {
+        if (usedBlock == null) {
             for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
                 if (Core.isRequiredElement(field, title)) {
                     return Core.getElementByField(this, field);
@@ -835,7 +836,9 @@ public abstract class Page {
         else {
             for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(usedBlock)){
                 if (Core.isRequiredElementInBlock(field, title)) {
-                    return Core.getElementByField(usedBlock, field);
+                    WebElement element = Core.getElementByField(usedBlock, field);
+                    usedBlock = null;
+                    return element;
                 }
             }
         }
@@ -1247,7 +1250,6 @@ public abstract class Page {
             Object element;
             try {
                 element = field.get(parentObject);
-                usedBlock = null;
                 return (T) element;
             } catch (IllegalArgumentException | IllegalAccessException iae) {
                 throw new ElementDescriptionException("Specified parent object is not an instance of the class or "
