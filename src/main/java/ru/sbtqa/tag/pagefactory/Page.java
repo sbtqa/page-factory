@@ -747,7 +747,7 @@ public abstract class Page {
             }
         }
 
-        isUsedBlock =true;
+        isUsedBlock = true;
         usedBlock = block;
         List<Method> methodList = Core.getDeclaredMethods(this.getClass());
         for (Method method : methodList) {
@@ -1249,7 +1249,7 @@ public abstract class Page {
             Object element;
             try {
                 element = field.get(parentObject);
-                isUsedBlock =false;
+                isUsedBlock = false;
                 usedBlock = null;
                 return (T) element;
             } catch (IllegalArgumentException | IllegalAccessException iae) {
