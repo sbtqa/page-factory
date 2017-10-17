@@ -71,9 +71,6 @@ public class SetupStepDefs {
             PageFactory.setAspectsDisabled(Boolean.parseBoolean(aspectDisabled));
         }
 
-        PageFactory.getDriver();
-        PageFactory.getInstance();
-
         Reflections reflections;
         reflections = new Reflections(PageFactory.getPagesPackage());
 
