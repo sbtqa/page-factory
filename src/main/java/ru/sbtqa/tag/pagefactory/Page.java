@@ -50,6 +50,7 @@ import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
+import ru.yandex.qatools.htmlelements.annotations.Name;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
@@ -59,6 +60,9 @@ import ru.yandex.qatools.htmlelements.element.HtmlElement;
 public abstract class Page {
 
     private static final Logger LOG = LoggerFactory.getLogger(Page.class);
+
+    private static boolean isUsedBlock = false;
+    private static HtmlElement usedBlock = null;
 
     /**
      * Find element with specified title annotation, and fill it with given text
@@ -743,6 +747,22 @@ public abstract class Page {
             }
         }
 
+        isUsedBlock = true;
+        usedBlock = block;
+        List<Method> methodList = Core.getDeclaredMethods(this.getClass());
+        for (Method method : methodList) {
+            if (Core.isRequiredAction(method, actionTitle)) {
+                try {
+                    method.setAccessible(true);
+                    MethodUtils.invokeMethod(this, method.getName(), parameters);
+                    return;
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    throw new FactoryRuntimeException(String.format("Failed to execute method '%s' in the following block: '%s'",
+                            actionTitle, blockPath), e);
+                }
+            }
+        }
+
         throw new NoSuchMethodException(String.format("There is no '%s' method in block '%s'", actionTitle, blockPath));
     }
 
@@ -807,9 +827,18 @@ public abstract class Page {
      * find corresponding element or element type is set incorrectly
      */
     public WebElement getElementByTitle(String title) throws PageException {
-        for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
-            if (Core.isRequiredElement(field, title)) {
-                return Core.getElementByField(this, field);
+        if (!isUsedBlock) {
+            for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(this.getClass())) {
+                if (Core.isRequiredElement(field, title)) {
+                    return Core.getElementByField(this, field);
+                }
+            }
+        }
+        else {
+            for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(usedBlock)){
+                if (Core.isRequiredElementInBlock(field, title)) {
+                    return Core.getElementByField(usedBlock, field);
+                }
             }
         }
 
@@ -1115,6 +1144,18 @@ public abstract class Page {
         }
 
         /**
+         * Check whether {@link Name} annotation of the field has a
+         * required value
+         *
+         * @param field field to check
+         * @param title value of ElementTitle annotation of required element
+         * @return true|false
+         */
+        private static boolean isRequiredElementInBlock(Field field, String title) {
+            return getFieldTitleInBlock(field).equals(title);
+        }
+
+        /**
          * Return value of {@link ElementTitle} annotation for the field. If
          * none present, return empty string
          *
@@ -1125,6 +1166,22 @@ public abstract class Page {
             for (Annotation a : field.getAnnotations()) {
                 if (a instanceof ElementTitle) {
                     return ((ElementTitle) a).value();
+                }
+            }
+            return "";
+        }
+
+        /**
+         * Return value of {@link Name} annotation for the field. If
+         * none present, return empty string
+         *
+         * @param field field to check
+         * @return either an element title, or an empty string
+         */
+        private static String getFieldTitleInBlock(Field field) {
+            for (Annotation a : field.getAnnotations()) {
+                if (a instanceof Name) {
+                    return ((Name) a).value();
                 }
             }
             return "";
@@ -1192,6 +1249,8 @@ public abstract class Page {
             Object element;
             try {
                 element = field.get(parentObject);
+                isUsedBlock = false;
+                usedBlock = null;
                 return (T) element;
             } catch (IllegalArgumentException | IllegalAccessException iae) {
                 throw new ElementDescriptionException("Specified parent object is not an instance of the class or "
