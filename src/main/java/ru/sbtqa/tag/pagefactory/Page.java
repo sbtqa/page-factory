@@ -62,7 +62,7 @@ public abstract class Page {
     private static final Logger LOG = LoggerFactory.getLogger(Page.class);
 
     private static boolean isUsedBlock = false;
-    private static HtmlElement usedBlock = null;
+    private static WebElement usedBlock = null;
 
     /**
      * Find element with specified title annotation, and fill it with given text
