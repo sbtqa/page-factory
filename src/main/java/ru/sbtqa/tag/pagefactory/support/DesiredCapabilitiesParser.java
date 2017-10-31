@@ -9,7 +9,6 @@ import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
 
@@ -90,7 +89,12 @@ public class DesiredCapabilitiesParser {
                     capabilities.setCapability(ChromeOptions.CAPABILITY, options);
                 }
             } else {
-                capabilities.setCapability(capability, Props.get(rawCapabilityKey));
+                if ("true".equals(Props.get(rawCapabilityKey).toLowerCase().trim())
+                        || "false".equals(Props.get(rawCapabilityKey).toLowerCase().trim())) {
+                    capabilities.setCapability(capability, Boolean.parseBoolean(Props.get(rawCapabilityKey)));
+                } else {
+                    capabilities.setCapability(capability, Props.get(rawCapabilityKey));
+                }
             }
         }
         return capabilities;
