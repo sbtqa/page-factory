@@ -49,7 +49,7 @@ public class TagWebDriver {
     private static final boolean WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Boolean.parseBoolean(Props.get("webdriver.browser.ie.killOnDispose", "false"));
     private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name").toLowerCase().equals("ie")
             // Normalize it for ie shorten name (ie)
-            ? BrowserType.IE : Props.get("webdriver.browser.name").toLowerCase();
+            ? BrowserType.IEXPLORE : Props.get("webdriver.browser.name").toLowerCase();
     private static final boolean IS_IE = WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
