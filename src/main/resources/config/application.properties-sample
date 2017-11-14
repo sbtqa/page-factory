@@ -60,3 +60,8 @@ webdriver.browser.ie.killOnDispose = false
 
 #optional. Share webdriver between tests
 webdriver.shared = false
+
+#Custom desired capabilities
+webdriver.chrome.capability.acceptSslCerts=true
+webdriver.chrome.capability.options.args=user-data-dir=C:\\workspace\\user-data\\,start-maximized
+webdriver.chrome.capability.options.prefs=key1=>val1,key2=>val2
