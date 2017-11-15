@@ -1192,7 +1192,7 @@ public abstract class Page {
         }
 
         /**
-         * Return value of {@link Name} annotation for the field. If
+         * Return value of {@link Name} or {@link ElementTitle} annotation for the field. If
          * none present, return empty string
          *
          * @param field field to check
@@ -1202,6 +1202,9 @@ public abstract class Page {
             for (Annotation a : field.getAnnotations()) {
                 if (a instanceof Name) {
                     return ((Name) a).value();
+                }
+                if (a instanceof ElementTitle) {
+                    return ((ElementTitle) a).value();
                 }
             }
             return "";
