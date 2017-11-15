@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +49,7 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.i18n.I18NRuntimeException;
+import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.annotations.Name;
@@ -401,6 +403,24 @@ public abstract class Page {
     @ActionTitle("ru.sbtqa.tag.pagefactory.check.value")
     public void checkValue(String elementTitle, String text) throws PageException {
         checkValue(text, getElementByTitle(elementTitle), MatchStrategy.EXACT);
+    }
+
+    /**
+     * Action for upload file.
+     *
+     * @param filePath     path to file
+     * @param elementTitle field name, usually 'input' type
+     * @throws PageException
+     */
+    @ActionTitle("ru.sbtqa.tag.pagefactory.upload.file")
+    public void uploadFile(String filePath, String elementTitle) throws PageException {
+        if (Props.get("webdriver.upload.dir") != null && Props.get("webdriver.upload.dir") != "") {
+            filePath = Props.get("webdriver.upload.dir") + filePath;
+        }
+
+        File file = new File(filePath);
+        WebElement element = getElementByTitle(elementTitle);
+        element.sendKeys(file.getAbsolutePath());
     }
 
     /**
