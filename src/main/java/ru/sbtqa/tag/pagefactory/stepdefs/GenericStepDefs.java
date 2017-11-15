@@ -2,7 +2,8 @@ package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
