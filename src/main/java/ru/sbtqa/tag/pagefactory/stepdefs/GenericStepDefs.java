@@ -10,7 +10,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.pagefactory.Page;
+import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
@@ -18,6 +18,7 @@ import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
+import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
 import ru.yandex.qatools.htmlelements.element.Button;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
@@ -138,42 +139,34 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.findElementInBlock")
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
+        String key = getI18nElementType(elementType);
         Class<? extends WebElement> clazz;
-        switch (elementType) {
-            case "element":
-            case "элемент":
+        switch (key) {
+            case "ru.sbtqa.tag.pagefactory.type.element":
                 clazz = WebElement.class;
                 break;
-            case "textinput":
-            case "текстовое поле":
+            case "ru.sbtqa.tag.pagefactory.type.textinput":
                 clazz = TextInput.class;
                 break;
-            case "checkbox":
-            case "чекбокс":
+            case "ru.sbtqa.tag.pagefactory.type.checkbox":
                 clazz = CheckBox.class;
                 break;
-            case "radiobutton":
-            case "радиобатон":
+            case "ru.sbtqa.tag.pagefactory.type.radiobutton":
                 clazz = Radio.class;
                 break;
-            case "table":
-            case "таблицу":
+            case "ru.sbtqa.tag.pagefactory.type.table":
                 clazz = Table.class;
                 break;
-            case "header":
-            case "заголовок":
+            case "ru.sbtqa.tag.pagefactory.type.header":
                 clazz = TextBlock.class;
                 break;
-            case "button":
-            case "кнопку":
+            case "ru.sbtqa.tag.pagefactory.type.button":
                 clazz = Button.class;
                 break;
-            case "link":
-            case "ссылку":
+            case "ru.sbtqa.tag.pagefactory.type.link":
                 clazz = Link.class;
                 break;
-            case "image":
-            case "изображение":
+            case "ru.sbtqa.tag.pagefactory.type.image":
                 clazz = Image.class;
                 break;
             default:
@@ -436,5 +429,22 @@ public class GenericStepDefs {
     @And("ru.sbtqa.tag.pagefactory.isElementFocused")
     public void isElementFocused(String element) throws SwipeException {
         LOG.warn("Note that isElementFocused method is still an empty!");
+    }
+
+    /**
+     * Find key for element type in I18N
+     *
+     * @param elementType
+     * @return element key
+     */
+    private String getI18nElementType(String elementType){
+        I18N i18n = I18N.getI18n(this.getClass(), TagCucumber.getFeature().getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
+        for(String key : i18n.toMap().keySet()){
+            if(i18n.toMap().get(key).equals(elementType)) {
+                return key;
+            }
+        }
+
+        return null;
     }
 }
