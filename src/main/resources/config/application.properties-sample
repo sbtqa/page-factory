@@ -61,6 +61,9 @@ webdriver.browser.ie.killOnDispose = false
 #optional. Share webdriver between tests
 webdriver.shared = false
 
+#optional. The path where are the files to download
+webdriver.upload.dir=C:\Temp\upload\
+
 #Custom desired capabilities
 webdriver.chrome.capability.acceptSslCerts=true
 webdriver.chrome.capability.options.args=user-data-dir=C:\\workspace\\user-data\\,start-maximized
