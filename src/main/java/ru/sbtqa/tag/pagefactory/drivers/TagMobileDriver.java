@@ -104,4 +104,14 @@ public class TagMobileDriver {
     public static void setMobileDriver(AppiumDriver<AndroidElement> aMobileDriver) {
         mobileDriver = aMobileDriver;
     }
+
+    /**
+     * @return was driver initialized or not
+     */
+    public static boolean isDriverInitialized(){
+        if(mobileDriver != null) {
+            return true;
+        }
+        return false;
+    }
 }
