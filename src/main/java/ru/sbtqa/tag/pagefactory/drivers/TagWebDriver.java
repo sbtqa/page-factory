@@ -54,6 +54,16 @@ public class TagWebDriver {
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
     private static final boolean WEBDRIVER_SHARED = Boolean.parseBoolean(Props.get("webdriver.shared", "false"));
+    //capabilities for Selenoid (https://github.com/aerokube/selenoid)
+    private static final String REMOTE_WEBDRIVER_BROWSER_VERSION = Props.get("webdriver.remote.browserVersion");
+    private static final String REMOTE_WEBDRIVER_ENABLE_VNC = Props.get("webdriver.remote.enableVNC");
+    private static final String REMOTE_WEBDRIVER_ENABLE_VIDEO = Props.get("webdriver.remote.enableVideo");
+    private static final String REMOTE_WEBDRIVER_SCREEN_RESOLUTION = Props.get("webdriver.remote.screenResolution");
+    private static final String REMOTE_WEBDRIVER_VIDEO_SCREEN_SIZE = Props.get("webdriver.remote.video.screenSize");
+    private static final String REMOTE_WEBDRIVER_VIDEO_FRAME_RATE = Props.get("webdriver.remote.video.screenSize");
+    private static final String REMOTE_WEBDRIVER_NAME_OF_TESTS = Props.get("webdriver.remote.nameOfTests");
+    private static final String REMOTE_WEBDRIVER_TIME_ZONE = Props.get("webdriver.remote.timeZone");
+    private static final String REMOTE_WEBDDRIVER_HOST_ENTRIES = Props.get("webdriver.remote.hostEntries");
 
     public static WebDriver getDriver() {
         if (Environment.WEB != PageFactory.getEnvironment()) {
@@ -128,6 +138,43 @@ public class TagWebDriver {
         }
         if (!WEBDRIVER_URL.isEmpty()) {
             URL remoteUrl = new URL(WEBDRIVER_URL);
+
+            if (!REMOTE_WEBDRIVER_BROWSER_VERSION.isEmpty()) {
+                capabilities.setVersion(REMOTE_WEBDRIVER_BROWSER_VERSION);
+            }
+
+            if (!REMOTE_WEBDRIVER_ENABLE_VNC.isEmpty()) {
+                capabilities.setCapability("enableVNC", Boolean.parseBoolean(REMOTE_WEBDRIVER_ENABLE_VNC));
+            }
+
+            if (!REMOTE_WEBDRIVER_ENABLE_VIDEO.isEmpty()) {
+                capabilities.setCapability("enableVideo", Boolean.parseBoolean(REMOTE_WEBDRIVER_ENABLE_VIDEO));
+            }
+
+            if (!REMOTE_WEBDRIVER_SCREEN_RESOLUTION.isEmpty()) {
+                capabilities.setCapability("screenResolution", REMOTE_WEBDRIVER_SCREEN_RESOLUTION);
+            }
+
+            if (!REMOTE_WEBDRIVER_VIDEO_SCREEN_SIZE.isEmpty()) {
+                capabilities.setCapability("videoScreenSize", REMOTE_WEBDRIVER_VIDEO_SCREEN_SIZE);
+            }
+
+            if (!REMOTE_WEBDRIVER_VIDEO_FRAME_RATE.isEmpty()) {
+                capabilities.setCapability("videoFrameRate", REMOTE_WEBDRIVER_VIDEO_FRAME_RATE);
+            }
+
+            if (!REMOTE_WEBDRIVER_NAME_OF_TESTS.isEmpty()) {
+                capabilities.setCapability("name", REMOTE_WEBDRIVER_NAME_OF_TESTS);
+            }
+
+            if (!REMOTE_WEBDRIVER_TIME_ZONE.isEmpty()) {
+                capabilities.setCapability("timeZone", REMOTE_WEBDRIVER_TIME_ZONE);
+            }
+
+            if (!REMOTE_WEBDDRIVER_HOST_ENTRIES.isEmpty()) {
+                capabilities.setCapability("hostsEntries", REMOTE_WEBDDRIVER_HOST_ENTRIES);
+            }
+
             setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
