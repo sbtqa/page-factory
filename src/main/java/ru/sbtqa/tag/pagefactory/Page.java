@@ -1044,8 +1044,9 @@ public abstract class Page {
             List<HtmlElement> found = new ArrayList<>();
             for (Field currentField : FieldUtilsExt.getDeclaredFieldsWithInheritance(context.getClass())) {
                 if (Core.isBlockElement(currentField)) {
+                    currentField.setAccessible(true);
+
                     if (Core.isRequiredElement(currentField, blockChain[0])) {
-                        currentField.setAccessible(true);
                         // isBlockElement() ensures that this is a HtmlElement instance
                         HtmlElement foundBlock = (HtmlElement) currentField.get(context);
                         if (blockChain.length == 1) {
