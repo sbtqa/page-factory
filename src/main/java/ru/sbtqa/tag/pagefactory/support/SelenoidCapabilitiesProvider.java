@@ -19,7 +19,7 @@ public class SelenoidCapabilitiesProvider {
     private static final String REMOTE_WEBDRIVER_TIME_ZONE = Props.get("webdriver.remote.timeZone");
     private static final String REMOTE_WEBDDRIVER_HOST_ENTRIES = Props.get("webdriver.remote.hostEntries");
 
-    public static void applySelenoidCapabilities(DesiredCapabilities capabilities) {
+    public static void apply(DesiredCapabilities capabilities) {
 
         if (!REMOTE_WEBDRIVER_BROWSER_VERSION.isEmpty()) {
             capabilities.setVersion(REMOTE_WEBDRIVER_BROWSER_VERSION);

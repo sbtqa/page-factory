@@ -129,7 +129,7 @@ public class TagWebDriver {
         }
         if (!WEBDRIVER_URL.isEmpty()) {
             URL remoteUrl = new URL(WEBDRIVER_URL);
-            SelenoidCapabilitiesProvider.applySelenoidCapabilities(capabilities);
+            SelenoidCapabilitiesProvider.apply(capabilities);
             setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
