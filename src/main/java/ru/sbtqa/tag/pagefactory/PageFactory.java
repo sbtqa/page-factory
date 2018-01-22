@@ -187,4 +187,12 @@ public class PageFactory {
     public static void setSharingProcessing(boolean aIsSharingProcessing) {
         isSharingProcessing = aIsSharingProcessing;
     }
+
+    /**
+     * Return true if webDriver or apiumDriver were initialized
+     * @return {java.boolean} 
+     */
+    public static boolean isDriverInitialized(){
+        return TagWebDriver.isDriverInitialized() || TagMobileDriver.isDriverInitialized();
+    }
 }
