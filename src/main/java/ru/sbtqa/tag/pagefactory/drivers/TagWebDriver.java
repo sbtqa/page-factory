@@ -33,6 +33,7 @@ import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.exceptions.UnsupportedBrowserException;
 import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
 import ru.sbtqa.tag.pagefactory.support.Environment;
+import ru.sbtqa.tag.pagefactory.support.SelenoidCapabilitiesProvider;
 import ru.sbtqa.tag.qautils.properties.Props;
 
 public class TagWebDriver {
@@ -128,6 +129,7 @@ public class TagWebDriver {
         }
         if (!WEBDRIVER_URL.isEmpty()) {
             URL remoteUrl = new URL(WEBDRIVER_URL);
+            SelenoidCapabilitiesProvider.apply(capabilities);
             setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
