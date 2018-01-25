@@ -6,6 +6,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import io.github.bonigarcia.wdm.BrowserManager;
+import io.github.bonigarcia.wdm.ChromeDriverManager;
+import io.github.bonigarcia.wdm.FirefoxDriverManager;
+import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
@@ -28,7 +33,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+
 import static ru.sbtqa.tag.pagefactory.PageFactory.getTimeOutInSeconds;
+
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.exceptions.UnsupportedBrowserException;
 import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
@@ -54,6 +61,9 @@ public class TagWebDriver {
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IE_HTA.toLowerCase())
             || WEBDRIVER_BROWSER_NAME.equals(BrowserType.IEXPLORE.toLowerCase());
     private static final boolean WEBDRIVER_SHARED = Boolean.parseBoolean(Props.get("webdriver.shared", "false"));
+    private static final String WEBDRIVER_NEXUS_LINK = Props.get("webdriver.nexus.url");
+    private static final String WEBDRIVER_DESIRABLE_VERSION = Props.get("webdriver.version");
+
 
     public static WebDriver getDriver() {
         if (Environment.WEB != PageFactory.getEnvironment()) {
@@ -94,6 +104,21 @@ public class TagWebDriver {
         capabilities.setBrowserName(WEBDRIVER_BROWSER_NAME);
 
         if (WEBDRIVER_BROWSER_NAME.equals(BrowserType.FIREFOX.toLowerCase())) {
+            if (WEBDRIVER_PATH.isEmpty()) {
+                LOG.warn("The value of property 'webdriver.drivers.path is not specified."
+                        + " Trying to automatically download and setup driver.", WEBDRIVER_BROWSER_NAME);
+
+                BrowserManager firefoxDriverManager = FirefoxDriverManager.getInstance();
+
+                if (!WEBDRIVER_DESIRABLE_VERSION.isEmpty()){
+                    firefoxDriverManager.version(WEBDRIVER_DESIRABLE_VERSION);
+                }
+                if (!WEBDRIVER_NEXUS_LINK.isEmpty()){
+                    firefoxDriverManager.useNexus(WEBDRIVER_NEXUS_LINK);
+                }
+
+                firefoxDriverManager.setup();
+            }
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new FirefoxDriver(capabilities));
             }
@@ -106,7 +131,18 @@ public class TagWebDriver {
                 System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
             } else {
                 LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                        + " Trying to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+                        + " Trying to automatically download and setup driver.", WEBDRIVER_BROWSER_NAME);
+
+                BrowserManager chromeDriverManager = ChromeDriverManager.getInstance();
+
+                if (!WEBDRIVER_DESIRABLE_VERSION.isEmpty()){
+                    chromeDriverManager.version(WEBDRIVER_DESIRABLE_VERSION);
+                }
+                if (!WEBDRIVER_NEXUS_LINK.isEmpty()){
+                    chromeDriverManager.useNexus(WEBDRIVER_NEXUS_LINK);
+                }
+
+                chromeDriverManager.setup();
             }
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new ChromeDriver(capabilities));
@@ -118,7 +154,18 @@ public class TagWebDriver {
                 System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
             } else {
                 LOG.warn("The value of property 'webdriver.drivers.path is not specified."
-                        + " Trying to get {} driver from system PATH'", WEBDRIVER_BROWSER_NAME);
+                        + " Trying to automatically download and setup driver.", WEBDRIVER_BROWSER_NAME);
+
+                BrowserManager ieDriverManager = InternetExplorerDriverManager.getInstance();
+
+                if (!WEBDRIVER_DESIRABLE_VERSION.isEmpty()){
+                    ieDriverManager.version(WEBDRIVER_DESIRABLE_VERSION);
+                }
+                if (!WEBDRIVER_NEXUS_LINK.isEmpty()){
+                    ieDriverManager.useNexus(WEBDRIVER_NEXUS_LINK);
+                }
+
+                ieDriverManager.setup();
             }
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new InternetExplorerDriver(capabilities));
@@ -136,10 +183,10 @@ public class TagWebDriver {
     }
 
     public static void dispose() {
-        if(webDriver == null) {
+        if (webDriver == null) {
             return;
         }
-        
+
         try {
             LOG.info("Checking any alert opened");
             WebDriverWait alertAwaiter = new WebDriverWait(webDriver, 2);
@@ -158,8 +205,8 @@ public class TagWebDriver {
                     webDriver.switchTo().window(winHandle);
                     ((JavascriptExecutor) webDriver).executeScript(
                             "var objWin = window.self;"
-                            + "objWin.open('','_self','');"
-                            + "objWin.close();");
+                                    + "objWin.open('','_self','');"
+                                    + "objWin.close();");
                 }
             }
         } catch (Exception e) {
