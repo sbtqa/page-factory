@@ -1,44 +1,44 @@
 package ru.sbtqa.tag.pagefactory.drivers;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import io.github.bonigarcia.wdm.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import io.github.bonigarcia.wdm.BrowserManager;
+import io.github.bonigarcia.wdm.ChromeDriverManager;
+import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 import net.lightbody.bmp.BrowserMobProxy;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.BrowserType;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.UnreachableBrowserException;
+import org.openqa.selenium.remote.*;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-
-import static ru.sbtqa.tag.pagefactory.PageFactory.getTimeOutInSeconds;
-
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.exceptions.UnsupportedBrowserException;
 import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.pagefactory.support.SelenoidCapabilitiesProvider;
 import ru.sbtqa.tag.qautils.properties.Props;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import static ru.sbtqa.tag.pagefactory.PageFactory.getTimeOutInSeconds;
 
 public class TagWebDriver {
 
@@ -61,6 +61,8 @@ public class TagWebDriver {
     private static final boolean WEBDRIVER_SHARED = Boolean.parseBoolean(Props.get("webdriver.shared", "false"));
     private static final String WEBDRIVER_NEXUS_LINK = Props.get("webdriver.nexus.url");
     private static final String WEBDRIVER_DESIRABLE_VERSION = Props.get("webdriver.version");
+    private static final String WEBDRIVER_BROWSER_VERSION = Props.get("webdriver.browser.version");
+
 
     private TagWebDriver() {
     }
@@ -78,10 +80,7 @@ public class TagWebDriver {
                     break;
                 } catch (UnreachableBrowserException e) {
                     LOG.warn("Failed to create web driver. Attempt number {}", i, e);
-                    if (null != webDriver) {
-                        // Don't dispose when driver is already null, cuz it causes new driver creation at Init.getWebDriver()
-                        dispose();
-                    }
+                    dispose();
                 } catch (UnsupportedBrowserException | MalformedURLException e) {
                     LOG.error("Failed to create web driver", e);
                     break;
@@ -92,8 +91,7 @@ public class TagWebDriver {
     }
 
     private static void createDriver() throws UnsupportedBrowserException, MalformedURLException {
-        final String noDriverPathWarnMessage = "The value of property 'webdriver.drivers.path is not specified."
-                + " Trying to automatically download and setup driver.";
+
         DesiredCapabilities capabilities = new DesiredCapabilitiesParser().parse();
 
         //Local proxy available on local webdriver instances only
@@ -101,13 +99,6 @@ public class TagWebDriver {
         capabilities.setBrowserName(WEBDRIVER_BROWSER_NAME);
 
         if (WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(BrowserType.FIREFOX)) {
-            if (WEBDRIVER_PATH.isEmpty()) {
-                LOG.warn(noDriverPathWarnMessage, WEBDRIVER_BROWSER_NAME);
-
-                BrowserManager firefoxDriverManager = FirefoxDriverManager.getInstance();
-                configureNexusParams(firefoxDriverManager);
-                firefoxDriverManager.setup();
-            }
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new FirefoxDriver(capabilities));
             }
@@ -116,30 +107,12 @@ public class TagWebDriver {
                 setWebDriver(new SafariDriver(capabilities));
             }
         } else if (WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(BrowserType.CHROME)) {
-            if (!WEBDRIVER_PATH.isEmpty()) {
-                System.setProperty("webdriver.chrome.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
-            } else {
-                LOG.warn(noDriverPathWarnMessage, WEBDRIVER_BROWSER_NAME);
-
-                BrowserManager chromeDriverManager = ChromeDriverManager.getInstance();
-                configureNexusParams(chromeDriverManager);
-                chromeDriverManager.setup();
-            }
+            configureDriver(ChromeDriverManager.getInstance(), BrowserType.CHROME);
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new ChromeDriver(capabilities));
             }
-        } else if (WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(BrowserType.IE)
-                || WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(BrowserType.IE_HTA)
-                || WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(BrowserType.IEXPLORE)) {
-            if (!WEBDRIVER_PATH.isEmpty()) {
-                System.setProperty("webdriver.ie.driver", new File(WEBDRIVER_PATH).getAbsolutePath());
-            } else {
-                LOG.warn(noDriverPathWarnMessage, WEBDRIVER_BROWSER_NAME);
-
-                BrowserManager ieDriverManager = InternetExplorerDriverManager.getInstance();
-                configureNexusParams(ieDriverManager);
-                ieDriverManager.setup();
-            }
+        } else if (IS_IE) {
+            configureDriver(InternetExplorerDriverManager.getInstance(), BrowserType.IE);
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new InternetExplorerDriver(capabilities));
             }
@@ -156,6 +129,19 @@ public class TagWebDriver {
         webDriver.get(WEBDRIVER_STARTING_URL);
     }
 
+    private static void configureDriver(BrowserManager webDriverManager, String browserType) {
+        final String noDriverPathWarnMessage = "The value of property 'webdriver.drivers.path is not specified."
+                + " Trying to automatically download and setup driver.";
+
+        if (!WEBDRIVER_PATH.isEmpty()) {
+            System.setProperty("webdriver." + browserType + ".driver", new File(WEBDRIVER_PATH).getAbsolutePath());
+        } else {
+            LOG.warn(noDriverPathWarnMessage, WEBDRIVER_BROWSER_NAME);
+            configureWebDriverManagerParams(webDriverManager, browserType);
+            webDriverManager.setup();
+        }
+    }
+
     private static void configureProxy(DesiredCapabilities capabilities) {
         if (!WEBDRIVER_PROXY.isEmpty()) {
             setProxy(new BrowserMobProxyServer());
@@ -165,13 +151,37 @@ public class TagWebDriver {
         }
     }
 
-    private static void configureNexusParams(BrowserManager webDriverManager) {
-        if (!WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
+    private static void configureWebDriverManagerParams(BrowserManager webDriverManager, String browserType) {
+        if (!WEBDRIVER_BROWSER_VERSION.isEmpty() && !browserType.equalsIgnoreCase(BrowserType.IE)) {
+            LOG.info("You have specified 'webdriver.browser.version' property. Trying to find corresponding driver.");
+
+            String mappedVersion = parseDriverVersionFromMapping(WEBDRIVER_BROWSER_VERSION, browserType.toLowerCase());
+            webDriverManager.version(mappedVersion);
+        } else if (!WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
             webDriverManager.version(WEBDRIVER_DESIRABLE_VERSION);
         }
         if (!WEBDRIVER_NEXUS_LINK.isEmpty()) {
             webDriverManager.useNexus(WEBDRIVER_NEXUS_LINK);
         }
+    }
+
+    private static String parseDriverVersionFromMapping(String browserVersion, String browserType) {
+        ClassLoader classLoader = TagWebDriver.class.getClassLoader();
+        try {
+            Path file = Paths.get(classLoader
+                    .getResource("drivers/mapping/" + browserType + "Mapping.json")
+                    .toURI());
+            JsonParser parser = new JsonParser();
+            JsonReader reader = new JsonReader(Files.newBufferedReader(file));
+            JsonObject mainObject = parser.parse(reader).getAsJsonObject();
+            return mainObject.get(browserVersion).getAsString();
+        } catch (URISyntaxException | IOException e) {
+            LOG.error(e.getMessage());
+        } catch (NullPointerException e) {
+            LOG.warn("Can't get corresponding driver for {} browser version. " +
+                    "Using LATEST driver version.", browserVersion);
+        }
+        return null;
     }
 
     public static void dispose() {
