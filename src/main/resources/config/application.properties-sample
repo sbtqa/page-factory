@@ -45,10 +45,11 @@ webdriver.browser.name = Chrome
 webdriver.browser.version = 63
 webdriver.starting.url = http://google.com
 
-#in case if you want drivers to be downloaded automatically
+#optional.In case if you want drivers to be downloaded from nexus. If not specified we will try to use default
+#repos to download drivers
 webdriver.nexus.url = http://your.nexus.repo.with.drivers.com/
 
-#forces to download this driver version if it is available. Latest by default
+#optional. Forces to download this driver version if it is available. LATEST by default
 webdriver.version = 2.35
 
 #optional. The number of start  attempts webdriver. 3 by default
