@@ -70,6 +70,8 @@ public class TagWebDriver {
     private static final String WEBDRIVER_NEXUS_LINK = Props.get("webdriver.nexus.url");
     private static final String WEBDRIVER_DESIRABLE_VERSION = Props.get("webdriver.version");
     private static final String WEBDRIVER_BROWSER_VERSION = Props.get("webdriver.browser.version");
+    private static final String MAPPING_FILES_PATH = "drivers/mapping/";
+    private static final String MAPPING_FILES_EXTENSION = ".json";
 
 
     private TagWebDriver() {
@@ -137,13 +139,11 @@ public class TagWebDriver {
     }
 
     private static void configureDriver(BrowserManager webDriverManager, String browserType) {
-        final String noDriverPathWarnMessage = "The value of property 'webdriver.drivers.path is not specified."
-                + " Trying to automatically download and setup driver.";
-
         if (!WEBDRIVER_PATH.isEmpty()) {
             System.setProperty("webdriver." + browserType + ".driver", new File(WEBDRIVER_PATH).getAbsolutePath());
         } else {
-            LOG.warn(noDriverPathWarnMessage, WEBDRIVER_BROWSER_NAME);
+            LOG.warn("The value of property 'webdriver.drivers.path is not specified."
+                    + " Trying to automatically download and setup driver.");
             configureWebDriverManagerParams(webDriverManager, browserType);
             webDriverManager.setup();
         }
@@ -176,7 +176,7 @@ public class TagWebDriver {
         ClassLoader classLoader = TagWebDriver.class.getClassLoader();
         try {
             Path file = Paths.get(classLoader
-                    .getResource("drivers/mapping/" + browserType + "Mapping.json")
+                    .getResource(MAPPING_FILES_PATH + browserType + MAPPING_FILES_EXTENSION)
                     .toURI());
             JsonParser parser = new JsonParser();
             JsonReader reader = new JsonReader(new BufferedReader(new FileReader(file.toFile())));
