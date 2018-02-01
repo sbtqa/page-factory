@@ -27,7 +27,9 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.pagefactory.support.SelenoidCapabilitiesProvider;
 import ru.sbtqa.tag.qautils.properties.Props;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -172,7 +174,7 @@ public class TagWebDriver {
                     .getResource("drivers/mapping/" + browserType + "Mapping.json")
                     .toURI());
             JsonParser parser = new JsonParser();
-            JsonReader reader = new JsonReader(Files.newBufferedReader(file));
+            JsonReader reader = new JsonReader(new BufferedReader(new FileReader(file.toFile())));
             JsonObject mainObject = parser.parse(reader).getAsJsonObject();
             return mainObject.get(browserVersion).getAsString();
         } catch (URISyntaxException | IOException e) {
