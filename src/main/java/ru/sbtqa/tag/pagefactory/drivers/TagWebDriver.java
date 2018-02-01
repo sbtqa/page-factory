@@ -100,7 +100,6 @@ public class TagWebDriver {
     }
 
     private static void createDriver() throws UnsupportedBrowserException, MalformedURLException {
-
         DesiredCapabilities capabilities = new DesiredCapabilitiesParser().parse();
 
         //Local proxy available on local webdriver instances only
