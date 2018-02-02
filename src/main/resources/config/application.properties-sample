@@ -41,11 +41,11 @@ appium.click.adb = false
 #IN CASE OF WEB
 #parameters for web driver create
 webdriver.browser.name = Chrome
-#in case you specified this param, we will try to automatically find corresponding driver version
+#optional. In case you specified this param, we will try to automatically find corresponding driver version
 webdriver.browser.version = 63
 webdriver.starting.url = http://google.com
 
-#optional.In case if you want drivers to be downloaded from nexus. If not specified we will try to use default
+#optional. In case if you want drivers to be downloaded from nexus. If not specified we will try to use default
 #repos to download drivers
 webdriver.nexus.url = http://your.nexus.repo.with.drivers.com/
 

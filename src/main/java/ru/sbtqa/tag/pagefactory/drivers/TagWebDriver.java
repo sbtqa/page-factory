@@ -47,7 +47,6 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.pagefactory.support.SelenoidCapabilitiesProvider;
 import ru.sbtqa.tag.qautils.properties.Props;
 
-
 public class TagWebDriver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TagWebDriver.class);
@@ -72,7 +71,6 @@ public class TagWebDriver {
     private static final String WEBDRIVER_BROWSER_VERSION = Props.get("webdriver.browser.version");
     private static final String MAPPING_FILES_PATH = "drivers/mapping/";
     private static final String MAPPING_FILES_EXTENSION = ".json";
-
 
     private TagWebDriver() {
     }
@@ -193,7 +191,7 @@ public class TagWebDriver {
             JsonReader reader = new JsonReader(new BufferedReader(new FileReader(file.toFile())));
             return parser.parse(reader).getAsJsonObject();
         } catch (URISyntaxException | IOException e) {
-            LOG.error(e.getMessage());
+            LOG.error("Error during parsing mapping file", e);
         }
         return null;
     }
