@@ -173,20 +173,27 @@ public class TagWebDriver {
     }
 
     private static String parseDriverVersionFromMapping(String browserVersion, String browserType) {
-        ClassLoader classLoader = TagWebDriver.class.getClassLoader();
+        JsonObject mapping = getResourceJsonFileAsJsonObject(MAPPING_FILES_PATH + browserType + MAPPING_FILES_EXTENSION);
         try {
-            Path file = Paths.get(classLoader
-                    .getResource(MAPPING_FILES_PATH + browserType + MAPPING_FILES_EXTENSION)
-                    .toURI());
-            JsonParser parser = new JsonParser();
-            JsonReader reader = new JsonReader(new BufferedReader(new FileReader(file.toFile())));
-            JsonObject mainObject = parser.parse(reader).getAsJsonObject();
-            return mainObject.get(browserVersion).getAsString();
-        } catch (URISyntaxException | IOException e) {
-            LOG.error(e.getMessage());
+            if (null != mapping) {
+                return mapping.get(browserVersion).getAsString();
+            }
         } catch (NullPointerException e) {
             LOG.warn("Can't get corresponding driver for {} browser version. " +
                     "Using LATEST driver version.", browserVersion);
+        }
+        return null;
+    }
+
+    private static JsonObject getResourceJsonFileAsJsonObject(String filePath) {
+        ClassLoader classLoader = TagWebDriver.class.getClassLoader();
+        try {
+            Path file = Paths.get(classLoader.getResource(filePath).toURI());
+            JsonParser parser = new JsonParser();
+            JsonReader reader = new JsonReader(new BufferedReader(new FileReader(file.toFile())));
+            return parser.parse(reader).getAsJsonObject();
+        } catch (URISyntaxException | IOException e) {
+            LOG.error(e.getMessage());
         }
         return null;
     }
