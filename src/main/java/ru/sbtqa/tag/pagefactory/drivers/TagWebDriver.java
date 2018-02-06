@@ -3,6 +3,7 @@ package ru.sbtqa.tag.pagefactory.drivers;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import io.github.bonigarcia.wdm.Architecture;
 import io.github.bonigarcia.wdm.BrowserManager;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
@@ -69,6 +70,7 @@ public class TagWebDriver {
     private static final String WEBDRIVER_NEXUS_LINK = Props.get("webdriver.nexus.url");
     private static final String WEBDRIVER_DESIRABLE_VERSION = Props.get("webdriver.version");
     private static final String WEBDRIVER_BROWSER_VERSION = Props.get("webdriver.browser.version");
+    private static final String WEBDRIVER_OS_ARCHITECTURE = Props.get("webdriver.os.arch");
     private static final String MAPPING_FILES_PATH = "drivers/mapping/";
     private static final String MAPPING_FILES_EXTENSION = ".json";
 
@@ -163,7 +165,18 @@ public class TagWebDriver {
             String mappedVersion = parseDriverVersionFromMapping(WEBDRIVER_BROWSER_VERSION, browserType.toLowerCase());
             webDriverManager.version(mappedVersion);
         } else if (!WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
+            LOG.info("Forcing driver version to {}", WEBDRIVER_DESIRABLE_VERSION);
             webDriverManager.version(WEBDRIVER_DESIRABLE_VERSION);
+        }
+        if (!WEBDRIVER_OS_ARCHITECTURE.isEmpty()) {
+            if (Architecture.valueOf("X" + WEBDRIVER_OS_ARCHITECTURE) == Architecture.X32) {
+                LOG.info("Forcing driver arch to X{}", WEBDRIVER_OS_ARCHITECTURE);
+                webDriverManager.arch32();
+            }
+            if (Architecture.valueOf("X" + WEBDRIVER_OS_ARCHITECTURE) == Architecture.X64) {
+                LOG.info("Forcing driver arch to X{}", WEBDRIVER_OS_ARCHITECTURE);
+                webDriverManager.arch64();
+            }
         }
         if (!WEBDRIVER_NEXUS_LINK.isEmpty()) {
             webDriverManager.useNexus(WEBDRIVER_NEXUS_LINK);
