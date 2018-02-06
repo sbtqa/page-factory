@@ -56,6 +56,7 @@ import ru.sbtqa.tag.pagefactory.support.DesiredCapabilitiesParser;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.pagefactory.support.SelenoidCapabilitiesProvider;
 import ru.sbtqa.tag.qautils.properties.Props;
+import static ru.sbtqa.tag.pagefactory.PageFactory.getTimeOutInSeconds;
 
 public class TagWebDriver {
 
