@@ -166,34 +166,20 @@ public class TagWebDriver {
     }
 
     private static void configureWebDriverManagerParams(BrowserManager webDriverManager, String browserType) {
-        String driverVersion = null;
-        if (WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
-            LOG.info("Trying to determine driver version based on browser version.");
-            if (WEBDRIVER_BROWSER_VERSION.isEmpty()) {
-                if (browserType.equalsIgnoreCase(IE)) {
-                    LOG.warn("You use IE browser. Switching to LATEST driver version. " +
-                            "You can specify driver version by using 'webdriver.version param'.");
-                } else {
-                    driverVersion = parseDriverVersionFromMapping(detectBrowserVersion(), browserType.toLowerCase());
-                }
-            } else {
-                driverVersion = parseDriverVersionFromMapping(WEBDRIVER_BROWSER_VERSION, browserType.toLowerCase());
-            }
-        } else {
-            driverVersion = WEBDRIVER_DESIRABLE_VERSION;
-        }
-        if (driverVersion == null && !browserType.equalsIgnoreCase(IE)) {
-            LOG.warn("Can't determine driver version. Rolling back to LATEST by default.");
-        }
-        webDriverManager.version(driverVersion);
+        configureWebDriverManagerVersion(webDriverManager, browserType);
+        configureWebDriverManagerArch(webDriverManager);
+        configureWebDriverManagerNexusLink(webDriverManager);
+    }
 
-            String mappedVersion = parseDriverVersionFromMapping(WEBDRIVER_BROWSER_VERSION, browserType.toLowerCase());
-            webDriverManager.version(mappedVersion);
-        } else if (!WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
-            LOG.info("Forcing driver version to {}", WEBDRIVER_DESIRABLE_VERSION);
-            webDriverManager.version(WEBDRIVER_DESIRABLE_VERSION);
+    private static void configureWebDriverManagerNexusLink(BrowserManager webDriverManager) {
+        if (!WEBDRIVER_NEXUS_URL.isEmpty()) {
+            webDriverManager.useNexus(WEBDRIVER_NEXUS_URL);
         }
-        if (!WEBDRIVER_OS_ARCHITECTURE.isEmpty()) {
+    }
+
+    private static void configureWebDriverManagerArch(BrowserManager webDriverManager) {
+        if (!WEBDRIVER_OS_ARCHITECTURE.isEmpty())
+        {
             if (Architecture.valueOf("X" + WEBDRIVER_OS_ARCHITECTURE) == Architecture.X32) {
                 LOG.info("Forcing driver arch to X{}", WEBDRIVER_OS_ARCHITECTURE);
                 webDriverManager.arch32();
@@ -203,9 +189,30 @@ public class TagWebDriver {
                 webDriverManager.arch64();
             }
         }
-        if (!WEBDRIVER_NEXUS_LINK.isEmpty()) {
-            webDriverManager.useNexus(WEBDRIVER_NEXUS_LINK);
+    }
+
+    private static void configureWebDriverManagerVersion(BrowserManager webDriverManager, String browserType) {
+        String driverVersion = null;
+        if (WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
+            LOG.info("Trying to determine driver version based on browser version.");
+            if (WEBDRIVER_BROWSER_VERSION.isEmpty()) {
+                if (browserType.equalsIgnoreCase(IE)) {
+                    LOG.warn("You use IE browser. Switching to LATEST driver version. " +
+                            "You can specify driver version by using 'webdriver.version' param.");
+                } else {
+                    driverVersion = parseDriverVersionFromMapping(detectBrowserVersion(), browserType.toLowerCase());
+                }
+            } else {
+                driverVersion = parseDriverVersionFromMapping(WEBDRIVER_BROWSER_VERSION, browserType.toLowerCase());
+            }
+        } else {
+            LOG.info("Forcing driver version to {}", WEBDRIVER_DESIRABLE_VERSION);
+            driverVersion = WEBDRIVER_DESIRABLE_VERSION;
         }
+        if (driverVersion == null && !browserType.equalsIgnoreCase(IE)) {
+            LOG.warn("Can't determine driver version. Rolling back to LATEST by default.");
+        }
+        webDriverManager.version(driverVersion);
     }
 
     private static String parseDriverVersionFromMapping(String browserVersion, String browserType) {
