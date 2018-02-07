@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory.drivers;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
@@ -7,7 +8,11 @@ import io.github.bonigarcia.wdm.Architecture;
 import io.github.bonigarcia.wdm.BrowserManager;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -51,7 +56,12 @@ import ru.sbtqa.tag.qautils.properties.Props;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
-import static org.openqa.selenium.remote.BrowserType.*;
+import static org.openqa.selenium.remote.BrowserType.CHROME;
+import static org.openqa.selenium.remote.BrowserType.FIREFOX;
+import static org.openqa.selenium.remote.BrowserType.IE;
+import static org.openqa.selenium.remote.BrowserType.IEXPLORE;
+import static org.openqa.selenium.remote.BrowserType.IE_HTA;
+import static org.openqa.selenium.remote.BrowserType.SAFARI;
 import static ru.sbtqa.tag.pagefactory.PageFactory.getTimeOutInSeconds;
 
 public class TagWebDriver {
@@ -178,8 +188,7 @@ public class TagWebDriver {
     }
 
     private static void configureWebDriverManagerArch(BrowserManager webDriverManager) {
-        if (!WEBDRIVER_OS_ARCHITECTURE.isEmpty())
-        {
+        if (!WEBDRIVER_OS_ARCHITECTURE.isEmpty()) {
             if (Architecture.valueOf("X" + WEBDRIVER_OS_ARCHITECTURE) == Architecture.X32) {
                 LOG.info("Forcing driver arch to X{}", WEBDRIVER_OS_ARCHITECTURE);
                 webDriverManager.arch32();
@@ -221,16 +230,15 @@ public class TagWebDriver {
         }
         LOG.info("Trying to find driver corresponding to {} browser version.", browserVersion);
 
-        JsonObject mapping = getResourceJsonFileAsJsonObject(MAPPING_FILES_PATH + browserType + MAPPING_FILES_EXTENSION);
-        try {
-            if (mapping != null) {
-                return mapping.get(browserVersion).getAsString();
-            }
-        } catch (NullPointerException e) {
+        JsonObject mappingObject = getResourceJsonFileAsJsonObject(MAPPING_FILES_PATH + browserType + MAPPING_FILES_EXTENSION);
+        JsonElement browserVersionElement;
+        if (mappingObject != null && (browserVersionElement = mappingObject.get(browserVersion)) != null) {
+            return browserVersionElement.getAsString();
+        } else {
             LOG.warn("Can't get corresponding driver for {} browser version. " +
                     "Using LATEST driver version.", browserVersion);
+            return null;
         }
-        return null;
     }
 
     private static JsonObject getResourceJsonFileAsJsonObject(String filePath) {
@@ -280,11 +288,10 @@ public class TagWebDriver {
                 }
             }
         } catch (IOException e) {
-            LOG.error("Error while reading browser version from terminal.");
+            LOG.error("Error while reading browser version from terminal.", e);
             return null;
         }
-
-        LOG.warn("Can't find browser binary in default location.");
+        LOG.error("Can't find browser binary in default location.");
         return null;
     }
 
