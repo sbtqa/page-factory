@@ -87,6 +87,7 @@ public class TagWebDriver {
     private static final String WEBDRIVER_DESIRABLE_VERSION = Props.get("webdriver.version");
     private static final String WEBDRIVER_BROWSER_VERSION = Props.get("webdriver.browser.version");
     private static final String WEBDRIVER_OS_ARCHITECTURE = Props.get("webdriver.os.arch");
+    private static final String WEBDRIVER_BROWSER_PATH = Props.get("webdriver.browser.path");
     private static final String MAPPING_FILES_PATH = "drivers/mapping/";
     private static final String MAPPING_FILES_EXTENSION = ".json";
 
@@ -299,17 +300,25 @@ public class TagWebDriver {
         final String recommendMessage = "Please specify your browser version by " +
                 "setting 'webdriver.browser.version' param.";
         List<String> commands = new ArrayList<>();
+        String path = WEBDRIVER_BROWSER_PATH;
+
         switch (os) {
             case MAC: {
                 LOG.warn("This OS is not supported for 'browser-driver' mapping yet. {}", recommendMessage);
                 break;
             }
             case WIN: {
-                commands = Arrays.asList("cmd.exe", "/c", "wmic datafile where name=\"C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\" get Version /value");
+                if (path.isEmpty()){
+                    path = "C:\\\\Program Files (x86)\\\\Google\\\\Chrome\\\\Application\\\\";
+                }
+                commands = Arrays.asList("cmd.exe", "/c", "wmic datafile where name=\"" + path + "chrome.exe\" get Version /value");
                 break;
             }
             case LINUX: {
-                commands = Arrays.asList("bin/bash", "-c", "/usr/bin/google-chrome --version");
+                if (path.isEmpty()){
+                    path = "/usr/bin/";
+                }
+                commands = Arrays.asList("bin/bash", "-c", path + "google-chrome --version");
                 break;
             }
         }
