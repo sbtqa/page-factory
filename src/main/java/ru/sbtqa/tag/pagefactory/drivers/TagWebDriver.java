@@ -318,7 +318,7 @@ public class TagWebDriver {
                 if (path.isEmpty()){
                     path = "/usr/bin/";
                 }
-                commands = Arrays.asList("bin/bash", "-c", path + "google-chrome --version");
+                commands = Arrays.asList("/bin/bash", "-c", path + "google-chrome --version");
                 break;
             }
         }
