@@ -325,8 +325,6 @@ public class GenericStepDefs {
         ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("window.open('" + pageUrl + "', '_blank')");
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
         PageFactory.getWebDriver().switchTo().window(tabs.get(tabs.size() - 1));
-        Assert.assertEquals("Fails to open a new page. "
-                + "URL is different from the expected: ", pageUrl, PageFactory.getWebDriver().getCurrentUrl());
     }
 
     /**
@@ -334,10 +332,12 @@ public class GenericStepDefs {
      */
     @And("ru.sbtqa.tag.pagefactory.switchesToNextTab")
     public void switchesToNextTab() {
+        String currentTab = PageFactory.getWebDriver().getWindowHandle();
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
         for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).equals(PageFactory.getWebDriver().getWindowHandle())) {
+            if (tabs.get(i).equals(currentTab)) {
                 PageFactory.getWebDriver().switchTo().window(tabs.get(i + 1));
+                return;
             }
         }
     }
