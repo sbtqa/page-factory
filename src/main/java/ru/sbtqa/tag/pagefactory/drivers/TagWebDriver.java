@@ -68,6 +68,8 @@ public class TagWebDriver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TagWebDriver.class);
 
+    private static final String IE_BROWSER_TYPE = "ie";
+
     private static WebDriver webDriver;
     private static BrowserMobProxy proxy;
     private static final int WEBDRIVER_CREATE_ATTEMPTS = Integer.parseInt(Props.get("webdriver.create.attempts", "3"));
@@ -76,7 +78,7 @@ public class TagWebDriver {
     private static final String WEBDRIVER_STARTING_URL = Props.get("webdriver.starting.url");
     private static final String WEBDRIVER_PROXY = Props.get("webdriver.proxy");
     private static final boolean WEBDRIVER_BROWSER_IE_KILL_ON_DISPOSE = Boolean.parseBoolean(Props.get("webdriver.browser.ie.killOnDispose", "false"));
-    private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name").equalsIgnoreCase("ie")
+    private static final String WEBDRIVER_BROWSER_NAME = Props.get("webdriver.browser.name").equalsIgnoreCase(IE_BROWSER_TYPE)
             // Normalize it for ie shorten name (ie)
             ? IEXPLORE : Props.get("webdriver.browser.name").toLowerCase();
     private static final boolean IS_IE = WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(IE)
@@ -138,7 +140,7 @@ public class TagWebDriver {
                 setWebDriver(new ChromeDriver(capabilities));
             }
         } else if (IS_IE) {
-            configureDriver(InternetExplorerDriverManager.getInstance(), "ie");
+            configureDriver(InternetExplorerDriverManager.getInstance(), IE_BROWSER_TYPE);
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new InternetExplorerDriver(capabilities));
             }
@@ -206,7 +208,7 @@ public class TagWebDriver {
         if (WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
             LOG.info("Trying to determine driver version based on browser version.");
             if (WEBDRIVER_BROWSER_VERSION.isEmpty()) {
-                if (browserType.equalsIgnoreCase("ie")) {
+                if (browserType.equalsIgnoreCase(IE_BROWSER_TYPE)) {
                     LOG.warn("You use IE browser. Switching to LATEST driver version. " +
                             "You can specify driver version by using 'webdriver.version' param.");
                 } else {
@@ -219,7 +221,7 @@ public class TagWebDriver {
             LOG.info("Forcing driver version to {}", WEBDRIVER_DESIRABLE_VERSION);
             driverVersion = WEBDRIVER_DESIRABLE_VERSION;
         }
-        if (driverVersion == null && !browserType.equalsIgnoreCase(IE)) {
+        if (driverVersion == null && !browserType.equalsIgnoreCase(IE_BROWSER_TYPE)) {
             LOG.warn("Can't determine driver version. Rolling back to LATEST by default.");
         }
         webDriverManager.version(driverVersion);
