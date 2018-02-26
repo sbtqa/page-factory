@@ -138,7 +138,7 @@ public class TagWebDriver {
                 setWebDriver(new ChromeDriver(capabilities));
             }
         } else if (IS_IE) {
-            configureDriver(InternetExplorerDriverManager.getInstance(), IE);
+            configureDriver(InternetExplorerDriverManager.getInstance(), "ie");
             if (WEBDRIVER_URL.isEmpty()) {
                 setWebDriver(new InternetExplorerDriver(capabilities));
             }
@@ -206,7 +206,7 @@ public class TagWebDriver {
         if (WEBDRIVER_DESIRABLE_VERSION.isEmpty()) {
             LOG.info("Trying to determine driver version based on browser version.");
             if (WEBDRIVER_BROWSER_VERSION.isEmpty()) {
-                if (browserType.equalsIgnoreCase(IE)) {
+                if (browserType.equalsIgnoreCase("ie")) {
                     LOG.warn("You use IE browser. Switching to LATEST driver version. " +
                             "You can specify driver version by using 'webdriver.version' param.");
                 } else {
