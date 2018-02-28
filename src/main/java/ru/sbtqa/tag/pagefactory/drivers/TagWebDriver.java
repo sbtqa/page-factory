@@ -120,6 +120,10 @@ public class TagWebDriver {
     }
 
     private static void createDriver() throws UnsupportedBrowserException, MalformedURLException {
+        if("".equals(WEBDRIVER_BROWSER_NAME)) {
+            throw new FactoryRuntimeException("Please add 'webdriver.browser.name  = browser name, for example Chrome' to application.properties");
+        }
+
         DesiredCapabilities capabilities = new DesiredCapabilitiesParser().parse();
 
         //Local proxy available on local webdriver instances only
