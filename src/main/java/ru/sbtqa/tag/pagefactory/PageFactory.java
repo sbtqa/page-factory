@@ -29,7 +29,7 @@ public class PageFactory {
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
-    private static final String TIMEOUT = Props.get("page.load.timeout");
+    private static final String TIMEOUT = (Props.get("page.load.timeout") == null) ? "20000" : Props.get("page.load.timeout");
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
     private static final boolean VIDEO_ENABLED = Boolean.parseBoolean(Props.get("video.enabled", "false"));
