@@ -808,6 +808,11 @@ public abstract class Page {
         for (Map.Entry<Field, String> entry : PageFactory.getPageRepository().get(this.getClass()).entrySet()) {
             try {
                 if (Core.getElementByField(this, entry.getKey()) == element) {
+                    if (entry.getKey().getAnnotation(ElementTitle.class) != null
+                            && entry.getKey().getAnnotation(ElementTitle.class).value() != null
+                            && "".equals(entry.getKey().getAnnotation(ElementTitle.class).value())) {
+                        return entry.getKey().getAnnotation(ElementTitle.class).value();
+                    }
                     return entry.getValue();
                 }
             } catch (NoSuchElementException | StaleElementReferenceException | ElementDescriptionException ex) {
