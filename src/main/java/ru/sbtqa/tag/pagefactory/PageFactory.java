@@ -26,10 +26,11 @@ public class PageFactory {
     private static PageWrapper PageWrapper;
     private static VideoRecorder videoRecorder;
     private static boolean aspectsDisabled = false;
+    private static String defaultTimeout = "20000";
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
-    private static final String TIMEOUT = (Props.get("page.load.timeout") == null) ? "20000" : Props.get("page.load.timeout");
+    private static String TIMEOUT;
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
     private static final boolean VIDEO_ENABLED = Boolean.parseBoolean(Props.get("video.enabled", "false"));
@@ -111,6 +112,16 @@ public class PageFactory {
      * @return the timeOut
      */
     public static int getTimeOut() {
+        if (TIMEOUT == null) {
+            if (Props.get("page.load.timeout") == null || "".equals(Props.get("page.load.timeout"))) {
+                LOG.warn("Set timeout in your properties file, key 'page.load.timeout'. Now using default value "
+                        + defaultTimeout + " milliseconds.");
+                TIMEOUT = defaultTimeout;
+            } else {
+                TIMEOUT = Props.get("page.load.timeout");
+            }
+        }
+
         return Integer.parseInt(TIMEOUT);
     }
 
@@ -118,7 +129,7 @@ public class PageFactory {
      * @return the timeOut
      */
     public static int getTimeOutInSeconds() {
-        return Integer.parseInt(TIMEOUT) / 1000;
+        return getTimeOut() / 1000;
     }
 
     /**
