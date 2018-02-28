@@ -8,6 +8,8 @@ import ru.sbtqa.tag.qautils.properties.Props;
 
 import java.util.HashMap;
 
+import static org.openqa.selenium.remote.BrowserType.OPERA;
+
 public class SelenoidCapabilitiesProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(SelenoidCapabilitiesProvider.class);
@@ -99,7 +101,7 @@ public class SelenoidCapabilitiesProvider {
             LOG.info("Capability \"labels\" for Selenoid isn't set. Using default capability.");
         }
 
-        if (TagWebDriver.WEBDRIVER_BROWSER_NAME.equalsIgnoreCase("Opera")) {
+        if (TagWebDriver.WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(OPERA)) {
             capabilities.setCapability("operaOptions", new HashMap<String, String>() {
                 {
                     put("binary", "/usr/bin/opera");

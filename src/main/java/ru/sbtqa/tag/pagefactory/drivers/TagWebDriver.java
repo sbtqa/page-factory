@@ -34,6 +34,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -90,6 +91,7 @@ public class TagWebDriver {
     private static final String WEBDRIVER_BROWSER_VERSION = Props.get("webdriver.browser.version");
     private static final String WEBDRIVER_OS_ARCHITECTURE = Props.get("webdriver.os.arch");
     private static final String WEBDRIVER_BROWSER_PATH = Props.get("webdriver.browser.path");
+    private static final String WEBDRIVER_BROWSER_SIZE = Props.get("webdriver.browser.size");
     private static final String MAPPING_FILES_PATH = "drivers/mapping/";
     private static final String MAPPING_FILES_EXTENSION = ".json";
 
@@ -153,7 +155,20 @@ public class TagWebDriver {
             setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
-        webDriver.manage().window().maximize();
+
+        if (!WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(CHROME)) {
+            webDriver.manage().window().maximize();
+        } else if (Double.parseDouble(capabilities.getVersion()) < 60.0) {
+            webDriver.manage().window().maximize();
+        }
+
+        if (!WEBDRIVER_BROWSER_SIZE.isEmpty()) {
+            String[] size = WEBDRIVER_BROWSER_SIZE.split("x");
+            int width = Integer.parseInt(size[0]);
+            int height = Integer.parseInt(size[1]);
+            webDriver.manage().window().setSize(new Dimension(width, height));
+        }
+
         webDriver.get(WEBDRIVER_STARTING_URL);
     }
 
