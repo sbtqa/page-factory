@@ -20,6 +20,7 @@ import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
 import ru.sbtqa.tag.qautils.strategies.DirectionStrategy;
+import ru.sbtqa.tag.qautils.strategies.MatchStrategy;
 import ru.yandex.qatools.htmlelements.element.Button;
 import ru.yandex.qatools.htmlelements.element.CheckBox;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
@@ -418,6 +419,18 @@ public class GenericStepDefs {
     @And("ru.sbtqa.tag.pagefactory.swipeToText")
     public void swipeToText(String direction, String text) throws SwipeException {
         MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
+    }
+
+    /**
+     * Swipe until text is visible for Android
+     *
+     * @param strategy contains or exact
+     * @param text text on page to swipe to
+     * @throws SwipeException if the text is not found
+     */
+    @And("ru.sbtqa.tag.pagefactory.swipeToTextAndroid")
+    public void swipeToTextAndroid(String strategy, String text) throws SwipeException {
+        MobileExtension.swipeToText(MatchStrategy.valueOf(strategy), text);
     }
 
     /**
