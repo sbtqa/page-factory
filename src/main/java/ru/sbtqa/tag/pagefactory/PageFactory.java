@@ -114,7 +114,7 @@ public class PageFactory {
     public static int getTimeOut() {
         if (TIMEOUT == null) {
             String pageLoadTimeoutProp = Props.get("page.load.timeout");
-            if (pageLoadTimeoutProp == null || "".equals(pageLoadTimeoutProp)) {
+            if (pageLoadTimeoutProp.isEmpty()) {
                 LOG.warn("Set timeout in your properties file, key 'page.load.timeout'. Now using default value {} milliseconds.", defaultTimeout);
                 TIMEOUT = defaultTimeout;
             } else {
