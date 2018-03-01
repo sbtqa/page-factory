@@ -99,7 +99,7 @@ public class SelenoidCapabilitiesProvider {
             LOG.info("Capability \"labels\" for Selenoid isn't set. Using default capability.");
         }
 
-        if (TagWebDriver.WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(OPERA)) {
+        if (TagWebDriver.getBrowserName().equalsIgnoreCase(OPERA)) {
             capabilities.setCapability("operaOptions", new HashMap<String, String>() {
                 {
                     put("binary", "/usr/bin/opera");
