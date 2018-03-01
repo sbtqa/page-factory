@@ -27,7 +27,7 @@ public class PageFactory {
     private static PageWrapper PageWrapper;
     private static VideoRecorder videoRecorder;
     private static boolean aspectsDisabled = false;
-    private static String defaultTimeout = "20000";
+    private static String defaultTimeout = "20771";
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
