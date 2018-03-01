@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
-
 import java.util.HashMap;
-
 import static org.openqa.selenium.remote.BrowserType.OPERA;
 
 public class SelenoidCapabilitiesProvider {
