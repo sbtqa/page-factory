@@ -113,16 +113,19 @@ public class PageFactory {
      */
     public static int getTimeOut() {
         if (TIMEOUT == null) {
-            if (Props.get("page.load.timeout") == null || "".equals(Props.get("page.load.timeout"))) {
-                LOG.warn("Set timeout in your properties file, key 'page.load.timeout'. Now using default value "
-                        + defaultTimeout + " milliseconds.");
+            String pageLoadTimeoutProp = Props.get("page.load.timeout");
+            if (pageLoadTimeoutProp == null || "".equals(pageLoadTimeoutProp)) {
+                LOG.warn("Set timeout in your properties file, key 'page.load.timeout'. Now using default value {} milliseconds.", defaultTimeout);
                 TIMEOUT = defaultTimeout;
             } else {
-                TIMEOUT = Props.get("page.load.timeout");
+                TIMEOUT = pageLoadTimeoutProp;
             }
         }
-
-        return Integer.parseInt(TIMEOUT);
+        try {
+            return Integer.parseInt(TIMEOUT);
+        } catch (NumberFormatException ex) {
+            throw new FactoryRuntimeException("Incorrect value in property 'page.load.timeout', please set a numeric value. {}", ex);
+        }
     }
 
     /**
