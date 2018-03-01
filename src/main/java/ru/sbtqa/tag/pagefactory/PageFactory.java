@@ -4,6 +4,7 @@ import io.appium.java_client.AppiumDriver;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.validator.routines.IntegerValidator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.pagefactory.FieldDecorator;
@@ -113,19 +114,17 @@ public class PageFactory {
      */
     public static int getTimeOut() {
         if (TIMEOUT == null) {
-            String pageLoadTimeoutProp = Props.get("page.load.timeout");
-            if (pageLoadTimeoutProp.isEmpty()) {
+            if (Props.get("page.load.timeout").isEmpty()) {
                 LOG.warn("Set timeout in your properties file, key 'page.load.timeout'. Now using default value {} milliseconds.", defaultTimeout);
-                TIMEOUT = defaultTimeout;
-            } else {
-                TIMEOUT = pageLoadTimeoutProp;
             }
+            TIMEOUT = Props.get("page.load.timeout", defaultTimeout);
         }
-        try {
-            return Integer.parseInt(TIMEOUT);
-        } catch (NumberFormatException ex) {
-            throw new FactoryRuntimeException("Incorrect value in property 'page.load.timeout', please set a numeric value. {}", ex);
+
+        if (!IntegerValidator.getInstance().isValid(TIMEOUT)) {
+            throw new FactoryRuntimeException("Incorrect value in property 'page.load.timeout', please set a numeric value. Now value is " + TIMEOUT);
         }
+
+        return Integer.parseInt(TIMEOUT);
     }
 
     /**
