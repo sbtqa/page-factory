@@ -155,12 +155,7 @@ public class TagWebDriver {
             setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
-
-        if (!WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(CHROME)) {
-            webDriver.manage().window().maximize();
-        } else if (Double.parseDouble(capabilities.getVersion()) < 60.0) {
-            webDriver.manage().window().maximize();
-        }
+        webDriver.manage().window().maximize();
 
         if (!WEBDRIVER_BROWSER_SIZE.isEmpty()) {
             String[] size = WEBDRIVER_BROWSER_SIZE.split("x");
