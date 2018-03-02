@@ -429,7 +429,7 @@ public class GenericStepDefs {
      * @throws SwipeException if the text is not found
      */
     @And("ru.sbtqa.tag.pagefactory.swipeToTextAndroid")
-    public void swipeToTextAndroid(String strategy, String text) throws SwipeException {
+    public void swipeToTextAndroid(String text, String strategy) throws SwipeException {
         MobileExtension.swipeToText(MatchStrategy.valueOf(strategy), text);
     }
 

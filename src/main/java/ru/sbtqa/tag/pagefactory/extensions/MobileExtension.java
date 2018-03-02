@@ -1,10 +1,9 @@
 package ru.sbtqa.tag.pagefactory.extensions;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-
 import io.appium.java_client.MobileBy;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
