@@ -81,7 +81,25 @@ webdriver.shared = false
 #optional. The path where are the files to download
 webdriver.upload.dir=C:\Temp\upload\
 
+#optional. Specify the size of window browser (this parameter need if you use browser in Docker container)
+webdriver.browser.size = 1920x1080
+
 #Custom desired capabilities
 webdriver.chrome.capability.acceptSslCerts=true
 webdriver.chrome.capability.options.args=user-data-dir=C:\\workspace\\user-data\\,start-maximized
 webdriver.chrome.capability.options.prefs=key1=>val1,key2=>val2
+
+#SELENOID (capabilities for running tests in Selenoid cluster http://aerokube.com/selenoid/latest/)
+selenoid.browserVersion = 58.0
+selenoid.enableVNC = true
+selenoid.screenResolution = 1280x1024x24
+selenoid.enableVideo = true
+selenoid.video.name = my-cool-video.mp4
+selenoid.video.screenSize = 1024x768
+selenoid.video.frameRate = 24
+selenoid.nameOfTests = myCoolTestName
+selenoid.timeZone = Europe/Moscow
+selenoid.hostEntries = example.com:192.168.0.1,test.com:192.168.0.2
+selenoid.applicationContainers = spring-application-main:my-cool-app,spring-application-gateway
+selenoid.containerLables = environment:testing,build-number:14353
+#more information about there capabilities http://aerokube.com/selenoid/latest/#_advanced_features
