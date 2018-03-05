@@ -809,7 +809,7 @@ public abstract class Page {
             try {
                 if (Core.getElementByField(this, entry.getKey()) == element) {
                     ElementTitle elementTitle = entry.getKey().getAnnotation(ElementTitle.class);
-                    if (elementTitle != null && !elementTitle.value().equals("")) {
+                    if (elementTitle != null && !elementTitle.value().isEmpty()) {
                         return elementTitle.value();
                     }
                     return entry.getValue();
