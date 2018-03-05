@@ -120,7 +120,7 @@ public class TagWebDriver {
     }
 
     private static void createDriver() throws UnsupportedBrowserException, MalformedURLException {
-        if("".equals(WEBDRIVER_BROWSER_NAME)) {
+        if(WEBDRIVER_BROWSER_NAME.isEmpty()) {
             throw new FactoryRuntimeException("Please add 'webdriver.browser.name  = browser name, for example Chrome' to application.properties");
         }
 

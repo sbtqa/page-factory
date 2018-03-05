@@ -104,7 +104,7 @@ public class PageFactory {
      * @return the pagesPackage
      */
     public static String getPagesPackage() {
-        if("".equals(PAGES_PACKAGE)) {
+        if(PAGES_PACKAGE.isEmpty()) {
             throw new FactoryRuntimeException("Please add 'page.package = page package path' to application.properties");
         }
 
