@@ -85,7 +85,7 @@ public class PageFactory {
      */
     public static PageWrapper getInstance() {
         if (null == PageWrapper) {
-            PageWrapper = new PageWrapper(PAGES_PACKAGE);
+            PageWrapper = new PageWrapper(getPagesPackage());
         }
         return PageWrapper;
     }
@@ -106,6 +106,10 @@ public class PageFactory {
      * @return the pagesPackage
      */
     public static String getPagesPackage() {
+        if(PAGES_PACKAGE.isEmpty()) {
+            throw new FactoryRuntimeException("Please add 'page.package = page package path' to application.properties");
+        }
+
         return PAGES_PACKAGE;
     }
 
