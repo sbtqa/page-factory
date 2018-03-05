@@ -4,6 +4,7 @@ import io.appium.java_client.AppiumDriver;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.validator.routines.IntegerValidator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.pagefactory.FieldDecorator;
@@ -26,10 +27,11 @@ public class PageFactory {
     private static PageWrapper PageWrapper;
     private static VideoRecorder videoRecorder;
     private static boolean aspectsDisabled = false;
+    private static String defaultTimeout = "20771";
 
     private static final String ENVIRONMENT = Props.get("driver.environment");
     private static final String PAGES_PACKAGE = Props.get("page.package");
-    private static final String TIMEOUT = Props.get("page.load.timeout");
+    private static String TIMEOUT;
     private static final String ENVIRONMENT_WEB = "web";
     private static final String ENVIRONMENT_MOBILE = "mobile";
     private static final boolean VIDEO_ENABLED = Boolean.parseBoolean(Props.get("video.enabled", "false"));
@@ -111,6 +113,17 @@ public class PageFactory {
      * @return the timeOut
      */
     public static int getTimeOut() {
+        if (TIMEOUT == null) {
+            if (Props.get("page.load.timeout").isEmpty()) {
+                LOG.warn("Set timeout in your properties file, key 'page.load.timeout'. Now using default value {} milliseconds.", defaultTimeout);
+            }
+            TIMEOUT = Props.get("page.load.timeout", defaultTimeout);
+        }
+
+        if (!IntegerValidator.getInstance().isValid(TIMEOUT)) {
+            throw new FactoryRuntimeException("Incorrect value in property 'page.load.timeout', please set a numeric value. Now value is " + TIMEOUT);
+        }
+
         return Integer.parseInt(TIMEOUT);
     }
 
@@ -118,7 +131,7 @@ public class PageFactory {
      * @return the timeOut
      */
     public static int getTimeOutInSeconds() {
-        return Integer.parseInt(TIMEOUT) / 1000;
+        return getTimeOut() / 1000;
     }
 
     /**
