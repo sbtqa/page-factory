@@ -9,10 +9,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
-import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 
 public class TagMobileDriver {
 

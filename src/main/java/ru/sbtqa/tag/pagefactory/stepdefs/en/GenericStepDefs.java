@@ -122,7 +122,7 @@ public class GenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And(value = "^user in block \"([^\"]*)\" \\((.*?)\\) with the parameters \"([^\"]*)\"  \"([^\"]*)\"$")
+    @And("^user in block \"([^\"]*)\" \\((.*?)\\) with the parameters \"([^\"]*)\"  \"([^\"]*)\"$")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, param1, param2);
     }
@@ -328,8 +328,6 @@ public class GenericStepDefs {
         ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("window.open('" + pageUrl + "', '_blank')");
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
         PageFactory.getWebDriver().switchTo().window(tabs.get(tabs.size() - 1));
-        Assert.assertEquals("Fails to open a new page. "
-                + "URL is different from the expected: ", pageUrl, PageFactory.getWebDriver().getCurrentUrl());
     }
 
     /**
@@ -337,10 +335,12 @@ public class GenericStepDefs {
      */
     @And("^user switches to the next tab$")
     public void switchesToNextTab() {
+        String currentTab = PageFactory.getWebDriver().getWindowHandle();
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
         for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).equals(PageFactory.getWebDriver().getWindowHandle())) {
+            if (tabs.get(i).equals(currentTab)) {
                 PageFactory.getWebDriver().switchTo().window(tabs.get(i + 1));
+                return;
             }
         }
     }
