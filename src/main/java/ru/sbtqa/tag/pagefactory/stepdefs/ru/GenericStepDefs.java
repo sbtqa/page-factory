@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.stepdefs;
+package ru.sbtqa.tag.pagefactory.stepdefs.ru;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
@@ -30,6 +30,7 @@ import ru.yandex.qatools.htmlelements.element.Table;
 import ru.yandex.qatools.htmlelements.element.TextBlock;
 import ru.yandex.qatools.htmlelements.element.TextInput;
 
+
 /**
  * Basic step definitions, that should be available on every project Notations
  * used in this class: Block - a class that extends {@link HtmlElement} and has
@@ -39,12 +40,12 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
  * {@link ru.sbtqa.tag.pagefactory.annotations.ElementTitle} annotation on page
  * object
  * <p>
- * To pass a Cucumber {@link cucumber.api.DataTable} as a parameter to method,
+ * To pass a Cucumber {@link DataTable} as a parameter to method,
  * supply a table in the following format after a step ini feature:
  * <p>
  * | header 1| header 2 | | value 1 | value 2 |
  * <p>
- * This table will be converted to a {@link cucumber.api.DataTable} object.
+ * This table will be converted to a {@link DataTable} object.
  * First line is not enforced to be a header.
  * <p>
  * To pass a list as parameter, use flattened table as follows: | value 1 | }
@@ -56,7 +57,7 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
 public class GenericStepDefs {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericStepDefs.class);
-    
+
     /**
      * Execute action with no parameters inside block element User|he keywords
      * are optional
@@ -68,7 +69,7 @@ public class GenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionInBlockNoParams")
+    @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\)$")
     public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
             NoSuchMethodException, NoSuchElementException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action);
@@ -86,7 +87,7 @@ public class GenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionInBlockTableParam")
+    @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметрами из таблицы$")
     public void userActionInBlockTableParam(String block, String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, dataTable);
     }
@@ -103,7 +104,7 @@ public class GenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionInBlockOneParam")
+    @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметром \"([^\"]*)\"$")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, param);
     }
@@ -121,7 +122,7 @@ public class GenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionInBlockTwoParams")
+    @And(value = "^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметрами \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, param1, param2);
     }
@@ -137,42 +138,44 @@ public class GenericStepDefs {
      * @throws PageException if current page is not initialized, or element
      * wasn't found
      */
-    @And("ru.sbtqa.tag.pagefactory.findElementInBlock")
+    @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" находит (элемент|текстовое поле|чекбокс|радиокнопка|таблицу|заголовок|кнопку|ссылку|изображение) \"([^\"]*)\"$")
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
         String key = getI18nElementType(elementType);
         Class<? extends WebElement> clazz;
-        switch (key) {
-            case "ru.sbtqa.tag.pagefactory.type.element":
-                clazz = WebElement.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.textinput":
-                clazz = TextInput.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.checkbox":
-                clazz = CheckBox.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.radiobutton":
-                clazz = Radio.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.table":
-                clazz = Table.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.header":
-                clazz = TextBlock.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.button":
-                clazz = Button.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.link":
-                clazz = Link.class;
-                break;
-            case "ru.sbtqa.tag.pagefactory.type.image":
-                clazz = Image.class;
-                break;
-            default:
-                clazz = WebElement.class;
+        if (key != null) {
+            switch (key) {
+                case "ru.sbtqa.tag.pagefactory.type.element":
+                    clazz = WebElement.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.textinput":
+                    clazz = TextInput.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.checkbox":
+                    clazz = CheckBox.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.radiobutton":
+                    clazz = Radio.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.table":
+                    clazz = Table.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.header":
+                    clazz = TextBlock.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.button":
+                    clazz = Button.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.link":
+                    clazz = Link.class;
+                    break;
+                case "ru.sbtqa.tag.pagefactory.type.image":
+                    clazz = Image.class;
+                    break;
+                default:
+                    clazz = WebElement.class;
+            }
+            PageFactory.getInstance().getCurrentPage().findElementInBlockByTitle(block, elementTitle, clazz);
         }
-        PageFactory.getInstance().getCurrentPage().findElementInBlockByTitle(block, elementTitle, clazz);
     }
 
     /**
@@ -185,7 +188,7 @@ public class GenericStepDefs {
      * @throws PageException if page wasn't initialized of required list wasn't
      * found
      */
-    @And("ru.sbtqa.tag.pagefactory.findElementInList")
+    @And("^(?:пользователь |он |)в списке \"([^\"]*)\" находит элемент со значением \"([^\"]*)\"$")
     public void findElementInList(String listTitle, String value) throws PageException {
         boolean found = false;
         for (WebElement webElement : PageFactory.getInstance().getCurrentPage().findListOfElements(listTitle)) {
@@ -195,7 +198,7 @@ public class GenericStepDefs {
             }
         }
         if (!found) {
-            throw new AutotestError(String.format("Element with text '%s' is absent in list '%s'", value, listTitle));
+            throw new AutotestError(String.format("ru.sbtqa.tag.pagefactory.Element with text '%s' is absent in list '%s'", value, listTitle));
         }
     }
 
@@ -207,7 +210,7 @@ public class GenericStepDefs {
      * @param title of the page to initialize
      * @throws PageInitializationException if page initialization failed
      */
-    @And("ru.sbtqa.tag.pagefactory.openPage")
+    @And("^(?:пользователь |он |)(?:находится на странице|открывается страница|открывается вкладка мастера) \"([^\"]*)\"$")
     public void openPage(String title) throws PageInitializationException {
         if (PageFactory.getEnvironment() != Environment.MOBILE
                 && !PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
@@ -225,7 +228,7 @@ public class GenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionNoParams")
+    @And("^(?:пользователь |он |)\\((.*?)\\)$")
     public void userActionNoParams(String action) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action);
     }
@@ -238,7 +241,7 @@ public class GenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionOneParam")
+    @And("^(?:пользователь |он |)\\((.*?)\\) (?:с параметром |)\"([^\"]*)\"$")
     public void userActionOneParam(String action, String param) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param);
     }
@@ -252,7 +255,7 @@ public class GenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionTwoParams")
+    @And("^(?:пользователь |он |)\\((.*?)\\) (?:с параметрами |)\"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionTwoParams(String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param1, param2);
     }
@@ -262,18 +265,18 @@ public class GenericStepDefs {
      *
      * @param action title of the action to execute
      * @param param1 first parameter
-     * @param param2 second patrameter
+     * @param param2 second parameter
      * @param param3 third parameter
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionThreeParams")
+    @And("^(?:пользователь |он |)\\((.*?)\\) (?:с параметрами |)\"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionThreeParams(String action, String param1, String param2, String param3) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param1, param2, param3);
     }
 
     /**
-     * Execute action with parameters from given {@link cucumber.api.DataTable}
+     * Execute action with parameters from given {@link DataTable}
      * User|he keywords are optional
      *
      * @param action title of the action to execute
@@ -281,13 +284,13 @@ public class GenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionTableParam")
+    @And("^(?:пользователь |он |)\\((.*?)\\) данными$")
     public void userActionTableParam(String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, dataTable);
     }
 
     /**
-     * Execute action with string parameter and {@link cucumber.api.DataTable}
+     * Execute action with string parameter and {@link DataTable}
      * User|he keywords are optional
      *
      * @param action title of the action to execute
@@ -296,7 +299,7 @@ public class GenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("ru.sbtqa.tag.pagefactory.userDoActionWithObject")
+    @And("^(?:пользователь |он |)\\((.*?)\\) [^\"]*\"([^\"]*)\" данными$")
     public void userDoActionWithObject(String action, String param, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param, dataTable);
     }
@@ -310,7 +313,7 @@ public class GenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("ru.sbtqa.tag.pagefactory.userActionListParam")
+    @And("^(?:пользователь |он |)\\((.*?)\\) из списка$")
     public void userActionListParam(String action, List<String> list) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, list);
     }
@@ -319,25 +322,25 @@ public class GenericStepDefs {
      * Open a copy for current page in a new browser tab User|he keywords are
      * optional
      */
-    @And("ru.sbtqa.tag.pagefactory.openCopyPage")
+    @And("^открывается копия страницы в новой вкладке$")
     public void openCopyPage() {
         String pageUrl = PageFactory.getWebDriver().getCurrentUrl();
-        ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("window.open('" + pageUrl + "', '_blank')");
+        ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("ru.sbtqa.tag.pagefactory.window.open('" + pageUrl + "', '_blank')");
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
         PageFactory.getWebDriver().switchTo().window(tabs.get(tabs.size() - 1));
+        Assert.assertEquals("ru.sbtqa.tag.pagefactory.Fails to open a new page. "
+                + "URL is different from the expected: ", pageUrl, PageFactory.getWebDriver().getCurrentUrl());
     }
 
     /**
      * Switch to a neighbour browser tab
      */
-    @And("ru.sbtqa.tag.pagefactory.switchesToNextTab")
+    @And("^(?:пользователь |он |)переключается на соседнюю вкладку$")
     public void switchesToNextTab() {
-        String currentTab = PageFactory.getWebDriver().getWindowHandle();
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
         for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).equals(currentTab)) {
+            if (tabs.get(i).equals(PageFactory.getWebDriver().getWindowHandle())) {
                 PageFactory.getWebDriver().switchTo().window(tabs.get(i + 1));
-                return;
             }
         }
     }
@@ -347,9 +350,9 @@ public class GenericStepDefs {
      *
      * @param url url for comparison
      */
-    @And("ru.sbtqa.tag.pagefactory.urlMatches")
+    @And("^URL соответствует \"(.*?)\"$")
     public void urlMatches(String url) {
-        Assert.assertEquals("URL is different from the expected: ", url, PageFactory.getWebDriver().getCurrentUrl());
+        Assert.assertEquals("ru.sbtqa.tag.pagefactory.URL is different from the expected: ", url, PageFactory.getWebDriver().getCurrentUrl());
     }
 
     /**
@@ -357,7 +360,7 @@ public class GenericStepDefs {
      *
      * @param title title of the page to open
      */
-    @And("ru.sbtqa.tag.pagefactory.closingCurrentWin")
+    @And("^(?:пользователь |он |)закрывает текущее окно и возвращается на \"(.*?)\"$")
     public void closingCurrentWin(String title) {
         PageFactory.getWebDriver().close();
         for (String windowHandle : PageFactory.getWebDriver().getWindowHandles()) {
@@ -366,13 +369,13 @@ public class GenericStepDefs {
                 return;
             }
         }
-        throw new AutotestError("Unable to return to the previously opened page: " + title);
+        throw new AutotestError("ru.sbtqa.tag.pagefactory.Unable to return to the previously opened page: " + title);
     }
 
     /**
      * Return to previous location (via browser "back" button)
      */
-    @And("ru.sbtqa.tag.pagefactory.backPage")
+    @And("^(?:пользователь |он |)нажимает назад в браузере$")
     public void backPage() {
         PageFactory.getWebDriver().navigate().back();
     }
@@ -382,7 +385,7 @@ public class GenericStepDefs {
      *
      * @param url url to go to
      */
-    @And("ru.sbtqa.tag.pagefactory.goToUrl")
+    @And("^(?:пользователь |он |)переходит на страницу \"(.*?)\" по ссылке$")
     public void goToUrl(String url) {
         PageFactory.getWebDriver().get(url);
     }
@@ -395,7 +398,7 @@ public class GenericStepDefs {
      * @throws PageInitializationException if page with corresponding URL is
      * absent or couldn't be initialized
      */
-    @And("ru.sbtqa.tag.pagefactory.goToPageByUrl")
+    @And("^(?:пользователь |он |)(?:переходит на|открывает) url \"(.*?)\"$")
     public void goToPageByUrl(String url) throws PageInitializationException {
         PageFactory.getInstance().changeUrlByTitle(url);
     }
@@ -403,7 +406,7 @@ public class GenericStepDefs {
     /**
      * Refresh browser page
      */
-    @And("ru.sbtqa.tag.pagefactory.reInitPage")
+    @And("^обновляем страницу$")
     public void reInitPage() {
         PageFactory.getWebDriver().navigate().refresh();
     }
@@ -415,7 +418,7 @@ public class GenericStepDefs {
      * @param text text on page to swipe to
      * @throws SwipeException if the text is not found or swipe depth is reached
      */
-    @And("ru.sbtqa.tag.pagefactory.swipeToText")
+    @And("^пользователь свайпает экран \"([^\"]*)\" до текста \"([^\"]*)\"$")
     public void swipeToText(String direction, String text) throws SwipeException {
         MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
     }
@@ -426,7 +429,7 @@ public class GenericStepDefs {
      * @param element
      * @throws SwipeException if the text is not found or swipe depth is reached
      */
-    @And("ru.sbtqa.tag.pagefactory.isElementFocused")
+    @And("^в фокусе находится элемент \"([^\"]*)\"$")
     public void isElementFocused(String element) throws SwipeException {
         LOG.warn("Note that isElementFocused method is still an empty!");
     }

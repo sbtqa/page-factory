@@ -9,10 +9,10 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.PageFactory;
-import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.properties.Props;
+import static ru.sbtqa.tag.pagefactory.PageFactory.setAspectsDisabled;
 
 public class TagMobileDriver {
 
@@ -27,6 +27,9 @@ public class TagMobileDriver {
     private static final boolean APPIUM_FILL_ADB = "true".equalsIgnoreCase(Props.get("appium.fill.adb"));
     private static final boolean APPIUM_CLICK_ADB = "true".equalsIgnoreCase(Props.get("appium.click.adb"));
     private static String deviceUdId;
+
+    private TagMobileDriver() {
+    }
 
     public static AppiumDriver<AndroidElement> getDriver() {
         if (Environment.MOBILE != PageFactory.getEnvironment()) {
@@ -109,9 +112,6 @@ public class TagMobileDriver {
      * @return was driver initialized or not
      */
     public static boolean isDriverInitialized(){
-        if(mobileDriver != null) {
-            return true;
-        }
-        return false;
+        return mobileDriver != null;
     }
 }
