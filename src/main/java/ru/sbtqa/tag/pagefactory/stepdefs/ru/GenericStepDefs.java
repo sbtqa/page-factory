@@ -198,7 +198,7 @@ public class GenericStepDefs {
             }
         }
         if (!found) {
-            throw new AutotestError(String.format("ru.sbtqa.tag.pagefactory.Element with text '%s' is absent in list '%s'", value, listTitle));
+            throw new AutotestError(String.format("Element with text '%s' is absent in list '%s'", value, listTitle));
         }
     }
 
@@ -325,10 +325,10 @@ public class GenericStepDefs {
     @And("^открывается копия страницы в новой вкладке$")
     public void openCopyPage() {
         String pageUrl = PageFactory.getWebDriver().getCurrentUrl();
-        ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("ru.sbtqa.tag.pagefactory.window.open('" + pageUrl + "', '_blank')");
+        ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("window.open('" + pageUrl + "', '_blank')");
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
         PageFactory.getWebDriver().switchTo().window(tabs.get(tabs.size() - 1));
-        Assert.assertEquals("ru.sbtqa.tag.pagefactory.Fails to open a new page. "
+        Assert.assertEquals("Fails to open a new page. "
                 + "URL is different from the expected: ", pageUrl, PageFactory.getWebDriver().getCurrentUrl());
     }
 
@@ -352,7 +352,7 @@ public class GenericStepDefs {
      */
     @And("^URL соответствует \"(.*?)\"$")
     public void urlMatches(String url) {
-        Assert.assertEquals("ru.sbtqa.tag.pagefactory.URL is different from the expected: ", url, PageFactory.getWebDriver().getCurrentUrl());
+        Assert.assertEquals("URL is different from the expected: ", url, PageFactory.getWebDriver().getCurrentUrl());
     }
 
     /**
@@ -369,7 +369,7 @@ public class GenericStepDefs {
                 return;
             }
         }
-        throw new AutotestError("ru.sbtqa.tag.pagefactory.Unable to return to the previously opened page: " + title);
+        throw new AutotestError("Unable to return to the previously opened page: " + title);
     }
 
     /**
