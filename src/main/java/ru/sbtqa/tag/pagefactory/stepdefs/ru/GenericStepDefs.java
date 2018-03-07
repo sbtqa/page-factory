@@ -4,6 +4,8 @@ import cucumber.api.DataTable;
 import cucumber.api.java.en.And;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -441,7 +443,10 @@ public class GenericStepDefs {
      * @return element key
      */
     private String getI18nElementType(String elementType){
-        I18N i18n = I18N.getI18n(this.getClass(), TagCucumber.getFeature().getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
+        String[] packages = this.getClass().getCanonicalName().split("\\.");
+        String currentLanguage = packages[packages.length - 2];
+
+        I18N i18n = I18N.getI18n(this.getClass(), new Locale(currentLanguage), I18N.DEFAULT_BUNDLE_PATH);
         for(String key : i18n.toMap().keySet()){
             if(i18n.toMap().get(key).equals(elementType)) {
                 return key;
