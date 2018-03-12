@@ -5,19 +5,18 @@ import cucumber.api.java.en.And;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import org.junit.Assert;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
+import ru.sbtqa.tag.pagefactory.stepdefs.AbstractGenericStepDefs;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
@@ -56,7 +55,7 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
  * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber
  * documentation</a>
  */
-public class GenericStepDefs {
+public class GenericStepDefs extends AbstractGenericStepDefs {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericStepDefs.class);
 
@@ -142,42 +141,41 @@ public class GenericStepDefs {
      */
     @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" находит (элемент|текстовое поле|чекбокс|радиокнопка|таблицу|заголовок|кнопку|ссылку|изображение) \"([^\"]*)\"$")
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
-        String key = getI18nElementType(elementType);
+        I18N i18n = I18N.getI18n(this.getClass(), new Locale(getLanguage()));
+        String key = i18n.getKey(elementType);
         Class<? extends WebElement> clazz;
-        if (key != null) {
-            switch (key) {
-                case "ru.sbtqa.tag.pagefactory.type.element":
-                    clazz = WebElement.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.textinput":
-                    clazz = TextInput.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.checkbox":
-                    clazz = CheckBox.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.radiobutton":
-                    clazz = Radio.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.table":
-                    clazz = Table.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.header":
-                    clazz = TextBlock.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.button":
-                    clazz = Button.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.link":
-                    clazz = Link.class;
-                    break;
-                case "ru.sbtqa.tag.pagefactory.type.image":
-                    clazz = Image.class;
-                    break;
-                default:
-                    clazz = WebElement.class;
-            }
-            PageFactory.getInstance().getCurrentPage().findElementInBlockByTitle(block, elementTitle, clazz);
+        switch (key) {
+            case "ru.sbtqa.tag.pagefactory.type.element":
+                clazz = WebElement.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.textinput":
+                clazz = TextInput.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.checkbox":
+                clazz = CheckBox.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.radiobutton":
+                clazz = Radio.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.table":
+                clazz = Table.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.header":
+                clazz = TextBlock.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.button":
+                clazz = Button.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.link":
+                clazz = Link.class;
+                break;
+            case "ru.sbtqa.tag.pagefactory.type.image":
+                clazz = Image.class;
+                break;
+            default:
+                clazz = WebElement.class;
         }
+        PageFactory.getInstance().getCurrentPage().findElementInBlockByTitle(block, elementTitle, clazz);
     }
 
     /**
@@ -434,25 +432,5 @@ public class GenericStepDefs {
     @And("^в фокусе находится элемент \"([^\"]*)\"$")
     public void isElementFocused(String element) throws SwipeException {
         LOG.warn("Note that isElementFocused method is still an empty!");
-    }
-
-    /**
-     * Find key for element type in I18N
-     *
-     * @param elementType
-     * @return element key
-     */
-    private String getI18nElementType(String elementType){
-        String[] packages = this.getClass().getCanonicalName().split("\\.");
-        String currentLanguage = packages[packages.length - 2];
-
-        I18N i18n = I18N.getI18n(this.getClass(), new Locale(currentLanguage), I18N.DEFAULT_BUNDLE_PATH);
-        for(String key : i18n.toMap().keySet()){
-            if(i18n.toMap().get(key).equals(elementType)) {
-                return key;
-            }
-        }
-
-        return null;
     }
 }
