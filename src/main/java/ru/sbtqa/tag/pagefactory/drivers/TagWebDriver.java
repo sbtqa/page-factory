@@ -10,14 +10,10 @@ import io.github.bonigarcia.wdm.ChromeDriverManager;
 import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -259,16 +255,11 @@ public class TagWebDriver {
     }
 
     private static JsonObject getResourceJsonFileAsJsonObject(String filePath) {
-        ClassLoader classLoader = TagWebDriver.class.getClassLoader();
-        try {
-            Path file = Paths.get(classLoader.getResource(filePath).toURI());
-            JsonParser parser = new JsonParser();
-            JsonReader reader = new JsonReader(new BufferedReader(new FileReader(file.toFile())));
-            return parser.parse(reader).getAsJsonObject();
-        } catch (URISyntaxException | IOException e) {
-            LOG.error("Error during parsing mapping file", e);
-        }
-        return null;
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStreamReader isr = new InputStreamReader(classLoader.getResourceAsStream(filePath));
+        JsonReader reader = new JsonReader(isr);
+        JsonParser parser = new JsonParser();
+        return parser.parse(reader).getAsJsonObject();
     }
 
     private static String detectBrowserVersion() {
