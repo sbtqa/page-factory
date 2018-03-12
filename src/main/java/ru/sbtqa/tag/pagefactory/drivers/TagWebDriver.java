@@ -11,6 +11,7 @@ import io.github.bonigarcia.wdm.InternetExplorerDriverManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -256,10 +257,14 @@ public class TagWebDriver {
 
     private static JsonObject getResourceJsonFileAsJsonObject(String filePath) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        InputStreamReader isr = new InputStreamReader(classLoader.getResourceAsStream(filePath));
-        JsonReader reader = new JsonReader(isr);
-        JsonParser parser = new JsonParser();
-        return parser.parse(reader).getAsJsonObject();
+        InputStream inputStream = classLoader.getResourceAsStream(filePath);
+        if (inputStream != null) {
+            InputStreamReader isr = new InputStreamReader(inputStream);
+            JsonReader reader = new JsonReader(isr);
+            JsonParser parser = new JsonParser();
+            return parser.parse(reader).getAsJsonObject();
+        }
+        return null;
     }
 
     private static String detectBrowserVersion() {
