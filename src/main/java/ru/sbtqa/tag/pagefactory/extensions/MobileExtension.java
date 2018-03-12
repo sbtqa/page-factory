@@ -1,7 +1,9 @@
 package ru.sbtqa.tag.pagefactory.extensions;
 
 import java.util.List;
+import io.appium.java_client.MobileBy;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -143,6 +145,7 @@ public class MobileExtension {
      * @param depth the amount of swipe action
      * @throws SwipeException if there is an error while swiping
      */
+    @Deprecated
     public static void swipeToText(DirectionStrategy direction, String text, MatchStrategy strategy, int depth) throws SwipeException {
 	for (int depthCounter = 0; depthCounter < depth; depthCounter++) {
 	    String oldPageSource = PageFactory.getDriver().getPageSource();
@@ -169,5 +172,39 @@ public class MobileExtension {
 	}
 
 	throw new SwipeException("Swiping depth is reached. Text not found");
+    }
+
+    /**
+     * Swipe until the text becomes visible
+     *
+     * UIAutomator for Android. Much faster and stable
+     *
+     * @param text text on page to swipe to
+     * @param strategy contains or exact
+     * @throws SwipeException if there is an error while swiping
+     */
+    public static void  swipeToText(MatchStrategy strategy, String text) throws SwipeException {
+        switch(strategy) {
+        case EXACT:
+            try {
+                PageFactory.getMobileDriver().findElement(MobileBy
+                        .AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0))" +
+                                ".scrollIntoView(new UiSelector().text(\"" + text + "\").instance(0))"));
+            } catch (NoSuchElementException e) {
+                throw new SwipeException("Swiping limit is reached. Text: " + text+ " not found");
+            }
+            break;
+        case CONTAINS:
+            try {
+                PageFactory.getMobileDriver().findElement(MobileBy
+                        .AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0))" +
+                                ".scrollIntoView(new UiSelector().textContains(\"" + text + "\").instance(0))"));
+            } catch (NoSuchElementException e) {
+                throw new SwipeException("Swiping limit is reached. Part text: " + text + " not found");
+            }
+            break;
+        default:
+			throw new SwipeException("Please use correct matching strategy. Available options: 'EXACT' or 'CONTAINS'.");
+        }
     }
 }
