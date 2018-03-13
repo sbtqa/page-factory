@@ -223,6 +223,15 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
+    @And("^user swipe to text \"([^\"]*)\" using match strategy \"([^\"]*)\"$")
+    public void swipeToTextAndroid(String text, String strategy) throws SwipeException {
+        super.swipeToTextAndroid(text, strategy);
+    }
+        
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @And("^element \"([^\"]*)\" is focused$")
     public void isElementFocused(String element) {
         super.isElementFocused(element);
