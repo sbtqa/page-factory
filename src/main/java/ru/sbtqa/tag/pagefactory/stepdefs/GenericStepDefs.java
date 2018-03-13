@@ -1,7 +1,6 @@
-package ru.sbtqa.tag.pagefactory.stepdefs.en;
+package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.DataTable;
-import cucumber.api.java.en.And;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -16,7 +15,6 @@ import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.extensions.MobileExtension;
-import ru.sbtqa.tag.pagefactory.stepdefs.AbstractGenericStepDefs;
 import ru.sbtqa.tag.pagefactory.support.Environment;
 import ru.sbtqa.tag.qautils.errors.AutotestError;
 import ru.sbtqa.tag.qautils.i18n.I18N;
@@ -30,7 +28,6 @@ import ru.yandex.qatools.htmlelements.element.Radio;
 import ru.yandex.qatools.htmlelements.element.Table;
 import ru.yandex.qatools.htmlelements.element.TextBlock;
 import ru.yandex.qatools.htmlelements.element.TextInput;
-
 
 /**
  * Basic step definitions, that should be available on every project Notations
@@ -55,10 +52,10 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
  * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber
  * documentation</a>
  */
-public class GenericStepDefs extends AbstractGenericStepDefs {
+public class GenericStepDefs {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericStepDefs.class);
-
+    
     /**
      * Execute action with no parameters inside block element User|he keywords
      * are optional
@@ -70,7 +67,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\)$")
     public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
             NoSuchMethodException, NoSuchElementException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action);
@@ -88,7 +84,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\) with the parameters of table$")
     public void userActionInBlockTableParam(String block, String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, dataTable);
     }
@@ -105,7 +100,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\) with a parameter \"([^\"]*)\"$")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, param);
     }
@@ -123,7 +117,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * specified block
      * @throws NoSuchElementException if block with given name couldn't be found
      */
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\) with the parameters \"([^\"]*)\"  \"([^\"]*)\"$")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitleInBlock(block, action, param1, param2);
     }
@@ -139,9 +132,10 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageException if current page is not initialized, or element
      * wasn't found
      */
-    @And("^user in block \"([^\"]*)\" finds (element|textinput|checkbox|radiobutton|table|header|button|link|image) \"([^\"]*)\"$")
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
-        I18N i18n = I18N.getI18n(this.getClass(), new Locale(getLanguage()));
+        String[] packages = this.getClass().getCanonicalName().split("\\."); 
+        String currentLanguage = packages[packages.length - 2]; 
+        I18N i18n = I18N.getI18n(this.getClass(), new Locale(currentLanguage));
         String key = i18n.getKey(elementType);
         Class<? extends WebElement> clazz;
         switch (key) {
@@ -188,7 +182,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageException if page wasn't initialized of required list wasn't
      * found
      */
-    @And("^user in list \"([^\"]*)\" finds the value element \"([^\"]*)\"$")
     public void findElementInList(String listTitle, String value) throws PageException {
         boolean found = false;
         for (WebElement webElement : PageFactory.getInstance().getCurrentPage().findListOfElements(listTitle)) {
@@ -210,7 +203,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @param title of the page to initialize
      * @throws PageInitializationException if page initialization failed
      */
-    @And("^(?:user |he |)(?:is on the page|page is being opened|master tab is being opened) \"(.*?)\"$")
     public void openPage(String title) throws PageInitializationException {
         if (PageFactory.getEnvironment() != Environment.MOBILE
                 && !PageFactory.getWebDriver().getWindowHandles().isEmpty()) {
@@ -228,7 +220,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("^user \\((.*?)\\)$")
     public void userActionNoParams(String action) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action);
     }
@@ -241,7 +232,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("^user \\((.*?)\\) (?:with param |)\"([^\"]*)\"$")
     public void userActionOneParam(String action, String param) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param);
     }
@@ -255,7 +245,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("^user \\((.*?)\\) (?:with the parameters |)\"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionTwoParams(String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param1, param2);
     }
@@ -270,7 +259,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("^user \\((.*?)\\) (?:with the parameters |)\"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionThreeParams(String action, String param1, String param2, String param3) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param1, param2, param3);
     }
@@ -284,7 +272,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("^user \\((.*?)\\) data$")
     public void userActionTableParam(String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, dataTable);
     }
@@ -299,7 +286,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("^user \\((.*?)\\) [^\"]*\"([^\"]*) data$")
     public void userDoActionWithObject(String action, String param, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, param, dataTable);
     }
@@ -313,7 +299,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if current page is not initialized
      * @throws NoSuchMethodException if corresponding method doesn't exist
      */
-    @And("^user \\((.*?)\\) from the list$")
     public void userActionListParam(String action, List<String> list) throws PageInitializationException, NoSuchMethodException {
         PageFactory.getInstance().getCurrentPage().executeMethodByTitle(action, list);
     }
@@ -322,7 +307,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * Open a copy for current page in a new browser tab User|he keywords are
      * optional
      */
-    @And("^copy of the page is being opened in a new tab$")
     public void openCopyPage() {
         String pageUrl = PageFactory.getWebDriver().getCurrentUrl();
         ((JavascriptExecutor) PageFactory.getWebDriver()).executeScript("window.open('" + pageUrl + "', '_blank')");
@@ -333,7 +317,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
     /**
      * Switch to a neighbour browser tab
      */
-    @And("^user switches to the next tab$")
     public void switchesToNextTab() {
         String currentTab = PageFactory.getWebDriver().getWindowHandle();
         List<String> tabs = new ArrayList<>(PageFactory.getWebDriver().getWindowHandles());
@@ -350,7 +333,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      *
      * @param url url for comparison
      */
-    @And("^URL matches \"(.*?)\"$")
     public void urlMatches(String url) {
         Assert.assertEquals("URL is different from the expected: ", url, PageFactory.getWebDriver().getCurrentUrl());
     }
@@ -360,7 +342,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      *
      * @param title title of the page to open
      */
-    @And("^user closes the current window and returns to \"(.*?)\"$")
     public void closingCurrentWin(String title) {
         PageFactory.getWebDriver().close();
         for (String windowHandle : PageFactory.getWebDriver().getWindowHandles()) {
@@ -375,7 +356,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
     /**
      * Return to previous location (via browser "back" button)
      */
-    @And("^user push back in the browser$")
     public void backPage() {
         PageFactory.getWebDriver().navigate().back();
     }
@@ -385,7 +365,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      *
      * @param url url to go to
      */
-    @And("^user navigates to page \"(.*?)\"$")
     public void goToUrl(String url) {
         PageFactory.getWebDriver().get(url);
     }
@@ -398,7 +377,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @throws PageInitializationException if page with corresponding URL is
      * absent or couldn't be initialized
      */
-    @And("^user navigates to url \"(.*?)\"$")
     public void goToPageByUrl(String url) throws PageInitializationException {
         PageFactory.getInstance().changeUrlByTitle(url);
     }
@@ -406,7 +384,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
     /**
      * Refresh browser page
      */
-    @And("^user refreshes the page$")
     public void reInitPage() {
         PageFactory.getWebDriver().navigate().refresh();
     }
@@ -418,7 +395,6 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
      * @param text text on page to swipe to
      * @throws SwipeException if the text is not found or swipe depth is reached
      */
-    @And("^user swipes \"(.*?)\" to text \"(.*?)\"$")
     public void swipeToText(String direction, String text) throws SwipeException {
         MobileExtension.swipeToText(DirectionStrategy.valueOf(direction.toUpperCase()), text);
     }
@@ -426,11 +402,9 @@ public class GenericStepDefs extends AbstractGenericStepDefs {
     /**
      * Element is focused
      *
-     * @param element
-     * @throws SwipeException if the text is not found or swipe depth is reached
+     * @param element element to focus on
      */
-    @And("^element \"([^\"]*)\" is focused$")
-    public void isElementFocused(String element) throws SwipeException {
+    public void isElementFocused(String element) {
         LOG.warn("Note that isElementFocused method is still an empty!");
     }
 }
