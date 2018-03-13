@@ -10,7 +10,10 @@ import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.stepdefs.GenericStepDefs;
 
 public class StepDefs extends GenericStepDefs {
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\)$")
     public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
@@ -18,138 +21,207 @@ public class StepDefs extends GenericStepDefs {
         super.userActionInBlockNoParams(block, action);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметрами из таблицы$")
     public void userActionInBlockTableParam(String block, String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
-       super.userActionInBlockTableParam(block, action, dataTable);
+        super.userActionInBlockTableParam(block, action, dataTable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметром \"([^\"]*)\"$")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockOneParam(block, action, param);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметрами \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockTwoParams(block, action, param1, param2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)в блоке \"([^\"]*)\" находит (элемент|текстовое поле|чекбокс|радиокнопка|таблицу|заголовок|кнопку|ссылку|изображение) \"([^\"]*)\"$")
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
         super.findElementInBlock(block, elementType, elementTitle);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)в списке \"([^\"]*)\" находит элемент со значением \"([^\"]*)\"$")
     public void findElementInList(String listTitle, String value) throws PageException {
         super.findElementInList(listTitle, value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)(?:находится на странице|открывается страница|открывается вкладка мастера) \"([^\"]*)\"$")
     public void openPage(String title) throws PageInitializationException {
         super.openPage(title);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)\\((.*?)\\)$")
     public void userActionNoParams(String action) throws PageInitializationException, NoSuchMethodException {
         super.userActionNoParams(action);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)\\((.*?)\\) (?:с параметром |)\"([^\"]*)\"$")
     public void userActionOneParam(String action, String param) throws PageInitializationException, NoSuchMethodException {
         super.userActionOneParam(action, param);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)\\((.*?)\\) (?:с параметрами |)\"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionTwoParams(String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         super.userActionTwoParams(action, param1, param2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)\\((.*?)\\) (?:с параметрами |)\"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionThreeParams(String action, String param1, String param2, String param3) throws PageInitializationException, NoSuchMethodException {
         super.userActionThreeParams(action, param1, param2, param3);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)\\((.*?)\\) данными$")
     public void userActionTableParam(String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userActionTableParam(action, dataTable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)\\((.*?)\\) [^\"]*\"([^\"]*)\" данными$")
     public void userDoActionWithObject(String action, String param, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userDoActionWithObject(action, param, dataTable);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)\\((.*?)\\) из списка$")
     public void userActionListParam(String action, List<String> list) throws PageInitializationException, NoSuchMethodException {
         super.userActionListParam(action, list);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^открывается копия страницы в новой вкладке$")
     public void openCopyPage() {
         super.openCopyPage();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)переключается на соседнюю вкладку$")
     public void switchesToNextTab() {
         super.switchesToNextTab();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^URL соответствует \"(.*?)\"$")
     public void urlMatches(String url) {
         super.urlMatches(url);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)закрывает текущее окно и возвращается на \"(.*?)\"$")
     public void closingCurrentWin(String title) {
         super.closingCurrentWin(title);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)нажимает назад в браузере$")
     public void backPage() {
         super.backPage();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)переходит на страницу \"(.*?)\" по ссылке$")
     public void goToUrl(String url) {
         super.goToUrl(url);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^(?:пользователь |он |)(?:переходит на|открывает) url \"(.*?)\"$")
     public void goToPageByUrl(String url) throws PageInitializationException {
         super.goToPageByUrl(url);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^обновляем страницу$")
     public void reInitPage() {
         super.reInitPage();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^пользователь свайпает экран \"([^\"]*)\" до текста \"([^\"]*)\"$")
     public void swipeToText(String direction, String text) throws SwipeException {
         super.swipeToText(direction, text);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @And("^в фокусе находится элемент \"([^\"]*)\"$")
     public void isElementFocused(String element) {
