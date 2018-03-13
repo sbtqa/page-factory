@@ -138,13 +138,13 @@ public class TagWebDriver {
                 setWebDriver(new SafariDriver(capabilities));
             }
         } else if (WEBDRIVER_BROWSER_NAME.equalsIgnoreCase(CHROME)) {
-            configureDriver(ChromeDriverManager.getInstance(), CHROME);
             if (WEBDRIVER_URL.isEmpty()) {
+                configureDriver(ChromeDriverManager.getInstance(), CHROME);
                 setWebDriver(new ChromeDriver(capabilities));
             }
         } else if (IS_IE) {
-            configureDriver(InternetExplorerDriverManager.getInstance(), IE_BROWSER_TYPE);
             if (WEBDRIVER_URL.isEmpty()) {
+                configureDriver(InternetExplorerDriverManager.getInstance(), IE_BROWSER_TYPE);
                 setWebDriver(new InternetExplorerDriver(capabilities));
             }
         } else {
