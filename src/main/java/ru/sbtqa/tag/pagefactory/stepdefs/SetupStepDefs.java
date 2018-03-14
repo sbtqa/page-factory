@@ -41,9 +41,9 @@ public class SetupStepDefs {
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
             PropertyConfigurator.configure(path);
-            LOG.info("Log4j proprties were picked up on the path " + path);
+            LOG.info("Log4j properties were picked up on the path {}",path);
         } else {
-            LOG.warn("There is no log4j.properties on the path " + path);
+            LOG.warn("There is no log4j.properties on the path {}", path);
         }
 
         try {

@@ -28,6 +28,9 @@ public class TagMobileDriver {
     private static final boolean APPIUM_CLICK_ADB = "true".equalsIgnoreCase(Props.get("appium.click.adb"));
     private static String deviceUdId;
 
+    private TagMobileDriver() {
+    }
+
     public static AppiumDriver<AndroidElement> getDriver() {
         if (Environment.MOBILE != PageFactory.getEnvironment()) {
             throw new FactoryRuntimeException("Failed to get mobile driver while environment is not mobile");
@@ -109,9 +112,6 @@ public class TagMobileDriver {
      * @return was driver initialized or not
      */
     public static boolean isDriverInitialized(){
-        if(mobileDriver != null) {
-            return true;
-        }
-        return false;
+        return mobileDriver != null;
     }
 }
