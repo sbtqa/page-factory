@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
 import java.util.HashMap;
+import java.util.UUID;
+
 import static org.openqa.selenium.remote.BrowserType.OPERA;
 
 public class SelenoidCapabilitiesProvider {
@@ -52,7 +54,7 @@ public class SelenoidCapabilitiesProvider {
         }
 
         if (!SELENOID_VIDEO_NAME.isEmpty()) {
-            capabilities.setCapability("videoName", SELENOID_VIDEO_NAME);
+            capabilities.setCapability("videoName", UUID.randomUUID().toString() + "-" + SELENOID_VIDEO_NAME);
         } else {
             LOG.info("Capability \"videoName\" for Selenoid isn't set. Using session id for name video.");
         }
@@ -105,6 +107,13 @@ public class SelenoidCapabilitiesProvider {
                     put("binary", "/usr/bin/opera");
                 }
             });
+        }
+
+        if (TagWebDriver.getBrowserName().equalsIgnoreCase("iexplore")) {
+            capabilities.setCapability("ie.usePerProcessProxy", true);
+            capabilities.setCapability("ie.browserCommandLineSwitches", "-private");
+            capabilities.setCapability("ie.ensureCleanSession", true);
+            capabilities.setCapability("requireWindowFocus", false);
         }
     }
 }
