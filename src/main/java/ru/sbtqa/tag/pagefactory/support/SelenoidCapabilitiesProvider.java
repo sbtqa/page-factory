@@ -1,12 +1,13 @@
 package ru.sbtqa.tag.pagefactory.support;
 
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
 import java.util.HashMap;
-import static org.openqa.selenium.remote.BrowserType.OPERA;
+import java.util.UUID;
 
 public class SelenoidCapabilitiesProvider {
 
@@ -52,7 +53,7 @@ public class SelenoidCapabilitiesProvider {
         }
 
         if (!SELENOID_VIDEO_NAME.isEmpty()) {
-            capabilities.setCapability("videoName", SELENOID_VIDEO_NAME);
+            capabilities.setCapability("videoName", UUID.randomUUID().toString() + "-" + SELENOID_VIDEO_NAME);
         } else {
             LOG.info("Capability \"videoName\" for Selenoid isn't set. Using session id for name video.");
         }
@@ -99,12 +100,19 @@ public class SelenoidCapabilitiesProvider {
             LOG.info("Capability \"labels\" for Selenoid isn't set. Using default capability.");
         }
 
-        if (TagWebDriver.getBrowserName().equalsIgnoreCase(OPERA)) {
+        if (TagWebDriver.getBrowserName().equalsIgnoreCase(BrowserType.OPERA)) {
             capabilities.setCapability("operaOptions", new HashMap<String, String>() {
                 {
                     put("binary", "/usr/bin/opera");
                 }
             });
+        }
+
+        if (TagWebDriver.getBrowserName().equalsIgnoreCase(BrowserType.IEXPLORE)) {
+            capabilities.setCapability("ie.usePerProcessProxy", true);
+            capabilities.setCapability("ie.browserCommandLineSwitches", "-private");
+            capabilities.setCapability("ie.ensureCleanSession", true);
+            capabilities.setCapability("requireWindowFocus", false);
         }
     }
 }
