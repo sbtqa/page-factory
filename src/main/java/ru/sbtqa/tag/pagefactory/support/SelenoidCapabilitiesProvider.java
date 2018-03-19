@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory.support;
 
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,8 +8,6 @@ import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
 import java.util.HashMap;
 import java.util.UUID;
-
-import static org.openqa.selenium.remote.BrowserType.OPERA;
 
 public class SelenoidCapabilitiesProvider {
 
@@ -101,7 +100,7 @@ public class SelenoidCapabilitiesProvider {
             LOG.info("Capability \"labels\" for Selenoid isn't set. Using default capability.");
         }
 
-        if (TagWebDriver.getBrowserName().equalsIgnoreCase(OPERA)) {
+        if (TagWebDriver.getBrowserName().equalsIgnoreCase(BrowserType.OPERA)) {
             capabilities.setCapability("operaOptions", new HashMap<String, String>() {
                 {
                     put("binary", "/usr/bin/opera");
@@ -109,7 +108,7 @@ public class SelenoidCapabilitiesProvider {
             });
         }
 
-        if (TagWebDriver.getBrowserName().equalsIgnoreCase("iexplore")) {
+        if (TagWebDriver.getBrowserName().equalsIgnoreCase(BrowserType.IEXPLORE)) {
             capabilities.setCapability("ie.usePerProcessProxy", true);
             capabilities.setCapability("ie.browserCommandLineSwitches", "-private");
             capabilities.setCapability("ie.ensureCleanSession", true);
