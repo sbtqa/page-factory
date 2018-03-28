@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.UUID;
 
 public class SelenoidCapabilitiesProvider {
 
@@ -53,7 +53,8 @@ public class SelenoidCapabilitiesProvider {
         }
 
         if (!SELENOID_VIDEO_NAME.isEmpty()) {
-            capabilities.setCapability("videoName", UUID.randomUUID().toString() + "-" + SELENOID_VIDEO_NAME);
+            capabilities.setCapability("videoName",
+                    new Date().toString().replaceAll("\\s","") + "-" + SELENOID_VIDEO_NAME);
         } else {
             LOG.info("Capability \"videoName\" for Selenoid isn't set. Using session id for name video.");
         }
