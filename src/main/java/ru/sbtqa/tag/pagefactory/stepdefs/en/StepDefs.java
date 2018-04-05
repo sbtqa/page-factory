@@ -84,7 +84,7 @@ public class StepDefs extends GenericStepDefs {
         super.userActionNoParams(action);
     }
 
-     /**
+    /**
      * {@inheritDoc}
      */
     @Override
