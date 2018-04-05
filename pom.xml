@@ -58,7 +58,7 @@
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>qa-utils</artifactId>
-      <version>1.3.1</version>
+      <version>1.2.8</version>
       <type>jar</type>
     </dependency>
     <dependency>
