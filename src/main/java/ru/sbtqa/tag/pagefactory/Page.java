@@ -27,7 +27,6 @@ import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
-import ru.sbtqa.tag.cucumber.TagCucumber;
 import ru.sbtqa.tag.datajack.Stash;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitle;
 import ru.sbtqa.tag.pagefactory.annotations.ActionTitles;
@@ -987,14 +986,16 @@ public abstract class Page {
                 actionList.add(actionTitle);
             }
 
+            I18N i18n = null;
+            try {
+                i18n = I18N.getI18n(method.getDeclaringClass(), ScenarioContext.getScenario());
+            } catch (I18NRuntimeException e) {
+                LOG.debug("There is no bundle for translation class. Leave it as is", e);
+            }
+
             for (ActionTitle action : actionList) {
-                String actionValue = action.value();
-                try {
-                    I18N i18n = I18N.getI18n(method.getDeclaringClass(), TagCucumber.getFeature().getI18n().getLocale(), I18N.DEFAULT_BUNDLE_PATH);
-                    actionValue = i18n.get(action.value());
-                } catch (I18NRuntimeException e) {
-                    LOG.debug("There is no bundle for translation class. Leave it as is", e);
-                }
+                String actionValue;
+                actionValue = (i18n != null) ? i18n.get(action.value()) :  action.value();
 
                 if (actionValue.equals(title)) {
                     return true;
