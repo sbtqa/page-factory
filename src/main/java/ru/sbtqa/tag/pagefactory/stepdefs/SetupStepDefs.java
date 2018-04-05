@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory.stepdefs;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import java.io.File;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
 import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
+import ru.sbtqa.tag.pagefactory.ScenarioContext;
 import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
@@ -35,8 +37,8 @@ public class SetupStepDefs {
     private static final Logger LOG = LoggerFactory.getLogger(SetupStepDefs.class);
 
     @Before()
-    public void setUp() {
-
+    public void setUp(Scenario scenario) {
+        ScenarioContext.setScenario(scenario);
         //try to connect logger property file if exists
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
