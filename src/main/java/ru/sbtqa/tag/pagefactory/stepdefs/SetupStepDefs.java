@@ -19,6 +19,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.allurehelper.ParamsHelper;
+import ru.sbtqa.tag.allurehelper.Type;
 import ru.sbtqa.tag.pagefactory.Page;
 import ru.sbtqa.tag.pagefactory.PageFactory;
 import ru.sbtqa.tag.pagefactory.ScenarioContext;
@@ -26,6 +27,7 @@ import ru.sbtqa.tag.pagefactory.annotations.ElementTitle;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.pagefactory.exceptions.FactoryRuntimeException;
 import ru.sbtqa.tag.pagefactory.support.Environment;
+import ru.sbtqa.tag.pagefactory.support.ScreenShooter;
 import ru.sbtqa.tag.qautils.properties.Props;
 import ru.sbtqa.tag.qautils.reflect.ClassUtilsExt;
 import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
@@ -115,6 +117,8 @@ public class SetupStepDefs {
 
     @After
     public void tearDown() {
+        attachScreenshotToReport();
+
         if (PageFactory.isVideoRecorderEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
             ParamsHelper.addParam("Video url", VideoRecorder.getInstance().stopRecording());
             VideoRecorder.getInstance().resetVideoRecorder();
@@ -125,6 +129,13 @@ public class SetupStepDefs {
             PageFactory.setSharingProcessing(true);
         } else {
             PageFactory.dispose();
+        }
+    }
+
+    private void attachScreenshotToReport() {
+        boolean isScenarioFailed = ScenarioContext.getScenario().isFailed();
+        if (isScenarioFailed && PageFactory.isDriverInitialized()) {
+            ParamsHelper.addAttachmentToRender(ScreenShooter.take(), "Screenshot", Type.PNG);
         }
     }
 }
