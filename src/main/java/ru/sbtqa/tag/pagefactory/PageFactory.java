@@ -58,6 +58,7 @@ public class PageFactory {
 
     public static void dispose() {
         PageWrapper = null;
+        actions = null;
         switch (getEnvironment()) {
             case WEB:
                 TagWebDriver.dispose();
