@@ -136,7 +136,7 @@ public class GenericStepDefs {
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
         String[] packages = this.getClass().getCanonicalName().split("\\."); 
         String currentLanguage = packages[packages.length - 2]; 
-        I18N i18n = I18N.getI18n(this.getClass(), new Locale(currentLanguage));
+        I18N i18n = I18N.getI18n(GenericStepDefs.class, new Locale(currentLanguage));
         String key = i18n.getKey(elementType);
         Class<? extends WebElement> clazz;
         switch (key) {
