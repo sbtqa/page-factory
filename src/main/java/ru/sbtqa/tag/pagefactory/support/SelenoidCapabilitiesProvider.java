@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.pagefactory.drivers.TagWebDriver;
 import ru.sbtqa.tag.qautils.properties.Props;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class SelenoidCapabilitiesProvider {
 
@@ -53,8 +55,9 @@ public class SelenoidCapabilitiesProvider {
         }
 
         if (!SELENOID_VIDEO_NAME.isEmpty()) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy'_'hh:mm:ss");
             capabilities.setCapability("videoName",
-                    new Date().toString().replaceAll("\\s","") + "-" + SELENOID_VIDEO_NAME);
+                    simpleDateFormat.format(new Date()) + '_' + UUID.randomUUID().toString() + "_" + SELENOID_VIDEO_NAME);
         } else {
             LOG.info("Capability \"videoName\" for Selenoid isn't set. Using session id for name video.");
         }
