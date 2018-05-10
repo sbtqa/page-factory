@@ -3,7 +3,6 @@ package ru.sbtqa.tag.pagefactory.stepdefs.ru;
 import cucumber.api.DataTable;
 import cucumber.api.java.ru.И;
 import java.util.List;
-import org.openqa.selenium.NoSuchElementException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
@@ -15,9 +14,8 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он )в блоке \"([^\"]*)\" \\(([^)]*)\\)$")
-    public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
-            NoSuchMethodException, NoSuchElementException {
+    @И("^(?:пользователь |он )?в блоке \"([^\"]*)\" \\(([^)]*)\\)$")
+    public void userActionInBlockNoParams(String block, String action) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockNoParams(block, action);
     }
 
