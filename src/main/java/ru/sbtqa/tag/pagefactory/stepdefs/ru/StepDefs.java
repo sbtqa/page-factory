@@ -3,7 +3,6 @@ package ru.sbtqa.tag.pagefactory.stepdefs.ru;
 import cucumber.api.DataTable;
 import cucumber.api.java.ru.И;
 import java.util.List;
-import org.openqa.selenium.NoSuchElementException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
@@ -15,9 +14,8 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\)$")
-    public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
-            NoSuchMethodException, NoSuchElementException {
+    @И("^(?:пользователь |он )?в блоке \"([^\"]*)\" \\(([^)]*)\\)$")
+    public void userActionInBlockNoParams(String block, String action) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockNoParams(block, action);
     }
 
@@ -25,7 +23,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметрами из таблицы$")
+    @И("^(?:пользователь |он )?в блоке \"([^\"]*)\" \\(([^)]*)\\) с параметрами из таблицы$")
     public void userActionInBlockTableParam(String block, String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockTableParam(block, action, dataTable);
     }
@@ -34,7 +32,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметром \"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?в блоке \"([^\"]*)\" \\(([^)]*)\\) с параметром \"([^\"]*)\"$")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockOneParam(block, action, param);
     }
@@ -43,7 +41,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)в блоке \"([^\"]*)\" \\((.*?)\\) с параметрами \"([^\"]*)\" \"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?в блоке \"([^\"]*)\" \\(([^)]*)\\) с параметрами \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockTwoParams(block, action, param1, param2);
     }
@@ -52,7 +50,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)в блоке \"([^\"]*)\" находит (элемент|текстовое поле|чекбокс|радиокнопка|таблицу|заголовок|кнопку|ссылку|изображение) \"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?в блоке \"([^\"]*)\" находит (элемент|текстовое поле|чекбокс|радиокнопка|таблицу|заголовок|кнопку|ссылку|изображение) \"([^\"]*)\"$")
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
         super.findElementInBlock(block, elementType, elementTitle);
     }
@@ -61,7 +59,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)в списке \"([^\"]*)\" находит элемент со значением \"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?в списке \"([^\"]*)\" находит элемент со значением \"([^\"]*)\"$")
     public void findElementInList(String listTitle, String value) throws PageException {
         super.findElementInList(listTitle, value);
     }
@@ -70,7 +68,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)(?:находится на странице|открывается страница|открывается вкладка мастера) \"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?(?:находится на странице|открывается страница|открывается вкладка мастера) \"([^\"]*)\"$")
     public void openPage(String title) throws PageInitializationException {
         super.openPage(title);
     }
@@ -79,7 +77,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)\\((.*?)\\)$")
+    @И("^(?:пользователь |он )?\\(([^)]*)\\)$")
     public void userActionNoParams(String action) throws PageInitializationException, NoSuchMethodException {
         super.userActionNoParams(action);
     }
@@ -88,7 +86,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)\\((.*?)\\) (?:с параметром |)\"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?\\(([^)]*)\\) (?:с параметром )?\"([^\"]*)\"$")
     public void userActionOneParam(String action, String param) throws PageInitializationException, NoSuchMethodException {
         super.userActionOneParam(action, param);
     }
@@ -97,7 +95,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)\\((.*?)\\) (?:с параметрами |)\"([^\"]*)\" \"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?\\(([^)]*)\\) (?:с параметрами )?\"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionTwoParams(String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         super.userActionTwoParams(action, param1, param2);
     }
@@ -106,7 +104,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)\\((.*?)\\) (?:с параметрами |)\"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
+    @И("^(?:пользователь |он )?\\(([^)]*)\\) (?:с параметрами )?\"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionThreeParams(String action, String param1, String param2, String param3) throws PageInitializationException, NoSuchMethodException {
         super.userActionThreeParams(action, param1, param2, param3);
     }
@@ -115,7 +113,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)\\((.*?)\\) данными$")
+    @И("^(?:пользователь |он )?\\(([^)]*)\\) данными$")
     public void userActionTableParam(String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userActionTableParam(action, dataTable);
     }
@@ -124,7 +122,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)\\((.*?)\\) [^\"]*\"([^\"]*)\" данными$")
+    @И("^(?:пользователь |он )?\\(([^)]*)\\) \"([^\"]*)\" данными$")
     public void userDoActionWithObject(String action, String param, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userDoActionWithObject(action, param, dataTable);
     }
@@ -133,7 +131,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)\\((.*?)\\) из списка$")
+    @И("^(?:пользователь |он )?\\(([^)]*)\\) из списка$")
     public void userActionListParam(String action, List<String> list) throws PageInitializationException, NoSuchMethodException {
         super.userActionListParam(action, list);
     }
@@ -151,7 +149,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)переключается на соседнюю вкладку$")
+    @И("^(?:пользователь |он )?переключается на соседнюю вкладку$")
     public void switchesToNextTab() {
         super.switchesToNextTab();
     }
@@ -160,7 +158,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^URL соответствует \"(.*?)\"$")
+    @И("^URL соответствует \"([^\"]*)\"$")
     public void urlMatches(String url) {
         super.urlMatches(url);
     }
@@ -169,7 +167,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)закрывает текущее окно и возвращается на \"(.*?)\"$")
+    @И("^(?:пользователь |он )?закрывает текущее окно и возвращается на \"([^\"]*)\"$")
     public void closingCurrentWin(String title) {
         super.closingCurrentWin(title);
     }
@@ -178,7 +176,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)нажимает назад в браузере$")
+    @И("^(?:пользователь |он )?нажимает назад в браузере$")
     public void backPage() {
         super.backPage();
     }
@@ -187,7 +185,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)переходит на страницу \"(.*?)\" по ссылке$")
+    @И("^(?:пользователь |он )?переходит на страницу \"([^\"]*)\" по ссылке$")
     public void goToUrl(String url) {
         super.goToUrl(url);
     }
@@ -196,7 +194,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @И("^(?:пользователь |он |)(?:переходит на|открывает) url \"(.*?)\"$")
+    @И("^(?:пользователь |он )?(?:переходит на|открывает) url \"([^\"]*)\"$")
     public void goToPageByUrl(String url) throws PageInitializationException {
         super.goToPageByUrl(url);
     }

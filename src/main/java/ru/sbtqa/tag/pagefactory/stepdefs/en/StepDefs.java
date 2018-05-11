@@ -15,7 +15,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\)$")
+    @And("^user in block \"([^\"]*)\" \\(([^)]*)\\)$")
     public void userActionInBlockNoParams(String block, String action) throws PageInitializationException,
             NoSuchMethodException, NoSuchElementException {
         super.userActionInBlockNoParams(block, action);
@@ -25,7 +25,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\) with the parameters of table$")
+    @And("^user in block \"([^\"]*)\" \\(([^)]*)\\) with the parameters of table$")
     public void userActionInBlockTableParam(String block, String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockTableParam(block, action, dataTable);
     }
@@ -34,7 +34,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\) with a parameter \"([^\"]*)\"$")
+    @And("^user in block \"([^\"]*)\" \\(([^)]*)\\) with a parameter \"([^\"]*)\"$")
     public void userActionInBlockOneParam(String block, String action, String param) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockOneParam(block, action, param);
     }
@@ -43,7 +43,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user in block \"([^\"]*)\" \\((.*?)\\) with the parameters \"([^\"]*)\"  \"([^\"]*)\"$")
+    @And("^user in block \"([^\"]*)\" \\(([^)]*)\\) with the parameters \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionInBlockTwoParams(String block, String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         super.userActionInBlockTwoParams(block, action, param1, param2);
     }
@@ -70,7 +70,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^(?:user |he |)(?:is on the page|page is being opened|master tab is being opened) \"(.*?)\"$")
+    @And("^(?:user |he )?(?:is on the page|page is being opened|master tab is being opened) \"([^\"]*)\"$")
     public void openPage(String title) throws PageInitializationException {
         super.openPage(title);
     }
@@ -79,7 +79,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user \\((.*?)\\)$")
+    @And("^user \\(([^)]*)\\)$")
     public void userActionNoParams(String action) throws PageInitializationException, NoSuchMethodException {
         super.userActionNoParams(action);
     }
@@ -88,7 +88,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user \\((.*?)\\) (?:with param |)\"([^\"]*)\"$")
+    @And("^user \\(([^)]*)\\) (?:with param )?\"([^\"]*)\"$")
     public void userActionOneParam(String action, String param) throws PageInitializationException, NoSuchMethodException {
         super.userActionOneParam(action, param);
     }
@@ -97,7 +97,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user \\((.*?)\\) (?:with the parameters |)\"([^\"]*)\" \"([^\"]*)\"$")
+    @And("^user \\(([^)]*)\\) (?:with the parameters )?\"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionTwoParams(String action, String param1, String param2) throws PageInitializationException, NoSuchMethodException {
         super.userActionTwoParams(action, param1, param2);
     }
@@ -106,7 +106,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user \\((.*?)\\) (?:with the parameters |)\"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
+    @And("^user \\(([^)]*)\\) (?:with the parameters )?\"([^\"]*)\" \"([^\"]*)\" \"([^\"]*)\"$")
     public void userActionThreeParams(String action, String param1, String param2, String param3) throws PageInitializationException, NoSuchMethodException {
         super.userActionThreeParams(action, param1, param2, param3);
     }
@@ -115,7 +115,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user \\((.*?)\\) data$")
+    @And("^user \\(([^)]*)\\) data$")
     public void userActionTableParam(String action, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userActionTableParam(action, dataTable);
     }
@@ -124,7 +124,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user \\((.*?)\\) [^\"]*\"([^\"]*) data$")
+    @And("^user \\(([^)]*)\\) \"([^\"]*)\" data$")
     public void userDoActionWithObject(String action, String param, DataTable dataTable) throws PageInitializationException, NoSuchMethodException {
         super.userDoActionWithObject(action, param, dataTable);
     }
@@ -133,7 +133,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user \\((.*?)\\) from the list$")
+    @And("^user \\(([^)]*)\\) from the list$")
     public void userActionListParam(String action, List<String> list) throws PageInitializationException, NoSuchMethodException {
         super.userActionListParam(action, list);
     }
@@ -160,7 +160,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^URL matches \"(.*?)\"$")
+    @And("^URL matches \"([^\"]*)\"$")
     public void urlMatches(String url) {
         super.urlMatches(url);
     }
@@ -169,7 +169,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user closes the current window and returns to \"(.*?)\"$")
+    @And("^user closes the current window and returns to \"([^\"]*)\"$")
     public void closingCurrentWin(String title) {
         super.closingCurrentWin(title);
     }
@@ -187,7 +187,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user navigates to page \"(.*?)\"$")
+    @And("^user navigates to page \"([^\"]*)\"$")
     public void goToUrl(String url) {
         super.goToUrl(url);
     }
@@ -196,7 +196,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user navigates to url \"(.*?)\"$")
+    @And("^user navigates to url \"([^\"]*)\"$")
     public void goToPageByUrl(String url) throws PageInitializationException {
         super.goToPageByUrl(url);
     }
@@ -214,7 +214,7 @@ public class StepDefs extends GenericStepDefs {
      * {@inheritDoc}
      */
     @Override
-    @And("^user swipes \"(.*?)\" to text \"(.*?)\"$")
+    @And("^user swipes \"([^\"]*)\" to text \"([^\"]*)\"$")
     public void swipeToText(String direction, String text) throws SwipeException {
         super.swipeToText(direction, text);
     }
