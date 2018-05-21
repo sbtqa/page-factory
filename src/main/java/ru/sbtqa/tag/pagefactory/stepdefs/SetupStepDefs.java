@@ -53,11 +53,8 @@ public class SetupStepDefs {
     @Before()
     public static void setUp(Scenario scenario) {
 
-        if (isSetUp.get()) {
+        if (isAlreadyPerformed(isSetUp)) {
             return;
-        } else {
-            isSetUp.set(true);
-            isTearDown.remove();
         }
 
         ScenarioContext.setScenario(scenario);
@@ -137,11 +134,8 @@ public class SetupStepDefs {
 
     public static void tearDown() {
 
-        if (isTearDown.get()) {
+        if (isAlreadyPerformed(isTearDown)) {
             return;
-        } else {
-            isTearDown.set(true);
-            isSetUp.remove();
         }
 
         attachScreenshotToReport();
@@ -156,6 +150,20 @@ public class SetupStepDefs {
             PageFactory.setSharingProcessing(true);
         } else {
             PageFactory.dispose();
+        }
+    }
+
+    private static boolean isAlreadyPerformed(ThreadLocal<Boolean> t) {
+        if (t.get()) {
+            return true;
+        } else {
+            t.set(true);
+            if (t.equals(isSetUp)) {
+                isTearDown.remove();
+            } else if (t.equals(isTearDown)) {
+                isSetUp.remove();
+            }
+            return false;
         }
     }
 
