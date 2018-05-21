@@ -151,7 +151,7 @@ public class SetupStepDefs {
         }
     }
 
-    private static boolean isAlreadyPerformed(ThreadLocal<Boolean> t) {
+    private static synchronized boolean isAlreadyPerformed(ThreadLocal<Boolean> t) {
         if (t.get()) {
             return true;
         } else {
