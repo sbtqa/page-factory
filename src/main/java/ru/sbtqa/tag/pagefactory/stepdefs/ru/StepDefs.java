@@ -1,14 +1,28 @@
 package ru.sbtqa.tag.pagefactory.stepdefs.ru;
 
 import cucumber.api.DataTable;
+import cucumber.api.Scenario;
+import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.ru.И;
 import java.util.List;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.stepdefs.GenericStepDefs;
+import ru.sbtqa.tag.pagefactory.stepdefs.SetupStepDefs;
 
 public class StepDefs extends GenericStepDefs {
+
+    @Before
+    public void SetUp(Scenario scenario) {
+        SetupStepDefs.setUp(scenario);
+    }
+
+    @After
+    public void tearDown(){
+        SetupStepDefs.tearDown();
+    }
 
     /**
      * {@inheritDoc}

@@ -1,7 +1,6 @@
 package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.Scenario;
-import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import java.io.File;
 import java.io.IOException;
@@ -36,16 +35,37 @@ import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 public class SetupStepDefs {
 
+    private static final ThreadLocal<Boolean> isSetUp = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return false;
+        }
+    };
+    private static final ThreadLocal<Boolean> isTearDown = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return false;
+        }
+    };
+
     private static final Logger LOG = LoggerFactory.getLogger(SetupStepDefs.class);
 
     @Before()
-    public void setUp(Scenario scenario) {
+    public static void setUp(Scenario scenario) {
+
+        if (isSetUp.get()) {
+            return;
+        } else {
+            isSetUp.set(true);
+            isTearDown.remove();
+        }
+
         ScenarioContext.setScenario(scenario);
         //try to connect logger property file if exists
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
             PropertyConfigurator.configure(path);
-            LOG.info("Log4j properties were picked up on the path {}",path);
+            LOG.info("Log4j properties were picked up on the path {}", path);
         } else {
             LOG.warn("There is no log4j.properties on the path {}", path);
         }
@@ -74,7 +94,7 @@ public class SetupStepDefs {
         reflections = new Reflections(PageFactory.getPagesPackage());
 
         Collection<String> allClassesString = reflections.getStore().get("SubTypesScanner").values();
-        Set<Class<?>> allClasses = new HashSet();
+        Set<Class<?>> allClasses = new HashSet<>();
         for (String clazz : allClassesString) {
             try {
                 allClasses.add(Class.forName(clazz));
@@ -115,8 +135,15 @@ public class SetupStepDefs {
         }
     }
 
-    @After
-    public void tearDown() {
+    public static void tearDown() {
+
+        if (isTearDown.get()) {
+            return;
+        } else {
+            isTearDown.set(true);
+            isSetUp.remove();
+        }
+
         attachScreenshotToReport();
 
         if (PageFactory.isVideoRecorderEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
@@ -132,7 +159,7 @@ public class SetupStepDefs {
         }
     }
 
-    private void attachScreenshotToReport() {
+    private static void attachScreenshotToReport() {
         boolean isScenarioFailed = ScenarioContext.getScenario().isFailed();
         if (isScenarioFailed && PageFactory.isDriverInitialized()) {
             ParamsHelper.addAttachmentToRender(ScreenShooter.take(), "Screenshot", Type.PNG);
