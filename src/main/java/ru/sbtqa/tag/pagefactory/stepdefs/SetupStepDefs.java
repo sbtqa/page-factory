@@ -1,7 +1,6 @@
 package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.Scenario;
-import cucumber.api.java.Before;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -50,7 +49,6 @@ public class SetupStepDefs {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetupStepDefs.class);
 
-    @Before()
     public static void setUp(Scenario scenario) {
 
         if (isAlreadyPerformed(isSetUp)) {
