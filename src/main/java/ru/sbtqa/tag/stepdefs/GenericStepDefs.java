@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.stepdefs;
+package ru.sbtqa.tag.stepdefs;
 
 import cucumber.api.DataTable;
 import java.util.ArrayList;
@@ -53,9 +53,9 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
  * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber
  * documentation</a>
  */
-public class PfGenericStepDefs extends PfSetupSteps {
+public class GenericStepDefs extends SetupSteps {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PfGenericStepDefs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenericStepDefs.class);
     
     /**
      * Execute action with no parameters inside block element User|he keywords
@@ -136,7 +136,7 @@ public class PfGenericStepDefs extends PfSetupSteps {
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
         String[] packages = this.getClass().getCanonicalName().split("\\."); 
         String currentLanguage = packages[packages.length - 2]; 
-        I18N i18n = I18N.getI18n(PfGenericStepDefs.class, new Locale(currentLanguage));
+        I18N i18n = I18N.getI18n(GenericStepDefs.class, new Locale(currentLanguage));
         String key = i18n.getKey(elementType);
         Class<? extends WebElement> clazz;
         switch (key) {
