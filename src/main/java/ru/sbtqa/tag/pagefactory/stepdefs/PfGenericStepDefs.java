@@ -53,9 +53,9 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
  * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber
  * documentation</a>
  */
-public class GenericStepDefs extends SetupSteps{
+public class PfGenericStepDefs extends PfSetupSteps {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GenericStepDefs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PfGenericStepDefs.class);
     
     /**
      * Execute action with no parameters inside block element User|he keywords
@@ -136,7 +136,7 @@ public class GenericStepDefs extends SetupSteps{
     public void findElementInBlock(String block, String elementType, String elementTitle) throws PageException {
         String[] packages = this.getClass().getCanonicalName().split("\\."); 
         String currentLanguage = packages[packages.length - 2]; 
-        I18N i18n = I18N.getI18n(GenericStepDefs.class, new Locale(currentLanguage));
+        I18N i18n = I18N.getI18n(PfGenericStepDefs.class, new Locale(currentLanguage));
         String key = i18n.getKey(elementType);
         Class<? extends WebElement> clazz;
         switch (key) {

@@ -9,9 +9,9 @@ import java.util.List;
 import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
-import ru.sbtqa.tag.pagefactory.stepdefs.GenericStepDefs;
+import ru.sbtqa.tag.pagefactory.stepdefs.PfGenericStepDefs;
 
-public class StepDefs extends GenericStepDefs {
+public class PfStepDefs extends PfGenericStepDefs {
 
     @Before
     public void setUp(Scenario scenario) {

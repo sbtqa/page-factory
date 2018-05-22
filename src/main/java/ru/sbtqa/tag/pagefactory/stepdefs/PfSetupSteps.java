@@ -32,7 +32,7 @@ import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
-public class SetupSteps {
+public class PfSetupSteps {
 
     private static final ThreadLocal<Boolean> isSetUp = new ThreadLocal<Boolean>() {
         @Override
@@ -47,7 +47,7 @@ public class SetupSteps {
         }
     };
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetupSteps.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PfSetupSteps.class);
 
     public void setUp(Scenario scenario) {
 
