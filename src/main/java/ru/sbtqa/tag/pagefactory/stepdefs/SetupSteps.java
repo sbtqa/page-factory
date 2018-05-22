@@ -1,8 +1,6 @@
 package ru.sbtqa.tag.pagefactory.stepdefs;
 
 import cucumber.api.Scenario;
-import cucumber.api.java.After;
-import cucumber.api.java.Before;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -34,18 +32,35 @@ import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
-public class SetupStepDefs {
+public class SetupSteps {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetupStepDefs.class);
+    private static final ThreadLocal<Boolean> isSetUp = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return false;
+        }
+    };
+    private static final ThreadLocal<Boolean> isTearDown = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return false;
+        }
+    };
 
-    @Before()
+    private static final Logger LOG = LoggerFactory.getLogger(SetupSteps.class);
+
     public void setUp(Scenario scenario) {
+
+        if (isAlreadyPerformed(isSetUp)) {
+            return;
+        }
+
         ScenarioContext.setScenario(scenario);
         //try to connect logger property file if exists
         String path = "src/test/resources/config/log4j.properties";
         if (new File(path).exists()) {
             PropertyConfigurator.configure(path);
-            LOG.info("Log4j properties were picked up on the path {}",path);
+            LOG.info("Log4j properties were picked up on the path {}", path);
         } else {
             LOG.warn("There is no log4j.properties on the path {}", path);
         }
@@ -74,7 +89,7 @@ public class SetupStepDefs {
         reflections = new Reflections(PageFactory.getPagesPackage());
 
         Collection<String> allClassesString = reflections.getStore().get("SubTypesScanner").values();
-        Set<Class<?>> allClasses = new HashSet();
+        Set<Class<?>> allClasses = new HashSet<>();
         for (String clazz : allClassesString) {
             try {
                 allClasses.add(Class.forName(clazz));
@@ -115,8 +130,12 @@ public class SetupStepDefs {
         }
     }
 
-    @After
     public void tearDown() {
+
+        if (isAlreadyPerformed(isTearDown)) {
+            return;
+        }
+
         attachScreenshotToReport();
 
         if (PageFactory.isVideoRecorderEnabled() && VideoRecorder.getInstance().isVideoStarted()) {
@@ -129,6 +148,20 @@ public class SetupStepDefs {
             PageFactory.setSharingProcessing(true);
         } else {
             PageFactory.dispose();
+        }
+    }
+
+    private synchronized boolean isAlreadyPerformed(ThreadLocal<Boolean> t) {
+        if (t.get()) {
+            return true;
+        } else {
+            t.set(true);
+            if (t.equals(isSetUp)) {
+                isTearDown.remove();
+            } else if (t.equals(isTearDown)) {
+                isSetUp.remove();
+            }
+            return false;
         }
     }
 
