@@ -10,18 +10,17 @@ import ru.sbtqa.tag.pagefactory.exceptions.PageException;
 import ru.sbtqa.tag.pagefactory.exceptions.PageInitializationException;
 import ru.sbtqa.tag.pagefactory.exceptions.SwipeException;
 import ru.sbtqa.tag.pagefactory.stepdefs.GenericStepDefs;
-import ru.sbtqa.tag.pagefactory.stepdefs.SetupStepDefs;
 
 public class StepDefs extends GenericStepDefs {
 
     @Before
-    public void SetUp(Scenario scenario) {
-        SetupStepDefs.setUp(scenario);
+    public void setUp(Scenario scenario) {
+        super.setUp(scenario);
     }
 
     @After
     public void tearDown(){
-        SetupStepDefs.tearDown();
+        super.tearDown();
     }
 
     /**

@@ -32,7 +32,7 @@ import ru.sbtqa.tag.qautils.reflect.FieldUtilsExt;
 import ru.sbtqa.tag.videorecorder.VideoRecorder;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
-public class SetupStepDefs {
+public class SetupSteps {
 
     private static final ThreadLocal<Boolean> isSetUp = new ThreadLocal<Boolean>() {
         @Override
@@ -47,9 +47,9 @@ public class SetupStepDefs {
         }
     };
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetupStepDefs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetupSteps.class);
 
-    public static void setUp(Scenario scenario) {
+    public void setUp(Scenario scenario) {
 
         if (isAlreadyPerformed(isSetUp)) {
             return;
@@ -130,7 +130,7 @@ public class SetupStepDefs {
         }
     }
 
-    public static void tearDown() {
+    public void tearDown() {
 
         if (isAlreadyPerformed(isTearDown)) {
             return;
@@ -151,7 +151,7 @@ public class SetupStepDefs {
         }
     }
 
-    private static synchronized boolean isAlreadyPerformed(ThreadLocal<Boolean> t) {
+    private synchronized boolean isAlreadyPerformed(ThreadLocal<Boolean> t) {
         if (t.get()) {
             return true;
         } else {
@@ -165,7 +165,7 @@ public class SetupStepDefs {
         }
     }
 
-    private static void attachScreenshotToReport() {
+    private void attachScreenshotToReport() {
         boolean isScenarioFailed = ScenarioContext.getScenario().isFailed();
         if (isScenarioFailed && PageFactory.isDriverInitialized()) {
             ParamsHelper.addAttachmentToRender(ScreenShooter.take(), "Screenshot", Type.PNG);
