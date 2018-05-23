@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.stepdefs;
+package ru.sbtqa.tag.stepdefs;
 
 import cucumber.api.DataTable;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ import ru.yandex.qatools.htmlelements.element.TextInput;
  * @see <a href="https://cucumber.io/docs/reference#step-definitions">Cucumber
  * documentation</a>
  */
-public class GenericStepDefs extends SetupSteps{
+public class GenericStepDefs extends SetupSteps {
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericStepDefs.class);
     

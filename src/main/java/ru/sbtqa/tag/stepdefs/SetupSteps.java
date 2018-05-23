@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.stepdefs;
+package ru.sbtqa.tag.stepdefs;
 
 import cucumber.api.Scenario;
 import java.io.File;
