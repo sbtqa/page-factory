@@ -20,7 +20,7 @@ import ru.yandex.qatools.htmlelements.element.TypifiedElement;
 @Aspect
 public class ClickAspect {
 
-    @Around("call(* ru.yandex.qatools.htmlelements.element.*.click(..))")
+    @Around("call(* org.openqa.selenium.WebElement.click()) || call(* ru.yandex.qatools.htmlelements.element.*.click())")
     public void doAroundClick(ProceedingJoinPoint joinPoint) throws Throwable {
         WebElement targetWebElement = null;
         Class<? extends Page> elementRedirect = null;
