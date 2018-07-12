@@ -216,6 +216,14 @@
                             <groupId>io.cucumber</groupId>
                             <artifactId>cucumber-junit</artifactId>
                         </weaveDependency>
+                        <weaveDependency>
+                            <groupId>ru.sbtqa.htmlelements</groupId>
+                            <artifactId>htmlelements-java</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>org.seleniumhq.selenium</groupId>
+                            <artifactId>selenium-api</artifactId>
+                        </weaveDependency>
                     </weaveDependencies>
                 </configuration>
                 <executions>
