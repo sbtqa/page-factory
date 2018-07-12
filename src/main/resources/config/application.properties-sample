@@ -103,3 +103,8 @@ selenoid.hostEntries = example.com:192.168.0.1,test.com:192.168.0.2
 selenoid.applicationContainers = spring-application-main:my-cool-app,spring-application-gateway
 selenoid.containerLables = environment:testing,build-number:14353
 #more information about there capabilities http://aerokube.com/selenoid/latest/#_advanced_features
+
+#Optional. Test data management
+data.type = json #json, properties, excel, mongo are supported
+data.folder = src/test/resources/data
+data.initial.collection = Data
