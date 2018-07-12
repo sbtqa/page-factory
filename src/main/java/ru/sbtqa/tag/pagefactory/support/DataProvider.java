@@ -12,9 +12,11 @@ import ru.sbtqa.tag.qautils.properties.Props;
 public class DataProvider {
 
     private static TestDataObject dataContainer;
+    private static String configCollection;
 
     public static TestDataObject getInstance() throws DataException {
         if (dataContainer == null) {
+            configCollection = Props.get("data.initial.collection", null);
             String dataType = Props.get("data.type", "stash");
             switch (dataType) {
                 case "json":
@@ -29,6 +31,13 @@ public class DataProvider {
 
     public static void updateCollection(TestDataObject newObject) {
         dataContainer = newObject;
+    }
+
+    /**
+     * @return the configCollection
+     */
+    public static String getConfigCollection() {
+        return configCollection;
     }
 
 }
