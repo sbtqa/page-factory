@@ -75,6 +75,18 @@
       <type>jar</type>
     </dependency>
     <dependency>
+      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
+      <artifactId>datajack-properties-adaptor</artifactId>
+      <version>1.0.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
+      <artifactId>datajack-excel-adaptor</artifactId>
+      <version>1.1.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>allure-helper</artifactId>
       <version>1.4.1</version>
