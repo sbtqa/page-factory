@@ -1,4 +1,4 @@
-package ru.sbtqa.tag.pagefactory.support;
+package ru.sbtqa.tag.pagefactory.support.data;
 
 import ru.sbtqa.tag.datajack.TestDataObject;
 import ru.sbtqa.tag.datajack.adaptors.ExcelDataObjectAdaptor;
@@ -7,10 +7,6 @@ import ru.sbtqa.tag.datajack.adaptors.PropertiesDataObjectAdaptor;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.qautils.properties.Props;
 
-/**
- *
- * @author sbt-sidochenko-vv
- */
 public class DataProvider {
 
     private static TestDataObject dataContainer;
@@ -20,6 +16,7 @@ public class DataProvider {
         if (dataContainer == null) {
             configCollection = Props.get("data.initial.collection", null);
             String dataType = Props.get("data.type", "stash");
+
             switch (dataType) {
                 case "json":
                     dataContainer = new JsonDataObjectAdaptor(
@@ -52,9 +49,6 @@ public class DataProvider {
         dataContainer = newObject;
     }
 
-    /**
-     * @return the configCollection
-     */
     public static String getConfigCollection() {
         return configCollection;
     }
