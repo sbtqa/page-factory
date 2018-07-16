@@ -1,10 +1,15 @@
 package ru.sbtqa.tag.pagefactory.support.data;
 
 import cucumber.runtime.model.CucumberFeature;
+import gherkin.ast.DataTable;
+import gherkin.ast.DocString;
 import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
+import gherkin.ast.Node;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
+import gherkin.ast.TableCell;
+import gherkin.ast.TableRow;
 import gherkin.ast.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +43,9 @@ public class DataParser {
                 List<Step> steps = scenarioDefinition.getSteps();
 
                 for (Step step : steps) {
-                    FieldUtils.writeField(step, "text", replaceStepPlaceholders(step.getText()), true);
+
+                    FieldUtils.writeField(step, "argument", replaceArgumentPlaceholders(step.getArgument()), true);
+                    FieldUtils.writeField(step, "text", replaceDataPlaceholders(step.getText()), true);
                 }
             }
         }
@@ -57,7 +64,19 @@ public class DataParser {
         return dataTag.isPresent() ? dataTag.get().getName().split("=")[1].trim() : null;
     }
 
-    private String replaceStepPlaceholders(String raw) throws DataException {
+    private Node replaceArgumentPlaceholders(Node argument) throws DataException, IllegalAccessException {
+        if (argument instanceof DataTable) {
+            DataTable dataTable = (DataTable) argument;
+            argument = replaceDataTablePlaceholders(dataTable);
+        } else if (argument instanceof DocString) {
+            DocString docString = (DocString) argument;
+            argument = new DocString(docString.getLocation(), docString.getContentType(), replaceDataPlaceholders(docString.getContent()));
+
+        }
+        return argument;
+    }
+
+    private String replaceDataPlaceholders(String raw) throws DataException {
         Pattern stepDataPattern = Pattern.compile(STEP_PARSE_REGEX);
         Matcher stepDataMatcher = stepDataPattern.matcher(raw);
         StringBuffer replacedStep = new StringBuffer(raw);
@@ -115,5 +134,21 @@ public class DataParser {
 
     private void setCurrentScenarioTag(String currentScenarioTag) {
         this.currentScenarioTag = currentScenarioTag;
+    }
+
+    private Node replaceDataTablePlaceholders(DataTable dataTable) throws DataException {
+        List<TableRow> resultTableRows = new ArrayList<>();
+
+        for (TableRow row : dataTable.getRows()) {
+            List<TableCell> resultCells = new ArrayList<>();
+
+            for (TableCell cell : row.getCells()) {
+                TableCell resultCell = new TableCell(cell.getLocation(), replaceDataPlaceholders(cell.getValue()));
+                resultCells.add(resultCell);
+            }
+            resultTableRows.add(new TableRow(row.getLocation(), resultCells));
+        }
+
+        return new DataTable(resultTableRows);
     }
 }
