@@ -222,7 +222,6 @@
           <target>${maven.compiler.target}</target>
           <complianceLevel>1.8</complianceLevel>
           <encoding>${project.build.sourceEncoding}</encoding>
-                    
           <weaveDependencies>
             <weaveDependency>
               <groupId>io.cucumber</groupId>
