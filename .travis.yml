@@ -3,11 +3,11 @@ branches:
   only:
     - master
     - /^[0-9]+\.[0-9]+\.[0-9]+$/
-addons:
-  sonarcloud:
-    organization: "sbtqasonarkey"
-    token:
-      secure: $SONAR_TOKEN
+#addons:
+#  sonarcloud:
+#    organization: "sbtqasonarkey"
+#    token:
+#      secure: $SONAR_TOKEN
 jdk:
   - oraclejdk8
 before_install:
@@ -15,8 +15,8 @@ before_install:
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
 install:
   - mvn clean --settings .travis/settings.xml install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip -B -V
-script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip
+#script:
+#  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip
 deploy:
   - provider: script
     script: ".travis/deploy.sh"
