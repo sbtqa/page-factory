@@ -38,7 +38,7 @@ public class DataParser {
                 List<Step> steps = scenarioDefinition.getSteps();
 
                 for (Step step : steps) {
-                    FieldUtils.writeField(step, "text", parseString(step.getText()), true);
+                    FieldUtils.writeField(step, "text", replaceStepPlaceholders(step.getText()), true);
                 }
             }
         }
@@ -57,10 +57,10 @@ public class DataParser {
         return dataTag.isPresent() ? dataTag.get().getName().split("=")[1].trim() : null;
     }
 
-    private String parseString(String raw) throws DataException {
+    private String replaceStepPlaceholders(String raw) throws DataException {
         Pattern stepDataPattern = Pattern.compile(STEP_PARSE_REGEX);
         Matcher stepDataMatcher = stepDataPattern.matcher(raw);
-        StringBuffer parsedStep = new StringBuffer(raw);
+        StringBuffer replacedStep = new StringBuffer(raw);
         int skipRange = 0;
 
         while (stepDataMatcher.find()) {
@@ -70,10 +70,11 @@ public class DataParser {
             if (value == null) {
                 continue;
             }
+
             if (collection != null) {
                 DataProvider.updateCollection(DataProvider.getInstance().fromCollection(collection.replace("@", "")));
 
-                parsedStep = parsedStep.replace(stepDataMatcher.start(1) + skipRange, stepDataMatcher.end(1) + skipRange, "");
+                replacedStep = replacedStep.replace(stepDataMatcher.start(1) + skipRange, stepDataMatcher.end(1) + skipRange, "");
                 skipRange += "".length() - collection.length();
             } else {
                 String tag = currentScenarioTag != null ? currentScenarioTag : featureDataTag;
@@ -85,10 +86,10 @@ public class DataParser {
 
             String dataPath = value.replace("${", "").replace("}", "");
             String parsedValue = DataProvider.getInstance().get(dataPath).getValue();
-            parsedStep = parsedStep.replace(stepDataMatcher.start(2) + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
+            replacedStep = replacedStep.replace(stepDataMatcher.start(2) + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
             skipRange += parsedValue.length() - value.length();
         }
-        return parsedStep.toString();
+        return replacedStep.toString();
     }
 
     private void parseTestDataObject(String tag) throws DataException {
