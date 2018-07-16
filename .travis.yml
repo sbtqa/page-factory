@@ -4,11 +4,10 @@ branches:
     - master
     - /^[0-9]+\.[0-9]+\.[0-9]+$/
 addons:
-  sonarqube: 
+  sonarcloud:
+    organization: "sbtqasonarkey"
     token:
-      secure: PQ+aNz7lsoUvSgMDMWdsVB1RRgUObwrSWAnaoO3t/55iyC/axqPHVj4EKwEjoQayXZpTftNXspl2O2jxFTpU2C6476Y8mu8wH8o1QEQFvXb7R8LucK51kV15a99NgjrCx421MFekSa1p4joYyhHr6nKnRQdufy5v/Zm6C4SGVBqdN5EYBHQT8PX2kW1/7mYsdlad9IIBEgzuNf72KESp3Ff0d3Eiaaq6wmNmM8EYa+1oN+i2AbJ5ww5L4vWyBK4EXTS8Skb7kMptWkKj8O5h826H2MfVGvBODKSaTsCgywz0sTlDud5PO5Ykn8IZjGggU8qvohyHu02VHWCYzwn+BkBeaR66LaEq7hGMUmx2rkb9oD28P8hEe8Wrf3NiIpzQuxx/DG96XDcfR/nHt5YllOiesW+QCnqewo8NmydyqBwQF5GnBa5su+HQ18RdVBISsY35d8EUVHvxAs9a70NujAOZ+LkQdmhTDWqERODBmvc9hNJNdMdUdAyRmpB2QQqxKRmPttNjWjRq4Xae/r184dgXNa7fhpbHqUP3nUDvCDwB+PFPPu/7J7UlQGWlT72SOUTwOTmUjM8YkbxlIKkfjO2hhL09PC65+qEz/oR+S70bJKiNwt9fvUZ2YwqBTHEbCBe39D+n5BhuiDPoNbfqM78QgoCWcHADOhGiJrQ+PJ0=
-    github_token:
-      secure: c/iQKrg4DckDv7d0caioudoBFdkxaBHZpxmBTT0t9kyOaVkHBBWy3jcvrRkak9w1p+MosKmYLE8x3NmbOCC5snB2A6VUlbapjmA5PKh5cMML053dAcSefBaakkbP3egF5YbKu36uaKUMDktECAGrZ9iM4UYnpFnFGnviiW7d9DqhOcWGqBwK9QIiPNGq0eK4dLBP4W1XgFe2gudJ7xbyeezFDSORHOMPYpPcsyQrFov9P052Tc5Y0wnW+E9dXve3JxqXBgMfz8ByyrAQ4OhhcgyLl+KB1CKRZcAof7XIZaf3dl+M37Jym13kZvrzhyC1n5a8er5qLtl99ocoPHl1e4AHyGIt4d+EE7RzCt3x8KCbRdgqdYxmX6b8f+PlfWcxCYIwJe23bMVES6YeloKAW+XUvrWOdaRkGjg0bA8aI8WNRK12KJArbQ+LXHtdKLcR/MvWDyrBzIgKwq9X7yWl04yifXvZ+Ye6GuVINmyaEZN1YgrnLuY6/Vg0AB7ysqA1dc8oAOR2eE3PExHfz2po9aZoTzpxpPqwpcilzpLJfM2JL0ThDJ4k1Hu8WpO+LjhQ5V/2oR/hF7Mm8S+dYe1pLeuQkeWdOAcaPRJaTxtyRUksI2zz7y9hL+5mTubNpWVDU9HofY8BU8yeg1PkahdDIr3B7S2sgAPywT+bZvVHjc4=
+      secure: $SONAR_TOKEN
 jdk:
   - oraclejdk8
 before_install:
@@ -16,9 +15,8 @@ before_install:
   - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
 install:
   - mvn clean --settings .travis/settings.xml install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip -B -V
-#TODO To not forget to revert it back later, when travis sonar integration will be fixed. 
-#script: 
-#  - sonar-scanner 
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip
 deploy:
   - provider: script
     script: ".travis/deploy.sh"
