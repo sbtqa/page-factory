@@ -65,12 +65,12 @@ public class DataParser {
         }
     }
 
-    private String parseTags(List<Tag> tags) throws DataException {
+    private String parseTags(List<Tag> tags) {
         Optional<Tag> dataTag = tags.stream().filter(predicate -> predicate.getName().startsWith("@data")).findFirst();
         return dataTag.isPresent() ? dataTag.get().getName().split("=")[1].trim() : null;
     }
 
-    private Node replaceArgumentPlaceholders(Node argument) throws DataException, IllegalAccessException {
+    private Node replaceArgumentPlaceholders(Node argument) throws DataException {
         if (argument instanceof DataTable) {
             DataTable dataTable = (DataTable) argument;
             argument = replaceDataTablePlaceholders(dataTable);
@@ -86,8 +86,8 @@ public class DataParser {
         Pattern stepDataPattern = Pattern.compile(STEP_PARSE_REGEX);
         Matcher stepDataMatcher = stepDataPattern.matcher(raw);
         StringBuffer replacedStep = new StringBuffer(raw);
-        // Skip range on value replace.
-        int skipRange = 0;
+        // Offet to handle diff between placeholder length and value length
+        int offset = 0;
 
         while (stepDataMatcher.find()) {
             String collection = stepDataMatcher.group(1);
@@ -99,8 +99,8 @@ public class DataParser {
             if (collection != null) {
                 DataProvider.updateCollection(DataProvider.getInstance().fromCollection(collection.replace("$", "")));
 
-                replacedStep = replacedStep.replace(stepDataMatcher.start(1) + skipRange, stepDataMatcher.end(1) + skipRange, "");
-                skipRange -= collection.length();
+                replacedStep = replacedStep.replace(stepDataMatcher.start(1) + offset, stepDataMatcher.end(1) + offset, "");
+                offset -= collection.length();
             } else {
                 String tag = currentScenarioTag != null ? currentScenarioTag : featureDataTag;
 
@@ -111,8 +111,8 @@ public class DataParser {
 
             String dataPath = normalizeValue(value);
             String parsedValue = DataProvider.getInstance().get(dataPath).getValue();
-            replacedStep = replacedStep.replace(stepDataMatcher.start(2) + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
-            skipRange += parsedValue.length() - value.length();
+            replacedStep = replacedStep.replace(stepDataMatcher.start(2) + offset, stepDataMatcher.end(2) + offset, parsedValue);
+            offset += parsedValue.length() - value.length();
         }
         return replacedStep.toString();
     }
