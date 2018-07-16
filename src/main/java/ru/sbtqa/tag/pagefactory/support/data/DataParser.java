@@ -1,6 +1,10 @@
 package ru.sbtqa.tag.pagefactory.support.data;
 
+import cucumber.runtime.model.CucumberFeature;
+import gherkin.ast.Feature;
+import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.Step;
 import gherkin.ast.Tag;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +23,28 @@ public class DataParser {
     private String featureDataTag;
     private String currentScenarioTag;
 
-    public List<Tag> getScenarioTags(ScenarioDefinition scenarioDefinition) {
+    public void replaceDataPlaceholders(List<CucumberFeature> cucumberFeatures) throws DataException, IllegalAccessException {
+
+        for (CucumberFeature cucumberFeature : cucumberFeatures) {
+            GherkinDocument gherkinDocument = cucumberFeature.getGherkinFeature();
+            Feature feature = gherkinDocument.getFeature();
+
+            setFeatureDataTag(parseTags(feature.getTags()));
+            List<ScenarioDefinition> featureChildren = feature.getChildren();
+
+            for (ScenarioDefinition scenarioDefinition : featureChildren) {
+                List<Tag> currentScenarioTags = getScenarioTags(scenarioDefinition);
+                setCurrentScenarioTag(parseTags(currentScenarioTags));
+                List<Step> steps = scenarioDefinition.getSteps();
+
+                for (Step step : steps) {
+                    FieldUtils.writeField(step, "text", parseString(step.getText()), true);
+                }
+            }
+        }
+    }
+
+    private List<Tag> getScenarioTags(ScenarioDefinition scenarioDefinition) {
         try {
             return (List<Tag>) FieldUtils.readField(scenarioDefinition, "tags", true);
         } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -27,12 +52,12 @@ public class DataParser {
         }
     }
 
-    public String parseTags(List<Tag> tags) throws DataException {
+    private String parseTags(List<Tag> tags) throws DataException {
         Optional<Tag> dataTag = tags.stream().filter(predicate -> predicate.getName().startsWith("@data")).findFirst();
         return dataTag.isPresent() ? dataTag.get().getName().split("=")[1].trim() : null;
     }
 
-    public String parseString(String raw) throws DataException {
+    private String parseString(String raw) throws DataException {
         Pattern stepDataPattern = Pattern.compile(STEP_PARSE_REGEX);
         Matcher stepDataMatcher = stepDataPattern.matcher(raw);
         StringBuffer parsedStep = new StringBuffer(raw);
@@ -83,11 +108,11 @@ public class DataParser {
         }
     }
 
-    public void setFeatureDataTag(String featureDataTag) {
+    private void setFeatureDataTag(String featureDataTag) {
         this.featureDataTag = featureDataTag;
     }
 
-    public void setCurrentScenarioTag(String currentScenarioTag) {
+    private void setCurrentScenarioTag(String currentScenarioTag) {
         this.currentScenarioTag = currentScenarioTag;
     }
 }
