@@ -24,8 +24,8 @@ import ru.sbtqa.tag.datajack.exceptions.DataException;
 
 public class DataParser {
 
-    private static final String STEP_PARSE_REGEX = "(?:(@[^\\$]+)?(\\$\\{[^\\}]+\\}))+";
-    private static final String TAG_PARSE_REGEX = "([^\\$]+)(?:\\$\\{([^\\}]+)\\})?";
+    private static final String STEP_PARSE_REGEX = "(?:\\$([^\\$\\{]+)?(\\{[^\\}]+\\}))+";
+    private static final String TAG_PARSE_REGEX = "(?:\\$([^\\{]+)(\\{([^\\}]+)\\})?)";
 
     private String featureDataTag;
     private String currentScenarioTag;
@@ -86,6 +86,7 @@ public class DataParser {
         Pattern stepDataPattern = Pattern.compile(STEP_PARSE_REGEX);
         Matcher stepDataMatcher = stepDataPattern.matcher(raw);
         StringBuffer replacedStep = new StringBuffer(raw);
+        // Skip range on value replace.
         int skipRange = 0;
 
         while (stepDataMatcher.find()) {
@@ -95,12 +96,11 @@ public class DataParser {
             if (value == null) {
                 continue;
             }
-
             if (collection != null) {
-                DataProvider.updateCollection(DataProvider.getInstance().fromCollection(collection.replace("@", "")));
+                DataProvider.updateCollection(DataProvider.getInstance().fromCollection(collection.replace("$", "")));
 
                 replacedStep = replacedStep.replace(stepDataMatcher.start(1) + skipRange, stepDataMatcher.end(1) + skipRange, "");
-                skipRange += "".length() - collection.length();
+                skipRange -= collection.length();
             } else {
                 String tag = currentScenarioTag != null ? currentScenarioTag : featureDataTag;
 
@@ -109,10 +109,10 @@ public class DataParser {
                 }
             }
 
-            String dataPath = value.replace("${", "").replace("}", "");
+            String dataPath = value.replace("$", "").replace("{", "").replace("}", "");
             String parsedValue = DataProvider.getInstance().get(dataPath).getValue();
-            replacedStep = replacedStep.replace(stepDataMatcher.start(2) + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
-            skipRange += parsedValue.length() - value.length();
+            replacedStep = replacedStep.replace(stepDataMatcher.start(2) - 1 + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
+            skipRange += parsedValue.length() - 1 - value.length();
         }
         return replacedStep.toString();
     }
@@ -127,7 +127,7 @@ public class DataParser {
             TestDataObject tdo = DataProvider.getInstance().fromCollection(collection);
 
             if (value != null) {
-                tdo = tdo.get(value);
+                tdo = tdo.get(value.replace("{", "").replace("}", ""));
             }
 
             DataProvider.updateCollection(tdo);
