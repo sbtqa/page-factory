@@ -24,7 +24,7 @@ import ru.sbtqa.tag.datajack.exceptions.DataException;
 
 public class DataParser {
 
-    private static final String STEP_PARSE_REGEX = "(?:\\$([^\\$\\{]+)?(\\{[^\\}]+\\}))+";
+    private static final String STEP_PARSE_REGEX = "(?:(\\$[^\\$\\{]+)?(\\$?\\{[^\\}]+\\}))+";
     private static final String TAG_PARSE_REGEX = "(?:\\$([^\\{]+)(\\{([^\\}]+)\\})?)";
 
     private String featureDataTag;
@@ -111,8 +111,8 @@ public class DataParser {
 
             String dataPath = value.replace("$", "").replace("{", "").replace("}", "");
             String parsedValue = DataProvider.getInstance().get(dataPath).getValue();
-            replacedStep = replacedStep.replace(stepDataMatcher.start(2) - 1 + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
-            skipRange += parsedValue.length() - 1 - value.length();
+            replacedStep = replacedStep.replace(stepDataMatcher.start(2) + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
+            skipRange += parsedValue.length() - value.length();
         }
         return replacedStep.toString();
     }
