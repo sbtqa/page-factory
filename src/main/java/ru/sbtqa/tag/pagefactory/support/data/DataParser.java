@@ -3,10 +3,12 @@ package ru.sbtqa.tag.pagefactory.support.data;
 import cucumber.runtime.model.CucumberFeature;
 import gherkin.ast.DataTable;
 import gherkin.ast.DocString;
+import gherkin.ast.Examples;
 import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.Node;
 import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.ScenarioOutline;
 import gherkin.ast.Step;
 import gherkin.ast.TableCell;
 import gherkin.ast.TableRow;
@@ -42,8 +44,12 @@ public class DataParser {
                 setCurrentScenarioTag(parseTags(currentScenarioTags));
                 List<Step> steps = scenarioDefinition.getSteps();
 
-                for (Step step : steps) {
+                if (scenarioDefinition instanceof ScenarioOutline) {
+                    List<Examples> examples = ((ScenarioOutline) scenarioDefinition).getExamples();
+                    FieldUtils.writeField(scenarioDefinition, "examples", replaceExamplesPlaceholders(examples), true);
+                }
 
+                for (Step step : steps) {
                     FieldUtils.writeField(step, "argument", replaceArgumentPlaceholders(step.getArgument()), true);
                     FieldUtils.writeField(step, "text", replaceDataPlaceholders(step.getText()), true);
                 }
@@ -137,9 +143,29 @@ public class DataParser {
     }
 
     private Node replaceDataTablePlaceholders(DataTable dataTable) throws DataException {
+        return new DataTable(replaceTableRows(dataTable.getRows()));
+    }
+
+    private List<Examples> replaceExamplesPlaceholders(List<Examples> examples) throws DataException {
+        List<Examples> resultExamples = new ArrayList<>();
+        for (Examples example : examples) {
+            Examples resultExample = new Examples(
+                    example.getLocation(),
+                    example.getTags(),
+                    example.getKeyword(),
+                    example.getName(),
+                    example.getDescription(),
+                    example.getTableHeader(),
+                    replaceTableRows(example.getTableBody()));
+            resultExamples.add(resultExample);
+        }
+        return resultExamples;
+    }
+
+    private List<TableRow> replaceTableRows(List<TableRow> tableRows) throws DataException {
         List<TableRow> resultTableRows = new ArrayList<>();
 
-        for (TableRow row : dataTable.getRows()) {
+        for (TableRow row : tableRows) {
             List<TableCell> resultCells = new ArrayList<>();
 
             for (TableCell cell : row.getCells()) {
@@ -148,7 +174,6 @@ public class DataParser {
             }
             resultTableRows.add(new TableRow(row.getLocation(), resultCells));
         }
-
-        return new DataTable(resultTableRows);
+        return resultTableRows;
     }
 }
