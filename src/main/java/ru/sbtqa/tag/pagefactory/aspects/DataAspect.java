@@ -16,8 +16,8 @@ import ru.sbtqa.tag.pagefactory.support.data.DataParser;
 @Aspect
 public class DataAspect {
 
-    @Around("call(* *.addChildren(..))")
-    public void stash(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("call(* cucumber.api.junit.Cucumber.addChildren(..))")
+    public void replaceDataPlaceholders(ProceedingJoinPoint joinPoint) throws Throwable {
         DataParser dataParser = new DataParser();
         List<CucumberFeature> cucumberFeatures = (List<CucumberFeature>) joinPoint.getArgs()[0];
 
