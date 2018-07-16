@@ -109,7 +109,7 @@ public class DataParser {
                 }
             }
 
-            String dataPath = value.replace("$", "").replace("{", "").replace("}", "");
+            String dataPath = normalizeValue(value);
             String parsedValue = DataProvider.getInstance().get(dataPath).getValue();
             replacedStep = replacedStep.replace(stepDataMatcher.start(2) + skipRange, stepDataMatcher.end(2) + skipRange, parsedValue);
             skipRange += parsedValue.length() - value.length();
@@ -118,16 +118,16 @@ public class DataParser {
     }
 
     private void parseTestDataObject(String tag) throws DataException {
-        Pattern dataP = Pattern.compile(TAG_PARSE_REGEX);
-        Matcher m = dataP.matcher(tag.trim());
+        Pattern tagPattern = Pattern.compile(TAG_PARSE_REGEX);
+        Matcher tagMatcher = tagPattern.matcher(tag.trim());
 
-        if (m.matches()) {
-            String collection = m.group(1);
-            String value = m.group(2);
+        if (tagMatcher.matches()) {
+            String collection = tagMatcher.group(1);
+            String value = tagMatcher.group(2);
             TestDataObject tdo = DataProvider.getInstance().fromCollection(collection);
 
             if (value != null) {
-                tdo = tdo.get(value.replace("{", "").replace("}", ""));
+                tdo = tdo.get(normalizeValue(value));
             }
 
             DataProvider.updateCollection(tdo);
@@ -175,5 +175,9 @@ public class DataParser {
             resultTableRows.add(new TableRow(row.getLocation(), resultCells));
         }
         return resultTableRows;
+    }
+
+    private String normalizeValue(String value) {
+        return value.replace("$", "").replace("{", "").replace("}", "");
     }
 }
