@@ -24,7 +24,7 @@ import ru.sbtqa.tag.datajack.exceptions.DataException;
 
 public class DataParser {
 
-    private static final String STEP_PARSE_REGEX = "(?:(\\$[^\\$\\{]+)?(\\$?\\{[^\\}]+\\}))+";
+    private static final String STEP_PARSE_REGEX = "(:?\\$([\\w|-|\\s|_\\d]+)?(\\{[^\\}|^\\$|^\\{]+\\}))+";
     private static final String TAG_PARSE_REGEX = "(?:\\$([^\\{]+)(\\{([^\\}]+)\\})?)";
 
     private String featureDataTag;
@@ -90,8 +90,8 @@ public class DataParser {
         int offset = 0;
 
         while (stepDataMatcher.find()) {
-            String collection = stepDataMatcher.group(1);
-            String value = stepDataMatcher.group(2);
+            String collection = stepDataMatcher.group(2);
+            String value = stepDataMatcher.group(3);
 
             if (value == null) {
                 continue;
@@ -99,7 +99,7 @@ public class DataParser {
             if (collection != null) {
                 DataProvider.updateCollection(DataProvider.getInstance().fromCollection(collection.replace("$", "")));
 
-                replacedStep = replacedStep.replace(stepDataMatcher.start(1) + offset, stepDataMatcher.end(1) + offset, "");
+                replacedStep = replacedStep.replace(stepDataMatcher.start(2) + offset, stepDataMatcher.end(2) + offset, "");
                 offset -= collection.length();
             } else {
                 String tag = currentScenarioTag != null ? currentScenarioTag : featureDataTag;
@@ -111,8 +111,8 @@ public class DataParser {
 
             String dataPath = normalizeValue(value);
             String parsedValue = DataProvider.getInstance().get(dataPath).getValue();
-            replacedStep = replacedStep.replace(stepDataMatcher.start(2) + offset, stepDataMatcher.end(2) + offset, parsedValue);
-            offset += parsedValue.length() - value.length();
+            replacedStep = replacedStep.replace(stepDataMatcher.start(3) - 1 + offset, stepDataMatcher.end(3) + offset, parsedValue);
+            offset += parsedValue.length() - 1 - value.length();
         }
         return replacedStep.toString();
     }
