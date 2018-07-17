@@ -409,7 +409,7 @@ public abstract class Page {
      *
      * @param filePath     path to file
      * @param elementTitle field name, usually 'input' type
-     * @throws PageException
+     * @throws PageException if file cant be uploaded
      */
     @ActionTitle("ru.sbtqa.tag.pagefactory.upload.file")
     public void uploadFile(String filePath, String elementTitle) throws PageException {
@@ -585,6 +585,7 @@ public abstract class Page {
      * chain of blocks. Otherwise, given block will be searched recursively on
      * the page
      *
+     * @param <T> Any element
      * @param blockPath block or block chain where element will be searched
      * @param title value of ElementTitle annotation of required element
      * @param type type of the searched element
