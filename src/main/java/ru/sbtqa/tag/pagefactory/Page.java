@@ -140,8 +140,8 @@ public abstract class Page {
      * initialized, or required element couldn't be found
      */
     @ActionTitles({
-        @ActionTitle("ru.sbtqa.tag.pagefactory.click.link"),
-        @ActionTitle("ru.sbtqa.tag.pagefactory.click.button")})
+            @ActionTitle("ru.sbtqa.tag.pagefactory.click.link"),
+            @ActionTitle("ru.sbtqa.tag.pagefactory.click.button")})
     public void clickElementByTitle(String elementTitle) throws PageException {
         WebElement webElement;
         try {
@@ -407,7 +407,7 @@ public abstract class Page {
     /**
      * Action for upload file.
      *
-     * @param filePath     path to file
+     * @param filePath path to file
      * @param elementTitle field name, usually 'input' type
      * @throws PageException if file cant be uploaded
      */
@@ -570,8 +570,8 @@ public abstract class Page {
      * @param text a {@link java.lang.String} object.
      */
     @ActionTitles({
-        @ActionTitle("ru.sbtqa.tag.pagefactory.check.element.with.text.present"),
-        @ActionTitle("ru.sbtqa.tag.pagefactory.check.text.visible")})
+            @ActionTitle("ru.sbtqa.tag.pagefactory.check.element.with.text.present"),
+            @ActionTitle("ru.sbtqa.tag.pagefactory.check.text.visible")})
     public void checkElementWithTextIsPresent(String text) {
         if (!DriverExtension.checkElementWithTextIsPresent(text, PageFactory.getTimeOutInSeconds())) {
             throw new AutotestError("Text '" + text + "' is not present");
@@ -592,8 +592,7 @@ public abstract class Page {
      * @return web element of the required type
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
-     * if element was not found, but with the wrong type
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with the wrong type
      */
     public <T extends WebElement> T findElementInBlockByTitle(String blockPath, String title, Class<T> type)
             throws PageException {
@@ -617,8 +616,7 @@ public abstract class Page {
      * @return WebElement
      * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementNotFoundException if
      * element was not found
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
-     * if element was not found, but with the wrong type
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if element was not found, but with the wrong type
      */
     public WebElement findElementInBlockByTitle(String blockPath, String title) throws PageException {
         return findElementInBlockByTitle(blockPath, title, WebElement.class);
@@ -826,8 +824,7 @@ public abstract class Page {
      *
      * @param element element, redirect for which is being searched
      * @return class of the page object, element redirects to
-     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException
-     * if failed to find redirect
+     * @throws ru.sbtqa.tag.pagefactory.exceptions.ElementDescriptionException if failed to find redirect
      */
     public Class<? extends Page> getElementRedirect(WebElement element) throws ElementDescriptionException {
         try {
@@ -857,9 +854,8 @@ public abstract class Page {
                     return Core.getElementByField(this, field);
                 }
             }
-        }
-        else {
-            for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(usedBlock)){
+        } else {
+            for (Field field : FieldUtilsExt.getDeclaredFieldsWithInheritance(usedBlock)) {
                 if (Core.isRequiredElementInBlock(field, title)) {
                     return Core.getElementByField(usedBlock, field);
                 }
@@ -996,7 +992,7 @@ public abstract class Page {
 
             for (ActionTitle action : actionList) {
                 String actionValue;
-                actionValue = (i18n != null) ? i18n.get(action.value()) :  action.value();
+                actionValue = (i18n != null) ? i18n.get(action.value()) : action.value();
 
                 if (actionValue.equals(title)) {
                     return true;
@@ -1136,7 +1132,7 @@ public abstract class Page {
                     } catch (ClassCastException cce) {
                         throw new ElementDescriptionException(
                                 String.format("Element '%s' was found in block '%s', but it's type is incorrect."
-                                        + "Requested '%s', but got '%s'",
+                                                + "Requested '%s', but got '%s'",
                                         elementTitle, block.getName(), type.getName(), f.getType()), cce);
                     }
                 }
@@ -1229,6 +1225,10 @@ public abstract class Page {
          * @return class of the page, this element redirects to
          */
         private static Class<? extends Page> findRedirect(Object parent, Object element) {
+            if (PageFactory.getPageRepository().get(parent.getClass()) == null) {
+                return null;
+            }
+
             for (Map.Entry<Field, String> entry : PageFactory.getPageRepository().get(parent.getClass()).entrySet()) {
                 Field field = entry.getKey();
                 RedirectsTo redirect = field.getAnnotation(RedirectsTo.class);
