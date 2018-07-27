@@ -23,17 +23,16 @@ public class ClickAspect {
     @Around("call(* org.openqa.selenium.WebElement.click()) || call(* ru.yandex.qatools.htmlelements.element.*.click())")
     public void doAroundClick(ProceedingJoinPoint joinPoint) throws Throwable {
         WebElement targetWebElement = null;
-        Class<? extends Page> elementRedirect = null;
+
         if (joinPoint.getTarget() instanceof TypifiedElement) {
             targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
-            TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
-            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(typifiedElement);
         } else if (joinPoint.getTarget() instanceof WebElement) {
             targetWebElement = (WebElement) joinPoint.getTarget();
-            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(targetWebElement);
         } else {
-            joinPoint.proceed();
+            return;
         }
+
+        Class<? extends Page> elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(targetWebElement);
 
         String elementHighlightStyle = null;
         boolean isVideoHighlightEnabled = Boolean.valueOf(Props.get("video.highlight.enabled"));
