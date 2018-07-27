@@ -1228,33 +1228,35 @@ public abstract class Page {
          * @return class of the page, this element redirects to
          */
         private static Class<? extends Page> findRedirect(Object parent, Object element) {
-            for (Map.Entry<Field, String> entry : PageFactory.getPageRepository().get(parent.getClass()).entrySet()) {
-                Field field = entry.getKey();
-                RedirectsTo redirect = field.getAnnotation(RedirectsTo.class);
+            if (PageFactory.getPageRepository().get(parent.getClass()) != null) {
+                for (Map.Entry<Field, String> entry : PageFactory.getPageRepository().get(parent.getClass()).entrySet()) {
+                    Field field = entry.getKey();
+                    RedirectsTo redirect = field.getAnnotation(RedirectsTo.class);
 
-                if (redirect != null) {
-                    try {
-                        field.setAccessible(true);
-                        Object targetField = field.get(parent);
-                        if (targetField != null) {
-                            if (targetField == element) {
-                                return redirect.page();
+                    if (redirect != null) {
+                        try {
+                            field.setAccessible(true);
+                            Object targetField = field.get(parent);
+                            if (targetField != null) {
+                                if (targetField == element) {
+                                    return redirect.page();
+                                }
                             }
+                        } catch (NoSuchElementException | StaleElementReferenceException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+                            LOG.debug("Failed to get page destination to redirect for element", ex);
                         }
-                    } catch (NoSuchElementException | StaleElementReferenceException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-                        LOG.debug("Failed to get page destination to redirect for element", ex);
                     }
-                }
-                if (Core.isChildOf(HtmlElement.class, field)) {
-                    field.setAccessible(true);
-                    Class<? extends Page> redirects = null;
-                    try {
-                        redirects = findRedirect(field.get(parent), element);
-                    } catch (IllegalArgumentException | IllegalAccessException ex) {
-                        LOG.debug("Failed to get page destination to redirect for html element", ex);
-                    }
-                    if (redirects != null) {
-                        return redirects;
+                    if (Core.isChildOf(HtmlElement.class, field)) {
+                        field.setAccessible(true);
+                        Class<? extends Page> redirects = null;
+                        try {
+                            redirects = findRedirect(field.get(parent), element);
+                        } catch (IllegalArgumentException | IllegalAccessException ex) {
+                            LOG.debug("Failed to get page destination to redirect for html element", ex);
+                        }
+                        if (redirects != null) {
+                            return redirects;
+                        }
                     }
                 }
             }
