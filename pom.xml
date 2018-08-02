@@ -71,7 +71,7 @@
     <dependency>
       <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
       <artifactId>datajack-json-adaptor</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0</version>
       <type>jar</type>
     </dependency>
     <dependency>
