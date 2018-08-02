@@ -2,8 +2,8 @@ package ru.sbtqa.tag.pagefactory.support.data;
 
 import ru.sbtqa.tag.datajack.TestDataObject;
 import ru.sbtqa.tag.datajack.adaptors.ExcelDataObjectAdaptor;
-import ru.sbtqa.tag.datajack.adaptors.PropertiesDataObjectAdaptor;
 import ru.sbtqa.tag.datajack.adaptors.json.JsonDataObjectAdaptor;
+import ru.sbtqa.tag.datajack.adaptors.properties.PropertiesDataObjectAdaptor;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.qautils.properties.Props;
 
