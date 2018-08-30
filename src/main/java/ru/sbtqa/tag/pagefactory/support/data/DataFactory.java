@@ -7,7 +7,7 @@ import ru.sbtqa.tag.datajack.adaptors.properties.PropertiesDataObjectAdaptor;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.qautils.properties.Props;
 
-public class DataProvider {
+public class DataFactory {
 
     private static TestDataObject dataContainer;
     private static String configCollection;
