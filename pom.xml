@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.sbtqa.tag</groupId>
   <artifactId>page-factory</artifactId>
@@ -43,7 +44,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <version.cucumber>2.4.0</version.cucumber>
+    <cucumber.version>2.4.0</cucumber.version>
+    <datajack.version>4.0.1</datajack.version>
   </properties>
   <distributionManagement>
     <snapshotRepository>
@@ -64,30 +66,6 @@
     </dependency>
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
-      <artifactId>datajack</artifactId>
-      <version>1.4.0</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
-      <artifactId>datajack-json-adaptor</artifactId>
-      <version>1.2.0</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
-      <artifactId>datajack-properties-adaptor</artifactId>
-      <version>1.1.0</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
-      <artifactId>datajack-excel-adaptor</artifactId>
-      <version>1.1.0</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>ru.sbtqa.tag</groupId>
       <artifactId>allure-helper</artifactId>
       <version>1.4.1</version>
     </dependency>
@@ -95,17 +73,17 @@
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>video-recorder</artifactId>
       <version>1.0.6</version>
-      <type>jar</type> 
+      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>${version.cucumber}</version>
+      <version>${cucumber.version}</version>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>${version.cucumber}</version>
+      <version>${cucumber.version}</version>
     </dependency>
     <dependency>
       <groupId>ru.sbtqa.htmlelements</groupId>
@@ -193,6 +171,31 @@
       <groupId>ru.sbtqa</groupId>
       <artifactId>webdrivermanager</artifactId>
       <version>2.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack</groupId>
+      <artifactId>datajack-api</artifactId>
+      <version>${datajack.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.providers</groupId>
+      <artifactId>json-provider</artifactId>
+      <version>${datajack.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.providers</groupId>
+      <artifactId>properties-provider</artifactId>
+      <version>${datajack.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.providers</groupId>
+      <artifactId>excel-provider</artifactId>
+      <version>${datajack.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.providers</groupId>
+      <artifactId>mongo-provider</artifactId>
+      <version>${datajack.version}</version>
     </dependency>
   </dependencies>
   <build>
