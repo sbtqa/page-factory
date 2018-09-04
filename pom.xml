@@ -44,7 +44,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <version.cucumber>2.4.0</version.cucumber>
+    <cucumber.version>2.4.0</cucumber.version>
     <maven.compilier.plugin.version>3.3</maven.compilier.plugin.version>
     <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
     <nexus.staging.maven.plugin.version>1.6.3</nexus.staging.maven.plugin.version>
