@@ -89,6 +89,8 @@ public class TagWebDriver {
     private static final String WEBDRIVER_OS_ARCHITECTURE = Props.get("webdriver.os.arch");
     private static final String WEBDRIVER_BROWSER_PATH = Props.get("webdriver.browser.path");
     private static final String WEBDRIVER_BROWSER_SIZE = Props.get("webdriver.browser.size");
+    private static final boolean WEBDRIVER_BROWSER_START_MAXIMIZED =
+            Boolean.parseBoolean(Props.get("webdriver.browser.startMaximized", "true"));
     private static final String MAPPING_FILES_PATH = "drivers/mapping/";
     private static final String MAPPING_FILES_EXTENSION = ".json";
 
@@ -156,7 +158,10 @@ public class TagWebDriver {
             setWebDriver(new RemoteWebDriver(remoteUrl, capabilities));
         }
         webDriver.manage().timeouts().pageLoadTimeout(getTimeOutInSeconds(), TimeUnit.SECONDS);
-        webDriver.manage().window().maximize();
+
+        if (WEBDRIVER_BROWSER_START_MAXIMIZED) {
+            webDriver.manage().window().maximize();
+        }
 
         if (!WEBDRIVER_BROWSER_SIZE.isEmpty()) {
             String[] size = WEBDRIVER_BROWSER_SIZE.split("x");

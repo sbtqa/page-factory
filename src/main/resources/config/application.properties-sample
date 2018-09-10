@@ -79,10 +79,13 @@ webdriver.browser.ie.killOnDispose = false
 webdriver.shared = false
 
 #optional. The path where are the files to download
-webdriver.upload.dir=C:\Temp\upload\
+webdriver.upload.dir = C:\Temp\upload\
 
 #optional. Specify the size of window browser (this parameter need if you use browser in Docker container)
 webdriver.browser.size = 1920x1080
+
+#optional. True by default
+webdriver.browser.startMaximized = true
 
 #Custom desired capabilities
 webdriver.chrome.capability.acceptSslCerts=true
@@ -110,7 +113,7 @@ selenoid.containerLables = environment:testing,build-number:14353
 data.type = json 
 ## Optional. Set custom file extension for json and properties data stores
 data.extension = json
-## Foleder with data files. For excel its path to excel file in xlsx format
+## Folder with data files. For excel its path to excel file in xlsx format
 data.folder = src/test/resources/data
 ## Initial collection which will initialized by default
 data.initial.collection = Data
