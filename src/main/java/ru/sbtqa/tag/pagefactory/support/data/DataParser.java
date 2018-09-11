@@ -32,6 +32,10 @@ public class DataParser {
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
             GherkinDocument gherkinDocument = cucumberFeature.getGherkinFeature();
             Feature feature = gherkinDocument.getFeature();
+            
+            if (feature == null) {
+                continue;
+            }
 
             setFeatureDataTag(parseTags(feature.getTags()));
             List<ScenarioDefinition> featureChildren = feature.getChildren();
