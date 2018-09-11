@@ -2,6 +2,8 @@ package ru.sbtqa.tag.pagefactory.support.data;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.sbtqa.tag.datajack.TestDataProvider;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
 import ru.sbtqa.tag.datajack.providers.ExcelDataProvider;
@@ -12,6 +14,7 @@ import ru.sbtqa.tag.qautils.properties.Props;
 
 public class DataFactory {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DataFactory.class);
     private static TestDataProvider testDataProvider;
     private static String configCollection;
 
@@ -47,8 +50,11 @@ public class DataFactory {
                             Props.get("data.initial.collection")
                     );
                     break;
+                case "stash":
+                    LOG.warn("Data provider isnt't set. Leaving all placeholders as is.");
+                    break;
                 default:
-                    throw new DataException(String.format("Data adaptor %s isn't supported", dataType));
+                    throw new DataException(String.format("Data provider %s isn't supported", dataType));
             }
         }
         return testDataProvider;
