@@ -20,34 +20,37 @@ public class DataFactory {
 
     public static TestDataProvider getDataProvider() throws DataException {
         if (testDataProvider == null) {
-            configCollection = Props.get("data.initial.collection", null);
+            configCollection = Props.get("data.initial.collection");
+
             String dataType = Props.get("data.type", "stash");
+            String dataFolder = Props.get("data.folder");
+            String dataExtension = Props.get("data.extension");
 
             switch (dataType) {
                 case "json":
                     testDataProvider = new JsonDataProvider(
-                            Props.get("data.folder"),
-                            Props.get("data.initial.collection"),
-                            Props.get("data.extension", "json")
+                            dataFolder,
+                            configCollection,
+                            dataExtension.isEmpty() ? "json" : dataExtension
                     );
                     break;
                 case "properties":
                     testDataProvider = new PropertiesDataProvider(
-                            Props.get("data.folder"),
-                            Props.get("data.initial.collection"),
-                            Props.get("data.extension", "properties")
+                            dataFolder,
+                            configCollection,
+                            dataExtension.isEmpty() ? "properties" : dataExtension
                     );
                     break;
                 case "excel":
                     testDataProvider = new ExcelDataProvider(
-                            Props.get("data.folder"),
-                            Props.get("data.initial.collection")
+                            dataFolder,
+                            configCollection
                     );
                     break;
                 case "mongo":
                     testDataProvider = new MongoDataProvider(
                             new MongoClient(new MongoClientURI(Props.get("data.uri"))).getDB("data.db"),
-                            Props.get("data.initial.collection")
+                            configCollection
                     );
                     break;
                 case "stash":
