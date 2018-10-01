@@ -1,5 +1,6 @@
 package ru.sbtqa.tag.pagefactory.support.data;
 
+import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import org.slf4j.Logger;
@@ -45,9 +46,9 @@ public class DataFactory {
                     );
                     break;
                 case "mongo":
-                    testDataProvider = new MongoDataProvider(
-                            new MongoClient(new MongoClientURI(Props.get("data.uri"))).getDB("data.db"),
-                            Props.get("data.initial.collection")
+                    MongoClient mongoclient = new MongoClient(new MongoClientURI(Props.get("data.uri")));
+                    DB db = mongoclient.getDB(Props.get("data.db"));
+                    testDataProvider = new MongoDataProvider(db, Props.get("data.initial.collection")
                     );
                     break;
                 case "stash":
