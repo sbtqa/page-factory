@@ -13,13 +13,17 @@ import gherkin.ast.Step;
 import gherkin.ast.TableCell;
 import gherkin.ast.TableRow;
 import gherkin.ast.Tag;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.reflect.FieldUtils;
 import ru.sbtqa.tag.datajack.exceptions.DataException;
+import ru.sbtqa.tag.qautils.properties.Props;
+
 import static ru.sbtqa.tag.datajack.providers.AbstractDataProvider.PATH_PARSE_REGEX;
 
 public class DataParser {
@@ -30,9 +34,10 @@ public class DataParser {
     public void replaceDataPlaceholders(List<CucumberFeature> cucumberFeatures) throws DataException, IllegalAccessException {
 
         for (CucumberFeature cucumberFeature : cucumberFeatures) {
+            featureDataTagValue = "$" + Props.get("data.initial.collection");
             GherkinDocument gherkinDocument = cucumberFeature.getGherkinFeature();
             Feature feature = gherkinDocument.getFeature();
-            
+
             if (feature == null) {
                 continue;
             }
@@ -98,6 +103,10 @@ public class DataParser {
 
             String builtPath = collection == null ? "$" + value : "$" + collection + value;
             String parsedValue = DataFactory.getDataProvider().getByPath(builtPath).getValue();
+            if (parsedValue == null) {
+                throw new DataException(String.format("Could not parse value for %s. Maybe it is not full. Possible path continuations: %s",
+                        builtPath, DataFactory.getDataProvider().getByPath(builtPath).getKeySet()));
+            }
             replacedStep = replacedStep.replace(stepDataMatcher.start(), stepDataMatcher.end(), parsedValue);
             stepDataMatcher = stepDataPattern.matcher(replacedStep);
         }
@@ -109,7 +118,9 @@ public class DataParser {
     }
 
     private void setFeatureDataTag(String featureDataTag) {
-        this.featureDataTagValue = featureDataTag;
+        if (featureDataTag != null) {
+            this.featureDataTagValue = featureDataTag;
+        }
     }
 
     private void setCurrentScenarioTag(String currentScenarioDataTag) {
