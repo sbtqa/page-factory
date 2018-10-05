@@ -51,7 +51,7 @@
     <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
     <maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
     <maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
-    <datajack.version>4.0.3</datajack.version>
+    <datajack.version>4.0.4</datajack.version>
   </properties>
   <distributionManagement>
     <snapshotRepository>
