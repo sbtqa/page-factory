@@ -27,6 +27,7 @@ public class SelenoidCapabilitiesProvider {
     private static final String SELENOID_HOST_ENTRIES = Props.get("selenoid.hostEntries");
     private static final String SELENOID_APPLICATION_CONTAINERS = Props.get("selenoid.applicationContainers");
     private static final String SELENOID_CONTAINER_LABLES = Props.get("selenoid.containerLables");
+    private static final String SELENOID_SESSION_TIMEOUT = Props.get("selenoid.sessionTimeout");
 
     public static void apply(DesiredCapabilities capabilities) {
 
@@ -102,6 +103,12 @@ public class SelenoidCapabilitiesProvider {
             capabilities.setCapability("labels", SELENOID_CONTAINER_LABLES);
         } else {
             LOG.info("Capability \"labels\" for Selenoid isn't set. Using default capability.");
+        }
+        
+        if (!SELENOID_SESSION_TIMEOUT.isEmpty()) {
+            capabilities.setCapability("sessionTimeout", SELENOID_SESSION_TIMEOUT);
+        } else { 
+            LOG.info("Capability 'sessionTimeout' for Selenoid isn't set. Using default capability.");
         }
 
         if (TagWebDriver.getBrowserName().equalsIgnoreCase(BrowserType.OPERA)) {
