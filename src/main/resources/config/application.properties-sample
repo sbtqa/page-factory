@@ -37,6 +37,16 @@ appium.app.activity = .Settings
 appium.fill.adb = false
 #optional. Avoid appium and click on elements throw adb by location. False by default
 appium.click.adb = false
+#optional. Don't reset app state before this session.
+#(For Android. Do not stop app, do not clear app data, and do not uninstall apk.)
+#(For iOS (including XCUITest) Do not destroy or shut down sim after test. Start tests running on whichever sim is running, or device is plugged in.)
+#True by default
+appium.noreset = true
+#optional. Perform a complete reset. See here for more details.
+#(For Android Stop app, clear app data and uninstall apk after test)
+#(For iOS Uninstall app after real device test, destroy Simulator after sim test)
+#False by default
+appium.fullreset = false
 
 #IN CASE OF WEB
 #parameters for web driver create
