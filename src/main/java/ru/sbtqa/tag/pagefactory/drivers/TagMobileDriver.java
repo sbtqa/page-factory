@@ -26,8 +26,8 @@ public class TagMobileDriver {
     private static final String APPIUM_APP_ACTIVITY = Props.get("appium.app.activity");
     private static final boolean APPIUM_FILL_ADB = "true".equalsIgnoreCase(Props.get("appium.fill.adb"));
     private static final boolean APPIUM_CLICK_ADB = "true".equalsIgnoreCase(Props.get("appium.click.adb"));
-    private static final boolean NO_RESET = "true".equalsIgnoreCase(Props.get("appium.noreset"));
-    private static final boolean FULL_RESET = "false".equalsIgnoreCase(Props.get("appium.fullreset"));
+    private static final boolean NO_RESET_KEY = Props.get("appium.noreset").isEmpty();
+
     private static String deviceUdId;
 
     private TagMobileDriver() {
@@ -53,8 +53,13 @@ public class TagMobileDriver {
         capabilities.setCapability("autoGrantPermissions", "true");
         capabilities.setCapability("unicodeKeyboard", "true");
         capabilities.setCapability("resetKeyboard", "true");
-        capabilities.setCapability("noReset",NO_RESET);
-        capabilities.setCapability("fullReset", FULL_RESET);
+        if (!NO_RESET_KEY) {
+            if("true".equalsIgnoreCase(Props.get("appium.noreset"))){
+                capabilities.setCapability("noReset","true");
+            }else{
+                capabilities.setCapability("fullReset","true");
+            }
+        }
         LOG.info("Capabilities are {}", capabilities);
 
         URL url;
