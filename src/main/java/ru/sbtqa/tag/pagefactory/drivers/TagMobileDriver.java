@@ -5,8 +5,6 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ public class TagMobileDriver {
     private static final boolean APPIUM_FILL_ADB = "true".equalsIgnoreCase(Props.get("appium.fill.adb"));
     private static final boolean APPIUM_CLICK_ADB = "true".equalsIgnoreCase(Props.get("appium.click.adb"));
     private static final String APPIUM_STRATEGIES_RESET = Props.get("appium.strategies.reset");
-
 
     private static String deviceUdId;
 
@@ -56,9 +53,9 @@ public class TagMobileDriver {
         capabilities.setCapability("autoGrantPermissions", "true");
         capabilities.setCapability("unicodeKeyboard", "true");
         capabilities.setCapability("resetKeyboard", "true");
-        if(APPIUM_STRATEGIES_RESET.equalsIgnoreCase("noreset")){
+        if (APPIUM_STRATEGIES_RESET.equalsIgnoreCase("noreset")) {
             capabilities.setCapability("noReset","true");
-        }else if(APPIUM_STRATEGIES_RESET.equalsIgnoreCase("fullreset")){
+        } else if (APPIUM_STRATEGIES_RESET.equalsIgnoreCase("fullreset")) {
             capabilities.setCapability("fullReset","true");
         }
 
